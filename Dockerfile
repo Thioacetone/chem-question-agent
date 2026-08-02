@@ -18,12 +18,14 @@ WORKDIR /app
 
 # 安装 RDKit 系统依赖
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libxrender1 libxext6 libfontconfig1 \
+    libxrender1 libxext6 libfontconfig1 libfreetype6 \
     && rm -rf /var/lib/apt/lists/*
 
-# 安装 Python 依赖
+# 安装 Python 依赖（先单独装 rdkit，再装其他）
 COPY requirements-docker.txt ./
-RUN pip install --no-cache-dir -r requirements-docker.txt
+RUN pip install --no-cache-dir rdkit>=2023.9.0 \
+    && pip install --no-cache-dir fastapi==0.115.0 uvicorn==0.30.6 gunicorn==23.0.0 \
+    pydantic==2.9.2 python-docx==1.1.2 python-multipart==0.0.12 httpx==0.27.2 'openai>=1.50.0'
 
 # 复制后端代码
 COPY backend/ ./backend/
