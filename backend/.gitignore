@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# 环境变量 / 密钥
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# 测试输出
+test_*.svg
+test_*.png
+
+# 提取的图片
+extracted_images/
+
+# 系统文件
+.DS_Store
+Thumbs.db

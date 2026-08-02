@@ -1,0 +1,652 @@
+"""
+命题生成引擎 v4.0 - 命题思维驱动的原创命题
+核心理念：理解命题逻辑 → 形成独特风格 → 创造原创好题
+"""
+import json
+import re
+from typing import Optional
+from knowledge_base import (
+    HIGH_SCHOOL_REACTIONS, REACTION_TYPES, QUESTION_TEMPLATES,
+    SCORING_GUIDELINES, TARGET_IDENTITIES, KNOWN_INFO_TEMPLATES,
+    ISOMER_CONDITIONS, DIFFICULTY_PROGRESSION, PROMPT_STYLE_KEYWORDS,
+)
+from llm_client import llm_client
+from config import (
+    MAX_REACTION_STEPS, MIN_REACTION_STEPS, DEFAULT_DIFFICULTY,
+    TOTAL_SCORE, QUESTION_COUNT_RANGE,
+)
+
+
+class QuestionGenerator:
+    """命题生成引擎 v4.0"""
+
+    def __init__(self):
+        self.llm = llm_client
+
+    def build_context_prompt(self, route_data: dict) -> str:
+        """
+        构建命题上下文 v5.0 — 精简聚焦，提供路线相关的知识参考
+        """
+        import random
+
+        # 提取反应类型
+        reaction_types_in_route = set()
+        for step in route_data.get("steps", []):
+            if "reaction_type" in step:
+                reaction_types_in_route.add(step["reaction_type"])
+
+        # 构建相关反应知识（只选取最相关的几个）
+        relevant_reactions = []
+        for rxn in HIGH_SCHOOL_REACTIONS:
+            if rxn["type"] in reaction_types_in_route or rxn["category"] in str(route_data):
+                relevant_reactions.append(
+                    f"- {rxn['name']}：{rxn['template']}"
+                )
+
+        # 随机选择用途身份
+        identity = random.choice(TARGET_IDENTITIES)
+
+        context = f"""【用户输入的合成路线】
+{json.dumps(route_data, ensure_ascii=False, indent=2)}
+
+【建议的目标化合物用途身份】
+{identity}
+
+【路线中涉及的反应类型】
+{', '.join(reaction_types_in_route) if reaction_types_in_route else '未指定'}
+
+【相关高中反应参考】
+{chr(10).join(relevant_reactions[:8])}
+
+请基于以上合成路线，创作一道有机化学大题。命题要求已在系统提示中详细说明，请严格遵守。"""
+        return context
+
+    def generate_from_route(self, route_data: dict, difficulty: float = DEFAULT_DIFFICULTY) -> dict:
+        """
+        从合成路线生成完整命题 v3.0
+
+        Args:
+            route_data: 合成路线数据
+            difficulty: 难度系数 0.3-0.8
+
+        Returns:
+            完整的命题数据
+        """
+        # 验证输入
+        steps = route_data.get("steps", [])
+        if len(steps) < MIN_REACTION_STEPS:
+            return {"error": f"合成路线至少需要{MIN_REACTION_STEPS}步反应"}
+        if len(steps) > MAX_REACTION_STEPS:
+            return {"error": f"合成路线最多{MAX_REACTION_STEPS}步反应"}
+
+        # 构建上下文
+        context = self.build_context_prompt(route_data)
+
+        # 调用DeepSeek生成命题
+        try:
+            raw_response = self.llm.generate_question(context, difficulty)
+            self._last_raw = raw_response
+            question_data = self._parse_json_response(raw_response)
+            question_data["raw_route"] = route_data
+            question_data["generated_by"] = "DeepSeek-Chemistry-Agent-v3.0"
+
+            # 检查答案是否包含 {{结构式:...}} 占位符和SMILES有效性
+            # 合并检查，最多只重试1次，避免多次API调用导致超时
+            answers = question_data.get("answers", [])
+            if isinstance(answers, list) and len(answers) > 0:
+                missing = self._check_structure_placeholders(answers)
+                invalid_smiles = self._validate_smiles_in_answers(answers)
+                
+                if missing or invalid_smiles:
+                    issues = []
+                    if missing:
+                        issues.append(f"第{', '.join(str(n) for n in missing)}题答案缺少结构式占位符")
+                    if invalid_smiles:
+                        issues.append(f"以下SMILES无效: {', '.join(i['smiles'] for i in invalid_smiles)}")
+                    
+                    retry_response = self._retry_combined(context, raw_response, issues, invalid_smiles)
+                    retry_data = self._parse_json_response(retry_response)
+                    if retry_data and not retry_data.get("parse_error"):
+                        if retry_data.get("answers"):
+                            question_data["answers"] = retry_data["answers"]
+                        if retry_data.get("questions"):
+                            question_data["questions"] = retry_data["questions"]
+                        if retry_data.get("analysis"):
+                            question_data["analysis"] = retry_data["analysis"]
+
+            # 后处理：清洗答案中的冗余条件表述
+            question_data = self._clean_answer_conditions(question_data)
+
+            return question_data
+        except Exception as e:
+            return {"error": f"命题生成失败: {str(e)}", "raw_response": getattr(self, '_last_raw', '')}
+
+    def _check_structure_placeholders(self, answers: list) -> list:
+        """检查哪些答案缺少 {结构式:...} 或 {{结构式:...}} 占位符"""
+        import re
+        missing = []
+        for a in answers:
+            content = a.get("content", "")
+            number = a.get("number", "?")
+            # 检查是否包含结构式占位符（支持单双大括号）
+            has_placeholder = re.search(r'\{结构式:', content) is not None
+            if not has_placeholder:
+                # 检查是否确实需要结构式（涉及化合物结构描述的答案）
+                needs_structure = any(kw in content for kw in [
+                    "结构式", "结构简式", "结构简", "化合物", "合成路线",
+                    "第1步", "第2步", "第3步", "第4步", "第5步", "第6步",
+                ])
+                if needs_structure:
+                    missing.append(number)
+        return missing
+
+    def _retry_combined(self, context: str, previous_response: str, issues: list, invalid_smiles: list) -> str:
+        """合并重试：一次性修复结构式占位符缺失和SMILES无效问题"""
+        issues_text = "\n".join(f"  - {i}" for i in issues)
+        
+        smiles_fix = ""
+        if invalid_smiles:
+            invalid_list = "\n".join(
+                f"  第{i['number']}题: {{{{结构式:{i['smiles']}}}}}"
+                for i in invalid_smiles
+            )
+            smiles_fix = f"""
+=== SMILES书写规范（务必遵守） ===
+- 苯环：c1ccccc1
+- 单取代苯：取代基在1位，如甲苯 Cc1ccccc1
+- 对位二取代苯：如对硝基甲苯 Cc1ccc(N(=O)=O)cc1
+- 间位二取代苯：如间硝基甲苯 Cc1cccc(N(=O)=O)c1
+- 邻位二取代苯：如邻硝基甲苯 Cc1ccccc1N(=O)=O
+- 羧基：C(=O)O（不是COOH）
+- 醛基：C=O
+- 羟基：O（不是OH）
+- 氨基：N（不是NH2）
+- 硝基：N(=O)=O
+- 氰基：C#N
+- 酯基：C(=O)OC
+- 酰胺基：C(=O)N
+- 醚键：COC
+- 双键：C=C
+- 三键：C#C"""
+
+        retry_prompt = f"""你刚才生成的命题有以下问题需要修复：
+
+{issues_text}
+{smiles_fix}
+
+请修复以上所有问题，重新输出完整的JSON（包含所有字段）。"""
+        return self.llm.generate(
+            system_prompt="你是一位高考化学命题专家。请修复命题中的问题。",
+            user_prompt=retry_prompt,
+            temperature=0.1,
+        )
+
+    def _validate_smiles_in_answers(self, answers: list) -> list:
+        """验证答案中所有SMILES的有效性，返回无效的SMILES列表"""
+        import re
+        from structure_renderer import renderer
+
+        invalid = []
+        for a in answers:
+            content = a.get("content", "")
+            number = a.get("number", "?")
+            # 提取所有 {{结构式:...}} 和 {结构式:...} 占位符
+            matches = re.findall(r'\{结构式:([^}]+)\}', content)
+            for m in matches:
+                smiles = m.strip()
+                # 跳过"化合物X"格式（不是SMILES）
+                if re.match(r'^化合物[A-Z]$', smiles):
+                    continue
+                # 验证SMILES
+                if not renderer.smiles_to_mol(smiles):
+                    invalid.append({
+                        "number": number,
+                        "smiles": smiles,
+                        "context": m,
+                    })
+        return invalid
+
+    def _retry_with_smiles_fix(self, context: str, previous_response: str, invalid_smiles: list) -> str:
+        """重试：修复无效的SMILES"""
+        invalid_list = "\n".join(
+            f"  第{i['number']}题: {{{{结构式:{i['smiles']}}}}} (来自: {i['context']})"
+            for i in invalid_smiles
+        )
+        retry_prompt = f"""你刚才生成的命题中，以下SMILES表达式无效，无法被RDKit解析：
+
+{invalid_list}
+
+=== SMILES书写规范（务必遵守） ===
+- 苯环：c1ccccc1
+- 单取代苯：取代基在1位，如甲苯 Cc1ccccc1
+- 对位二取代苯：如对硝基甲苯 Cc1ccc(N(=O)=O)cc1
+- 间位二取代苯：如间硝基甲苯 Cc1cccc(N(=O)=O)c1
+- 邻位二取代苯：如邻硝基甲苯 Cc1ccccc1N(=O)=O
+- 羧基：C(=O)O（不是COOH）
+- 醛基：C=O
+- 羟基：O（不是OH）
+- 氨基：N（不是NH2）
+- 硝基：[N+](=O)[O-] 或 N(=O)=O
+- 氰基：C#N
+- 酯基：C(=O)OC
+- 酰胺基：C(=O)N
+- 醚键：COC（两个碳之间加O）
+- 双键：C=C
+- 三键：C#C
+
+请修正所有无效SMILES，重新输出完整的JSON（包含所有字段）。"""
+        return self.llm.generate(
+            system_prompt="你是一位高考化学命题专家，也是SMILES化学式书写专家。请修正无效的SMILES表达式。",
+            user_prompt=retry_prompt,
+            temperature=0.1,
+        )
+
+    def _parse_json_response(self, response: str) -> dict:
+        """解析LLM返回的JSON（增强版：处理markdown代码块）"""
+        cleaned = response.strip()
+
+        # 策略1：直接解析
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+        # 策略2：去除markdown代码块标记 ```json ... ``` 或 ``` ... ```
+        code_block = re.search(r'```(?:json)?\s*\n?([\s\S]*?)\n?```', cleaned)
+        if code_block:
+            try:
+                return json.loads(code_block.group(1).strip())
+            except json.JSONDecodeError:
+                pass
+
+        # 策略3：栈匹配
+        start = cleaned.find('{')
+        if start >= 0:
+            depth = 0
+            for i in range(start, len(cleaned)):
+                if cleaned[i] == '{':
+                    depth += 1
+                elif cleaned[i] == '}':
+                    depth -= 1
+                    if depth == 0:
+                        try:
+                            return json.loads(cleaned[start:i + 1])
+                        except json.JSONDecodeError:
+                            break
+
+        # 策略4：正则回退
+        json_match = re.search(r'\{[\s\S]*\}', cleaned)
+        if json_match:
+            try:
+                return json.loads(json_match.group())
+            except json.JSONDecodeError:
+                pass
+
+        return {"raw_output": response, "parse_error": True}
+
+    # ================================================================
+    # 条件清洗：确保条件表述严格符合高考真题规范
+    # ================================================================
+
+    @staticmethod
+    def _clean_condition_text(text: str) -> str:
+        """
+        清洗冗余条件表述，使其符合高考真题极简格式。
+
+        真题特征：
+        - 浓HNO₃, 浓H₂SO₄, △（硝化）
+        - H₂, Pd-C（催化加氢）
+        - NaOH, H₂O, △（水解）
+        - (1) O₃ (2) Zn, H₂O（臭氧化）
+        - 浓H₂SO₄, △（酯化/消去）
+        - Fe, HCl（硝基还原）
+        - KMnO₄, H⁺（氧化）
+        - O₂, Cu, △（醇催化氧化）
+        - NaOH, 醇, △（卤代烃消去）
+        - Br₂, FeBr₃（苯环溴代）
+        """
+        if not text or not isinstance(text, str):
+            return text
+
+        cleaned = text.strip()
+
+        # === 1. 去除冗余修饰词（按危害程度逐级清理） ===
+        # 第一级：完整的冗余句式
+        cleaned = re.sub(r'在\s*[^，,]*?\s*条件下', '', cleaned)
+        cleaned = re.sub(r'在\s*[^，,]*?\s*下', '', cleaned)
+        cleaned = re.sub(r'用\s*[^，,]*?\s*催化', '', cleaned)
+        cleaned = re.sub(r'以\s*[^，,]*?\s*为催化剂', '', cleaned)
+
+        # 第二级：单个冗余词
+        redundant_words = [
+            '加热回流', '回流', '加热', '搅拌', '室温',
+            '过夜', '滴加', '缓慢', '反应', '催化',
+            '溶液中', '作用下', '处理后', '条件下',
+            '洗涤', '干燥', '过滤', '蒸馏', '萃取',
+            '浓缩', '重结晶', '柱层析', '纯化',
+            '通入', '加入', '依次加入', '分批加入',
+            '保持', '控制', '搅拌下', '持续',
+            '催化下', '保护下', '氛围', '气氛',
+        ]
+        for word in sorted(redundant_words, key=len, reverse=True):
+            # 使用词边界匹配，避免误删化学式中的字符
+            cleaned = re.sub(r'\s*' + re.escape(word) + r'\s*', ' ', cleaned)
+
+        # === 2. 将"加热"替换为 △（如果还没被替换） ===
+        # 如果清洗后仍有"加热"或"△加热"，统一为 △
+        cleaned = re.sub(r'△\s*加热', '△', cleaned)
+        cleaned = re.sub(r'加热\s*△', '△', cleaned)
+        if '加热' in cleaned and '△' not in cleaned:
+            cleaned = cleaned.replace('加热', '△')
+
+        # === 3. 清理分隔符 ===
+        # 旧格式 "/" → 逗号
+        cleaned = re.sub(r'\s*/\s*', ', ', cleaned)
+        # 中文逗号 → 英文逗号
+        cleaned = cleaned.replace('，', ', ')
+        # 顿号 → 逗号
+        cleaned = cleaned.replace('、', ', ')
+        # 分号 → 逗号（除非是(1)(2)这种编号分隔）
+        cleaned = re.sub(r'(?<!\d)\s*;\s*(?!\d)', ', ', cleaned)
+
+        # === 4. 清理多余空格和逗号 ===
+        cleaned = re.sub(r'\s*,\s*', ', ', cleaned)
+        cleaned = re.sub(r',\s*,', ',', cleaned)  # 连续逗号
+        cleaned = re.sub(r'^\s*,\s*', '', cleaned)  # 开头逗号
+        cleaned = re.sub(r'\s*,\s*$', '', cleaned)  # 结尾逗号
+        cleaned = re.sub(r'\s{2,}', ' ', cleaned)  # 多个空格
+        cleaned = cleaned.strip()
+
+        # === 5. 如果完全为空，返回原文本（避免空条件） ===
+        if not cleaned:
+            return text.strip()
+
+        return cleaned
+
+    def _clean_answer_conditions(self, question_data: dict) -> dict:
+        """
+        清洗所有答案中的条件表述，确保符合高考真题极简格式。
+        主要处理第(5)题答案中的 →[条件] 格式。
+        """
+        if "answers" not in question_data:
+            return question_data
+
+        for a in question_data["answers"]:
+            content = a.get("content", "")
+            if not isinstance(content, str):
+                continue
+
+            # 匹配 →[条件] 格式，清洗方括号内的条件文本
+            def _replace_condition(match):
+                bracket_content = match.group(1)
+                cleaned = self._clean_condition_text(bracket_content)
+                return f'→[{cleaned}]'
+
+            # 处理 →[条件] 格式
+            cleaned_content = re.sub(r'→\s*\[([^\]]*)\]', _replace_condition, content)
+
+            # 也处理旧格式：在...条件下得 → 得
+            # （这些在 _clean_condition_text 中已处理，这里做兜底）
+            if cleaned_content != content:
+                a["content"] = cleaned_content
+
+        return question_data
+
+    def validate_question(self, question_data: dict) -> dict:
+        """
+        验证命题质量 v3.0 - 基于81道真题的严格验证
+        检查项：化学正确性、格式规范性、题型分布、难度合理性、真题风格符合度
+        """
+        issues = []
+        warnings = []
+
+        # 检查必要字段
+        required_fields = ["stem", "questions", "answers"]
+        for field in required_fields:
+            if field not in question_data:
+                issues.append(f"缺少必要字段: {field}")
+
+        if "questions" in question_data:
+            n_questions = len(question_data["questions"])
+            min_q, max_q = QUESTION_COUNT_RANGE
+            if n_questions < min_q:
+                warnings.append(f"问题数量偏少({n_questions}个)，标准为{min_q}-{max_q}个")
+            elif n_questions > max_q:
+                warnings.append(f"问题数量偏多({n_questions}个)，标准为{min_q}-{max_q}个")
+
+            # 检查题型分布（基于81道真题数据）
+            types = [q.get("type", "") for q in question_data["questions"]]
+
+            # 第1题：建议为基础识记
+            if n_questions >= 1:
+                q1_type = types[0] if len(types) > 0 else ""
+                basic_types = ["官能团识别", "基础识记", "反应类型判断", "手性碳", "σ键/π键计数", "官能团", "反应类型", "分子式", "命名"]
+                if not any(t in q1_type for t in basic_types):
+                    warnings.append(f"第1题建议为基础识记题，当前为: {q1_type}")
+
+            # 第4题：建议为同分异构体
+            if n_questions >= 4:
+                q4_type = types[3] if len(types) > 3 else ""
+                if "同分异构" not in q4_type:
+                    warnings.append(f"第4题建议为同分异构体题，当前题型为: {q4_type}")
+
+            # 第5题：建议为合成路线设计
+            if n_questions >= 5:
+                q5_type = types[4] if len(types) > 4 else ""
+                if "合成路线" not in q5_type and "合成" not in q5_type:
+                    warnings.append(f"第5题建议为合成路线设计题，当前题型为: {q5_type}")
+
+            # 检查难度递进
+            difficulties = [q.get("difficulty", "") for q in question_data["questions"]]
+            if len(difficulties) >= 5:
+                if difficulties[0] != "easy":
+                    warnings.append("第(1)题应为easy难度")
+                if difficulties[3] != "hard":
+                    warnings.append("第(4)题应为hard难度")
+                if difficulties[4] != "hard":
+                    warnings.append("第(5)题应为hard难度")
+
+        # === 分值校验 v3.0 - 基于81道真题参考答案的严格分值检查 ===
+        if "questions" in question_data:
+            questions = question_data["questions"]
+            scores = [q.get("score", 0) for q in questions]
+            total = sum(scores)
+            n = len(scores)
+
+            # 标准分值分布（基于81道真题统计）
+            # 模式A: 2+2+3+3+5=15（最常见）
+            # 模式B: 2+2+2+3+5=14（较少见）
+            if n >= 5:
+                # 第5题（合成路线设计）必须为5分
+                if scores[4] != 5:
+                    issues.append(f"第5题（合成路线设计）分值必须为5分，当前为{scores[4]}分")
+                # 第4题（同分异构体）建议为3分
+                if scores[3] != 3:
+                    warnings.append(f"第4题（同分异构体）分值建议为3分，当前为{scores[3]}分")
+
+            # 第1-3题分值检查
+            for i in range(min(3, n)):
+                expected = scores[i]
+                if i in [0, 1] and expected not in [2]:
+                    warnings.append(f"第{i+1}题分值通常为2分，当前为{expected}分")
+                if i == 2 and expected not in [2, 3]:
+                    warnings.append(f"第3题分值通常为2或3分，当前为{expected}分")
+
+            # 总分检查
+            if total not in [14, 15]:
+                issues.append(f"总分({total}分)不符合标准，江苏高考有机大题应为14或15分")
+            if total == 15:
+                if n >= 5 and scores[:4] != [2, 2, 3, 3]:
+                    warnings.append(f"15分制下，前4题分值应为2+2+3+3=10分，当前为{'+'.join(str(s) for s in scores[:4])}={sum(scores[:4])}分")
+            elif total == 14:
+                if n >= 5 and scores[:4] != [2, 2, 2, 3]:
+                    warnings.append(f"14分制下，前4题分值应为2+2+2+3=9分，当前为{'+'.join(str(s) for s in scores[:4])}={sum(scores[:4])}分")
+
+        if "total_score" in question_data:
+            try:
+                score = float(question_data["total_score"])
+                if score not in [14, 15]:
+                    issues.append(f"total_score字段({score})与标准（14-15分）不符")
+                if "questions" in question_data:
+                    actual_total = sum(q.get("score", 0) for q in question_data["questions"])
+                    if score != actual_total:
+                        issues.append(f"total_score({score})与各小题分数之和({actual_total})不一致")
+            except (ValueError, TypeError):
+                pass
+
+        # 检查题干是否包含用途身份
+        if "stem" in question_data:
+            stem = question_data["stem"]
+            if not any(kw in stem for kw in ["中间体", "药物", "香料", "材料", "天然", "活性", "染料", "农药", "医药"]):
+                warnings.append("题干建议包含目标化合物的用途身份描述")
+
+        # 检查合成路线设计：需包含已知信息和目标产物
+        if "questions" in question_data:
+            for q in question_data["questions"]:
+                if "合成" in q.get("type", ""):
+                    content = q.get("content", "")
+                    if "已知" not in content:
+                        issues.append("【严重】第(5)题合成路线设计缺少'已知'信息，必须提供一个新反应")
+                    else:
+                        # 检查已知信息质量：不能是课本内容
+                        known_section = content.split("已知")[1] if "已知" in content else ""
+                        bad_known = [
+                            "格氏试剂", "Grignard", "醛酮反应", "酯化反应", "水解反应",
+                            "消去反应", "加成反应", "取代反应", "氧化反应", "还原反应",
+                        ]
+                        has_bad_known = any(kw in known_section for kw in bad_known)
+                        # 检查是否给出了具体反应式（含→或箭头）
+                        has_rxn_arrow = any(sym in known_section for sym in ['→', '->', '⟶'])
+                        if has_bad_known and not has_rxn_arrow:
+                            warnings.append("第(5)题已知信息过于泛泛，建议给出具体反应式和条件")
+                        if not has_rxn_arrow and len(known_section) < 20:
+                            warnings.append("第(5)题已知信息过于简短，建议给出具体反应方程式")
+                    if "制备" not in content and "合成" not in content:
+                        issues.append("【严重】第(5)题必须明确写出'制备化合物X'（X=目标产物代号）")
+
+        # 检查 new_info 是否包含结构式占位符（ChemDraw格式）
+        if "new_info" in question_data and question_data["new_info"]:
+            new_info = str(question_data["new_info"])
+            if not re.search(r'\{结构式:', new_info):
+                warnings.append("已知信息(new_info)建议包含{{结构式:SMILES}}占位符，以ChemDraw格式渲染结构式")
+
+        # 检查合成路线答案：4-6步、有结构式占位符、有试剂条件
+        if "answers" in question_data:
+            for a in question_data["answers"]:
+                # 找到第5题（合成路线设计）的答案
+                if a.get("number") == 5 or a.get("number") == "5":
+                    answer_content = a.get("content", "")
+                    # 检查步骤数（通过"第X步"或"步骤X"计数）
+                    step_matches = re.findall(r'第(\d+)步|步骤(\d+)', answer_content)
+                    step_count = len(step_matches)
+                    if step_count < 4:
+                        warnings.append(f"合成路线答案步骤数({step_count}步)偏少，应为4-6步")
+                    elif step_count > 6:
+                        warnings.append(f"合成路线答案步骤数({step_count}步)偏多，应为4-6步")
+                    # 检查是否有结构式占位符（支持单双大括号）
+                    if not re.search(r'\{结构式:', answer_content):
+                        warnings.append("合成路线答案中建议包含结构式占位符，每步产物用{结构式:SMILES}标出")
+                    # 检查每步是否包含试剂/条件信息（条件错或漏扣分）
+                    if step_count > 0:
+                        steps_without_condition = 0
+                        steps_verbose = 0  # 条件过于冗余的步骤数
+                        for i in range(1, step_count + 1):
+                            # 提取第i步的文本
+                            pattern = re.compile(rf'第{i}步[：:]\s*(.*?)(?=第\d+步[：:]|$)', re.DOTALL)
+                            step_match = pattern.search(answer_content)
+                            if step_match:
+                                step_text = step_match.group(1)
+                                # 检查箭头格式：→[条件]
+                                cond_match = re.search(r'→\s*\[([^\]]*)\]', step_text)
+                                if cond_match:
+                                    condition = cond_match.group(1).strip()
+                                    # 检查条件是否为空
+                                    if not condition or len(condition) < 2:
+                                        steps_without_condition += 1
+                                    # 检查是否有冗余文字（高考真题风格应该是简洁的）
+                                    verbose_patterns = [
+                                        '在.*条件下', '反应', '加热回流', '搅拌',
+                                        '室温', '过夜', '滴加', '缓慢', '催化',
+                                        '溶液中', '作用下', '处理后',
+                                    ]
+                                    if any(vp in condition for vp in verbose_patterns):
+                                        steps_verbose += 1
+                                    # 检查是否使用了旧格式"/"分隔符（应用逗号）
+                                    if '/' in condition and condition.count(',') == 0:
+                                        steps_verbose += 1
+                                else:
+                                    # 没有箭头格式，检查旧格式
+                                    has_condition = any(kw in step_text for kw in [
+                                        'KMnO₄', 'H₂SO₄', 'HNO₃', 'NaOH', 'HCl',
+                                        'Pd', 'Ni', 'Fe', 'SOCl₂', 'Br₂', 'Cl₂',
+                                        '浓', '稀', '△', '加热', '光照',
+                                        'H⁺', 'OH⁻', 'H₂', 'O₂', 'Na₂CO₃', 'NaHCO₃',
+                                    ])
+                                    if not has_condition:
+                                        steps_without_condition += 1
+                        if steps_without_condition > 0:
+                            warnings.append(f"第(5)题答案有{steps_without_condition}步缺少试剂/条件信息（条件错或漏扣分）")
+                        if steps_verbose > 0:
+                            warnings.append(f"第(5)题答案有{steps_verbose}步条件表述过于冗余，应采用'试剂1, 试剂2, 条件'的极简格式")
+
+        # 检查同分异构体是否有3个条件，且条件合理
+        if "questions" in question_data:
+            for q in question_data["questions"]:
+                if "同分异构" in q.get("type", ""):
+                    content = q.get("content", "")
+                    # 检查是否包含①②③编号条件
+                    cond_count = sum(1 for c in ['①', '②', '③', '条件1', '条件2', '条件3'] if c in content)
+                    if cond_count < 2:
+                        warnings.append("同分异构体题应包含2-3个限定条件（①②③编号）")
+                    if cond_count == 3:
+                        # 检查条件是否合理（有官能团、谱学、结构三类条件）
+                        has_func_group = any(kw in content for kw in ['遇FeCl₃', '银镜', 'NaHCO₃', 'Na₂CO₃', 'NaOH', '溴水', '褪色', '显色', '官能团', '能发生', '能与'])
+                        has_spectrum = any(kw in content for kw in ['氢谱', '核磁', '峰组', '峰面积', '吸收峰', '化学位移', '红外', '质谱'])
+                        has_structure = any(kw in content for kw in ['苯环', '手性碳', '对位', '间位', '邻位', '取代基', '对称', '碳原子数'])
+                        if not has_func_group:
+                            warnings.append("同分异构体条件①建议包含官能团特征反应限制")
+                        if not has_spectrum:
+                            warnings.append("同分异构体条件②建议包含核磁共振氢谱等谱学限制")
+                        if not has_structure:
+                            warnings.append("同分异构体条件③建议包含苯环取代位置或手性碳等结构限制")
+
+        return {
+            "is_valid": len(issues) == 0,
+            "issues": issues,
+            "warnings": warnings,
+        }
+
+    def refine_question(self, question_data: dict, teacher_feedback: str) -> dict:
+        """
+        根据教师反馈优化命题
+        """
+        prompt = f"""
+【当前命题】
+{json.dumps(question_data, ensure_ascii=False, indent=2)}
+
+【教师修改意见】
+{teacher_feedback}
+
+请根据上述修改意见，优化命题内容。只修改教师提到的部分，保持其他内容不变。
+输出完整的优化后命题（JSON格式）。"""
+        try:
+            response = self.llm.generate(
+                system_prompt="你是一位高考化学命题专家，请根据教师反馈精确修改命题。",
+                user_prompt=prompt,
+                temperature=0.2,
+            )
+            return self._parse_json_response(response)
+        except Exception as e:
+            return {"error": f"优化失败: {str(e)}"}
+
+    def extract_from_paper(self, paper_text: str) -> dict:
+        """从论文文本中提取合成路线"""
+        try:
+            response = self.llm.extract_route_from_paper(paper_text)
+            return self._parse_json_response(response)
+        except Exception as e:
+            return {"error": f"论文提取失败: {str(e)}"}
+
+
+# 全局单例
+question_generator = QuestionGenerator()

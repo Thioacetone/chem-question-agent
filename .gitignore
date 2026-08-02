@@ -1,0 +1,46 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+node_modules/
+*.egg-info/
+.venv/
+venv/
+*.log
+.DS_Store
+Thumbs.db
+tunnel_url.txt
+*.bat
+!start.bat
+
+# 大型文件
+试卷/
+x36高考化学复习知识总结/
+人教版高中化学教材/
+tchMaterial-parser/
+extracted_images/
+*.pdf
+*.docx
+*.doc
+
+# 临时文件
+output.txt
+test_*.svg
+test_*.json
+raw_output.txt
+extracted_organic_questions.json
+organic_analysis_report.json
+*.png
+*.jpg
+
+# 临时脚本
+fix_routes*.js
+analyze_*.py
+extract_*.py
+download_*.py
+check_*.py
+find_*.py
+run_tunnel.py
+start_tunnel.py
+tunnel.js
+tunnel_bg.bat
