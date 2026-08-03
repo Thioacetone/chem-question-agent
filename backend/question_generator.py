@@ -60,6 +60,7 @@ class QuestionGenerator:
 
 【重要提醒】
 第(5)题合成路线答案必须恰好5-7步，不能少于5步，也不能多于7步。这是硬性要求！
+🔴 单步路线（仅1步反应）绝对禁止！必须设计5-7步的完整合成路线。
 请基于以上合成路线，创作一道有机化学大题。命题要求已在系统提示中详细说明，请严格遵守。"""
         return context
 
@@ -99,7 +100,7 @@ class QuestionGenerator:
                 # 先检查步骤数（最高优先级）
                 wrong_steps = self._check_answer_step_count(answers)
                 retry_count = 0
-                max_retries = 2
+                max_retries = 3  # 提升到3次重试，确保步骤数问题被彻底修复
                 
                 while wrong_steps and retry_count < max_retries:
                     retry_count += 1
@@ -168,12 +169,27 @@ class QuestionGenerator:
         return missing
 
     def _check_answer_step_count(self, answers: list) -> int:
-        """检查第5题答案步骤数是否在5-7范围内，返回实际步骤数（不符合时），符合时返回0"""
+        """检查第5题答案步骤数是否在5-7范围内，返回实际步骤数（不符合时），符合时返回0
+        
+        检测策略（双重兜底）：
+        1. 优先匹配"第X步"格式（标准格式）
+        2. 兜底：统计 →[条件] 箭头数量（防止LLM不用"第X步"格式写出1步路线）
+        """
         for a in answers:
             if a.get("number") == 5 or a.get("number") == "5":
                 content = a.get("content", "")
+                # 策略1：匹配"第X步"或"步骤X"格式
                 step_matches = re.findall(r'第(\d+)步|步骤(\d+)', content)
                 step_count = len(step_matches)
+                
+                # 策略2：兜底——如果"第X步"格式匹配不到，统计箭头数量
+                if step_count == 0:
+                    # 统计 →[条件] 箭头数量（每个箭头代表一步反应）
+                    arrow_count = len(re.findall(r'→\s*\[', content))
+                    if arrow_count > 0:
+                        # 箭头数量就是实际步骤数
+                        step_count = arrow_count
+                
                 if step_count < 5 or step_count > 7:
                     return step_count
         return 0
@@ -221,23 +237,33 @@ class QuestionGenerator:
 
     def _retry_step_count(self, context: str, previous_response: str, wrong_steps: int, retry_num: int) -> str:
         """专门重试：强制修复第5题答案步骤数问题"""
-        urgency = "这是最后一次机会！" if retry_num >= 2 else "请务必修复！"
+        urgency = "这是最后一次机会！" if retry_num >= 3 else "请务必修复！"
         
-        if wrong_steps < 5:
+        if wrong_steps <= 1:
+            problem = f"步骤数严重不足（仅{wrong_steps}步）！这是绝对不能接受的。你必须设计一条完整的5-7步合成路线。"
+            fix_guide = """=== 如何从1步扩展到5-7步 ===
+你不能只写1步反应！必须设计一条多步合成路线。例如：
+- 起始原料经过官能团转化（如氧化、还原、卤代、硝化、酯化、水解、酰化等）逐步构建目标分子
+- 每一步只做一个转化，不要合并多步反应
+- 确保有5-7个独立的→[条件]箭头
+- 示例：A→[条件1]B→[条件2]C→[条件3]D→[条件4]E→[条件5]F（这就是5步）"""
+        elif wrong_steps < 5:
             problem = f"步骤数太少（仅{wrong_steps}步），需要补充到5-7步。请增加中间步骤，把路线拆分成更多步反应。"
+            fix_guide = """=== 如何修正 ===
+把路线中的每一步都拆开，起始原料→中间体A→中间体B→...→最终产物，确保有5-7个箭头。"""
         else:
             problem = f"步骤数太多（{wrong_steps}步），需要精简到5-7步。请合并一些连续的同类反应，或去掉不必要的步骤。"
+            fix_guide = """=== 如何修正 ===
+合并一些连续的简单转化（如氧化后直接酯化可合并为一步），控制在5-7步。"""
         
         retry_prompt = f"""【严重错误】你生成的命题第(5)题合成路线答案步骤数不符合要求！
 
 问题：{problem}
 要求：第(5)题答案必须恰好5-7步反应，不能多也不能少。{urgency}
 
-=== 如何修正 ===
-如果步骤太少：把路线中的每一步都拆开，起始原料→中间体A→中间体B→...→最终产物，确保有5-7个箭头。
-如果步骤太多：合并一些连续的简单转化（如氧化后直接酯化可合并为一步），控制在5-7步。
+{fix_guide}
 
-=== 正确答案格式 ===
+=== 正确答案格式（必须严格遵守！） ===
 第1步：{{{{结构式:SMILES}}}}（原料名）→[条件] {{{{结构式:SMILES}}}}（产物名）
 第2步：{{{{结构式:SMILES}}}}（产物名）→[条件] {{{{结构式:SMILES}}}}（产物名）
 第3步：{{{{结构式:SMILES}}}}（产物名）→[条件] {{{{结构式:SMILES}}}}（产物名）
@@ -615,10 +641,15 @@ class QuestionGenerator:
                 # 找到第5题（合成路线设计）的答案
                 if a.get("number") == 5 or a.get("number") == "5":
                     answer_content = a.get("content", "")
-                    # 检查步骤数（通过"第X步"或"步骤X"计数）
+                    # 检查步骤数（通过"第X步"或"步骤X"计数，兜底用箭头计数）
                     step_matches = re.findall(r'第(\d+)步|步骤(\d+)', answer_content)
                     step_count = len(step_matches)
-                    if step_count < 5:
+                    if step_count == 0:
+                        # 兜底：统计箭头数量
+                        step_count = len(re.findall(r'→\s*\[', answer_content))
+                    if step_count == 1:
+                        issues.append(f"【严重】合成路线答案仅1步反应！这是绝对不允许的。必须设计5-7步的完整合成路线。")
+                    elif step_count < 5 and step_count > 0:
                         issues.append(f"【严重】合成路线答案步骤数({step_count}步)偏少，必须为5-7步")
                     elif step_count > 7:
                         issues.append(f"【严重】合成路线答案步骤数({step_count}步)偏多，必须为5-7步")
