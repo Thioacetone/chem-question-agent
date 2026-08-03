@@ -58,6 +58,8 @@ class QuestionGenerator:
 【相关高中反应参考】
 {chr(10).join(relevant_reactions[:8])}
 
+【重要提醒】
+第(5)题合成路线答案必须恰好5-7步，不能少于5步，也不能多于7步。这是硬性要求！
 请基于以上合成路线，创作一道有机化学大题。命题要求已在系统提示中详细说明，请严格遵守。"""
         return context
 
@@ -91,21 +93,43 @@ class QuestionGenerator:
             question_data["generated_by"] = "DeepSeek-Chemistry-Agent-v3.0"
 
             # 检查答案是否包含 {{结构式:...}} 占位符和SMILES有效性
-            # 合并检查，最多只重试1次，避免多次API调用导致超时
+            # 步骤数问题是最高优先级，必须修复
             answers = question_data.get("answers", [])
             if isinstance(answers, list) and len(answers) > 0:
+                # 先检查步骤数（最高优先级）
+                wrong_steps = self._check_answer_step_count(answers)
+                retry_count = 0
+                max_retries = 2
+                
+                while wrong_steps and retry_count < max_retries:
+                    retry_count += 1
+                    retry_response = self._retry_step_count(context, raw_response, wrong_steps, retry_count)
+                    retry_data = self._parse_json_response(retry_response)
+                    if retry_data and not retry_data.get("parse_error"):
+                        if retry_data.get("answers"):
+                            question_data["answers"] = retry_data["answers"]
+                            answers = retry_data["answers"]
+                        if retry_data.get("questions"):
+                            question_data["questions"] = retry_data["questions"]
+                        if retry_data.get("analysis"):
+                            question_data["analysis"] = retry_data["analysis"]
+                        raw_response = retry_response
+                    wrong_steps = self._check_answer_step_count(answers)
+                
+                # 如果步骤数仍然不对，标记错误
+                if wrong_steps:
+                    question_data["_step_error"] = f"第5题答案步骤数({wrong_steps}步)不符合5-7步要求，已重试{max_retries}次仍无法修复"
+
+                # 然后检查结构式占位符和SMILES
                 missing = self._check_structure_placeholders(answers)
                 invalid_smiles = self._validate_smiles_in_answers(answers)
-                wrong_steps = self._check_answer_step_count(answers)
                 
-                if missing or invalid_smiles or wrong_steps:
+                if missing or invalid_smiles:
                     issues = []
                     if missing:
                         issues.append(f"第{', '.join(str(n) for n in missing)}题答案缺少结构式占位符")
                     if invalid_smiles:
                         issues.append(f"以下SMILES无效: {', '.join(i['smiles'] for i in invalid_smiles)}")
-                    if wrong_steps:
-                        issues.append(f"合成路线答案步骤数({wrong_steps}步)不符合要求，必须为5-7步")
                     
                     retry_response = self._retry_combined(context, raw_response, issues, invalid_smiles)
                     retry_data = self._parse_json_response(retry_response)
@@ -193,6 +217,41 @@ class QuestionGenerator:
             system_prompt="你是一位高考化学命题专家。请修复命题中的问题。",
             user_prompt=retry_prompt,
             temperature=0.1,
+        )
+
+    def _retry_step_count(self, context: str, previous_response: str, wrong_steps: int, retry_num: int) -> str:
+        """专门重试：强制修复第5题答案步骤数问题"""
+        urgency = "这是最后一次机会！" if retry_num >= 2 else "请务必修复！"
+        
+        if wrong_steps < 5:
+            problem = f"步骤数太少（仅{wrong_steps}步），需要补充到5-7步。请增加中间步骤，把路线拆分成更多步反应。"
+        else:
+            problem = f"步骤数太多（{wrong_steps}步），需要精简到5-7步。请合并一些连续的同类反应，或去掉不必要的步骤。"
+        
+        retry_prompt = f"""【严重错误】你生成的命题第(5)题合成路线答案步骤数不符合要求！
+
+问题：{problem}
+要求：第(5)题答案必须恰好5-7步反应，不能多也不能少。{urgency}
+
+=== 如何修正 ===
+如果步骤太少：把路线中的每一步都拆开，起始原料→中间体A→中间体B→...→最终产物，确保有5-7个箭头。
+如果步骤太多：合并一些连续的简单转化（如氧化后直接酯化可合并为一步），控制在5-7步。
+
+=== 正确答案格式 ===
+第1步：{{{{结构式:SMILES}}}}（原料名）→[条件] {{{{结构式:SMILES}}}}（产物名）
+第2步：{{{{结构式:SMILES}}}}（产物名）→[条件] {{{{结构式:SMILES}}}}（产物名）
+第3步：{{{{结构式:SMILES}}}}（产物名）→[条件] {{{{结构式:SMILES}}}}（产物名）
+第4步：{{{{结构式:SMILES}}}}（产物名）→[条件] {{{{结构式:SMILES}}}}（产物名）
+第5步：{{{{结构式:SMILES}}}}（产物名）→[条件] {{{{结构式:SMILES}}}}（产物名）
+（如有第6步和第7步，继续按此格式）
+
+注意：答案路线必须与题干路线不同！不能完全照抄题干路线。
+
+请重新生成完整的JSON命题（包含所有字段），确保第5题答案恰好5-7步。"""
+        return self.llm.generate(
+            system_prompt="你是一位高考化学命题专家。第5题合成路线答案必须恰好5-7步！这是硬性要求，绝对不能违反！",
+            user_prompt=retry_prompt,
+            temperature=0.2,
         )
 
     def _validate_smiles_in_answers(self, answers: list) -> list:
