@@ -96,13 +96,16 @@ class QuestionGenerator:
             if isinstance(answers, list) and len(answers) > 0:
                 missing = self._check_structure_placeholders(answers)
                 invalid_smiles = self._validate_smiles_in_answers(answers)
+                wrong_steps = self._check_answer_step_count(answers)
                 
-                if missing or invalid_smiles:
+                if missing or invalid_smiles or wrong_steps:
                     issues = []
                     if missing:
                         issues.append(f"第{', '.join(str(n) for n in missing)}题答案缺少结构式占位符")
                     if invalid_smiles:
                         issues.append(f"以下SMILES无效: {', '.join(i['smiles'] for i in invalid_smiles)}")
+                    if wrong_steps:
+                        issues.append(f"合成路线答案步骤数({wrong_steps}步)不符合要求，必须为5-7步")
                     
                     retry_response = self._retry_combined(context, raw_response, issues, invalid_smiles)
                     retry_data = self._parse_json_response(retry_response)
@@ -134,11 +137,22 @@ class QuestionGenerator:
                 # 检查是否确实需要结构式（涉及化合物结构描述的答案）
                 needs_structure = any(kw in content for kw in [
                     "结构式", "结构简式", "结构简", "化合物", "合成路线",
-                    "第1步", "第2步", "第3步", "第4步", "第5步", "第6步",
+                    "第1步", "第2步", "第3步", "第4步", "第5步", "第6步", "第7步",
                 ])
                 if needs_structure:
                     missing.append(number)
         return missing
+
+    def _check_answer_step_count(self, answers: list) -> int:
+        """检查第5题答案步骤数是否在5-7范围内，返回实际步骤数（不符合时），符合时返回0"""
+        for a in answers:
+            if a.get("number") == 5 or a.get("number") == "5":
+                content = a.get("content", "")
+                step_matches = re.findall(r'第(\d+)步|步骤(\d+)', content)
+                step_count = len(step_matches)
+                if step_count < 5 or step_count > 7:
+                    return step_count
+        return 0
 
     def _retry_combined(self, context: str, previous_response: str, issues: list, invalid_smiles: list) -> str:
         """合并重试：一次性修复结构式占位符缺失和SMILES无效问题"""
@@ -340,14 +354,20 @@ class QuestionGenerator:
             cleaned = cleaned.replace('加热', '△')
 
         # === 3. 清理分隔符 ===
-        # 旧格式 "/" → 逗号
-        cleaned = re.sub(r'\s*/\s*', ', ', cleaned)
+        # 保护(1)(2)格式：如果文本中已有(1)(2)编号，不替换分隔符
+        has_numbered = bool(re.search(r'\(\d+\)', cleaned))
+        if not has_numbered:
+            # 旧格式 "/" → 逗号（仅在无编号时）
+            cleaned = re.sub(r'\s*/\s*', ', ', cleaned)
+            # 分号 → 逗号（仅在无编号时）
+            cleaned = re.sub(r'\s*;\s*', ', ', cleaned)
+        else:
+            # 有编号时，只清理编号之间的多余空格
+            cleaned = re.sub(r'\s*;\s*', '; ', cleaned)  # 保留分号但规范化空格
         # 中文逗号 → 英文逗号
         cleaned = cleaned.replace('，', ', ')
         # 顿号 → 逗号
         cleaned = cleaned.replace('、', ', ')
-        # 分号 → 逗号（除非是(1)(2)这种编号分隔）
-        cleaned = re.sub(r'(?<!\d)\s*;\s*(?!\d)', ', ', cleaned)
 
         # === 4. 清理多余空格和逗号 ===
         cleaned = re.sub(r'\s*,\s*', ', ', cleaned)
@@ -530,7 +550,7 @@ class QuestionGenerator:
             if not re.search(r'\{结构式:', new_info):
                 warnings.append("已知信息(new_info)建议包含{{结构式:SMILES}}占位符，以ChemDraw格式渲染结构式")
 
-        # 检查合成路线答案：4-6步、有结构式占位符、有试剂条件
+        # 检查合成路线答案：5-7步、有结构式占位符、有试剂条件
         if "answers" in question_data:
             for a in question_data["answers"]:
                 # 找到第5题（合成路线设计）的答案
@@ -539,10 +559,10 @@ class QuestionGenerator:
                     # 检查步骤数（通过"第X步"或"步骤X"计数）
                     step_matches = re.findall(r'第(\d+)步|步骤(\d+)', answer_content)
                     step_count = len(step_matches)
-                    if step_count < 4:
-                        warnings.append(f"合成路线答案步骤数({step_count}步)偏少，应为4-6步")
-                    elif step_count > 6:
-                        warnings.append(f"合成路线答案步骤数({step_count}步)偏多，应为4-6步")
+                    if step_count < 5:
+                        issues.append(f"【严重】合成路线答案步骤数({step_count}步)偏少，必须为5-7步")
+                    elif step_count > 7:
+                        issues.append(f"【严重】合成路线答案步骤数({step_count}步)偏多，必须为5-7步")
                     # 检查是否有结构式占位符（支持单双大括号）
                     if not re.search(r'\{结构式:', answer_content):
                         warnings.append("合成路线答案中建议包含结构式占位符，每步产物用{结构式:SMILES}标出")
@@ -550,6 +570,7 @@ class QuestionGenerator:
                     if step_count > 0:
                         steps_without_condition = 0
                         steps_verbose = 0  # 条件过于冗余的步骤数
+                        steps_bad_numbered = 0  # 有(2)无(1)的步骤数
                         for i in range(1, step_count + 1):
                             # 提取第i步的文本
                             pattern = re.compile(rf'第{i}步[：:]\s*(.*?)(?=第\d+步[：:]|$)', re.DOTALL)
@@ -563,6 +584,11 @@ class QuestionGenerator:
                                     # 检查条件是否为空
                                     if not condition or len(condition) < 2:
                                         steps_without_condition += 1
+                                    # 检查(2)必须有(1)规则
+                                    has_num2 = bool(re.search(r'\(2\)', condition))
+                                    has_num1 = bool(re.search(r'\(1\)', condition))
+                                    if has_num2 and not has_num1:
+                                        steps_bad_numbered += 1
                                     # 检查是否有冗余文字（高考真题风格应该是简洁的）
                                     verbose_patterns = [
                                         '在.*条件下', '反应', '加热回流', '搅拌',
@@ -572,7 +598,7 @@ class QuestionGenerator:
                                     if any(vp in condition for vp in verbose_patterns):
                                         steps_verbose += 1
                                     # 检查是否使用了旧格式"/"分隔符（应用逗号）
-                                    if '/' in condition and condition.count(',') == 0:
+                                    if '/' in condition and condition.count(',') == 0 and not has_num1:
                                         steps_verbose += 1
                                 else:
                                     # 没有箭头格式，检查旧格式
@@ -588,6 +614,8 @@ class QuestionGenerator:
                             warnings.append(f"第(5)题答案有{steps_without_condition}步缺少试剂/条件信息（条件错或漏扣分）")
                         if steps_verbose > 0:
                             warnings.append(f"第(5)题答案有{steps_verbose}步条件表述过于冗余，应采用'试剂1, 试剂2, 条件'的极简格式")
+                        if steps_bad_numbered > 0:
+                            warnings.append(f"第(5)题答案有{steps_bad_numbered}步条件中有(2)但没有(1)，标号不完整")
 
         # 检查同分异构体是否有3个条件，且条件合理
         if "questions" in question_data:
