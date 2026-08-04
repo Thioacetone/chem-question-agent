@@ -2,22 +2,45 @@
 """
 FastAPI 主服务 - 命题生成Agent API
 """
-from fastapi import FastAPI, HTTPException, Query, UploadFile, File, Form, Body
+from fastapi import FastAPI, HTTPException, Query, UploadFile, File, Form, Body, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, FileResponse, JSONResponse as _JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Optional, List
+from collections import defaultdict
 import json
 import re
 import base64
 import os
+import time
+import hashlib
 
 from config import DEEPSEEK_API_KEY, DEFAULT_DIFFICULTY
 from question_generator import question_generator
 from export_service import export_service
 from llm_client import llm_client
 from structure_renderer import renderer
+
+# ==================== 安全配置 ====================
+
+# 允许的域名（CORS白名单）
+ALLOWED_ORIGINS = [
+    "https://thioacetone-chemistry.top",
+    "https://chem-question-agent-production.up.railway.app",
+    "http://localhost:5173",
+    "http://localhost:8000",
+    "http://localhost:8001",
+]
+
+# 速率限制配置
+RATE_LIMIT_WINDOW = 60        # 时间窗口（秒）
+RATE_LIMIT_MAX_REQUESTS = 30  # 每窗口最大请求数（普通API）
+RATE_LIMIT_GENERATE_MAX = 10  # generate接口每窗口最大请求数（资源密集）
+RATE_LIMIT_BURST = 5          # 突发允许额外请求数
+
+# 请求体大小限制（字节）
+MAX_BODY_SIZE = 2 * 1024 * 1024  # 2MB
 
 # 查找前端 dist 目录
 _BACKEND_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -45,23 +68,22 @@ app = FastAPI(
     default_response_class=UTF8JSONResponse,
 )
 
-# CORS
+# CORS - 白名单模式
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 # 禁用前端静态资源缓存
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.requests import Request
+from starlette.requests import Request as StarletteRequest
 
 class NoCacheMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
+    async def dispatch(self, request: StarletteRequest, call_next):
         response = await call_next(request)
-        # 对 JS/CSS/HTML 文件禁用缓存
         path = request.url.path
         if any(path.endswith(ext) for ext in ('.js', '.css', '.html')) or path == '/' or path == '':
             response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
@@ -69,24 +91,96 @@ class NoCacheMiddleware(BaseHTTPMiddleware):
             response.headers['Expires'] = '0'
         return response
 
+
+class RateLimitMiddleware(BaseHTTPMiddleware):
+    """速率限制中间件：基于IP的滑动窗口限流"""
+    def __init__(self, app):
+        super().__init__(app)
+        self._requests = defaultdict(list)  # {ip: [timestamps]}
+
+    def _get_client_ip(self, request: StarletteRequest) -> str:
+        """获取客户端真实IP（优先取X-Forwarded-For，适配Railway代理）"""
+        xff = request.headers.get("X-Forwarded-For")
+        if xff:
+            return xff.split(",")[0].strip()
+        xri = request.headers.get("X-Real-IP")
+        if xri:
+            return xri.strip()
+        client = request.client
+        return client.host if client else "unknown"
+
+    async def dispatch(self, request: StarletteRequest, call_next):
+        ip = self._get_client_ip(request)
+        now = time.time()
+        window_start = now - RATE_LIMIT_WINDOW
+
+        # 清理过期记录
+        self._requests[ip] = [t for t in self._requests[ip] if t > window_start]
+
+        # generate接口更严格限制
+        if request.url.path == "/api/generate":
+            max_req = RATE_LIMIT_GENERATE_MAX
+        else:
+            max_req = RATE_LIMIT_MAX_REQUESTS
+
+        if len(self._requests[ip]) >= max_req + RATE_LIMIT_BURST:
+            raise HTTPException(
+                status_code=429,
+                detail="请求过于频繁，请稍后再试",
+                headers={"Retry-After": str(RATE_LIMIT_WINDOW)},
+            )
+
+        self._requests[ip].append(now)
+        return await call_next(request)
+
+
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    """安全响应头中间件"""
+    async def dispatch(self, request: StarletteRequest, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        # 移除可能泄露服务器信息的头
+        response.headers.pop("Server", None)
+        response.headers.pop("X-Powered-By", None)
+        return response
+
+
+class BodySizeLimitMiddleware(BaseHTTPMiddleware):
+    """请求体大小限制中间件"""
+    async def dispatch(self, request: StarletteRequest, call_next):
+        content_length = request.headers.get("content-length")
+        if content_length and int(content_length) > MAX_BODY_SIZE:
+            raise HTTPException(status_code=413, detail="请求体过大")
+        return await call_next(request)
+
+
+# 添加安全中间件（顺序重要：先大小限制 → 速率限制 → 安全头 → 缓存控制）
+app.add_middleware(BodySizeLimitMiddleware)
+app.add_middleware(RateLimitMiddleware)
+app.add_middleware(SecurityHeadersMiddleware)
 app.add_middleware(NoCacheMiddleware)
 
 
 # ==================== 数据模型 ====================
 
 class ReactionStep(BaseModel):
-    step_number: int = Field(..., description="步骤编号")
-    reactant: str = Field(..., description="反应物名称或SMILES")
-    reagent: str = Field(..., description="试剂与反应条件")
-    product: str = Field(..., description="产物名称或SMILES")
-    reaction_type: Optional[str] = Field(None, description="反应类型")
-    reactant_smiles: Optional[str] = Field(None, description="反应物SMILES（前端自动解析）")
-    product_smiles: Optional[str] = Field(None, description="产物SMILES（前端自动解析）")
+    step_number: int = Field(..., ge=1, le=20, description="步骤编号")
+    reactant: str = Field(..., min_length=1, max_length=200, description="反应物名称或SMILES")
+    reagent: str = Field(..., min_length=1, max_length=500, description="试剂与反应条件")
+    product: str = Field(..., min_length=1, max_length=200, description="产物名称或SMILES")
+    reaction_type: Optional[str] = Field(None, max_length=100, description="反应类型")
+    reactant_smiles: Optional[str] = Field(None, max_length=500, description="反应物SMILES（前端自动解析）")
+    product_smiles: Optional[str] = Field(None, max_length=500, description="产物SMILES（前端自动解析）")
 
 
 class RouteInput(BaseModel):
-    title: str = Field("", description="路线标题")
-    steps: List[ReactionStep] = Field(..., description="反应步骤列表")
+    title: str = Field("", max_length=200, description="路线标题")
+    steps: List[ReactionStep] = Field(..., min_length=1, max_length=20, description="反应步骤列表")
 
 
 class GenerateRequest(BaseModel):
@@ -96,20 +190,20 @@ class GenerateRequest(BaseModel):
 
 class RefineRequest(BaseModel):
     question_data: dict = Field(..., description="当前命题数据")
-    feedback: str = Field(..., description="教师修改意见")
+    feedback: str = Field(..., min_length=1, max_length=2000, description="教师修改意见")
 
 
 class PaperExtractRequest(BaseModel):
-    paper_text: str = Field(..., description="论文文本内容")
+    paper_text: str = Field(..., min_length=10, max_length=50000, description="论文文本内容")
 
 
 class ParseTextRequest(BaseModel):
-    raw_text: str = Field(..., description="非结构化文本（论文、实验步骤、手写OCR结果等）")
+    raw_text: str = Field(..., min_length=10, max_length=50000, description="非结构化文本（论文、实验步骤、手写OCR结果等）")
 
 
 class ParseImageRequest(BaseModel):
-    image_base64: str = Field(..., description="图片的Base64编码")
-    image_type: str = Field("png", description="图片格式（png/jpg/jpeg）")
+    image_base64: str = Field(..., min_length=1, max_length=10 * 1024 * 1024, description="图片的Base64编码")
+    image_type: str = Field("png", max_length=20, description="图片格式（png/jpg/jpeg）")
 
 
 # ==================== 辅助函数 ====================
@@ -265,8 +359,10 @@ def parse_route_text(request: ParseTextRequest):
         raw_response = llm_client.parse_route_text(request.raw_text)
         result = _parse_json_response(raw_response)
         return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"解析失败: {str(e)}")
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=500, detail="服务器内部错误，请稍后重试")
 
 
 @app.post("/api/parse/image")
@@ -288,8 +384,8 @@ async def parse_route_image(request: ParseImageRequest):
         return result
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"识别失败: {str(e)}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="服务器内部错误，请稍后重试")
 
 
 @app.post("/api/parse/image-upload")
@@ -327,8 +423,8 @@ async def parse_route_image_upload(file: UploadFile = File(...)):
         return result
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"识别失败: {str(e)}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="服务器内部错误，请稍后重试")
 
 
 @app.post("/api/export/docx")
@@ -344,8 +440,8 @@ def export_docx(question_data: dict = Body(...), include_answer: bool = True):
             media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             headers={"Content-Disposition": f"attachment; filename={filename}"},
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"导出失败: {str(e)}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="服务器内部错误，请稍后重试")
 
 
 @app.get("/api/knowledge/reactions")
@@ -380,25 +476,25 @@ def get_reaction_types():
 # ==================== 结构式渲染 API ====================
 
 class RenderRequest(BaseModel):
-    smiles: str = Field(..., description="SMILES字符串")
-    label: str = Field("", description="化合物标签")
-    width: int = Field(400, description="宽度")
-    height: int = Field(200, description="高度")
+    smiles: str = Field(..., min_length=1, max_length=1000, description="SMILES字符串")
+    label: str = Field("", max_length=20, description="化合物标签")
+    width: int = Field(400, ge=100, le=2000, description="宽度")
+    height: int = Field(200, ge=50, le=2000, description="高度")
 
 
 class RenderMultipleRequest(BaseModel):
-    compounds: List[dict] = Field(..., description="化合物列表 [{'smiles': '...', 'label': 'A'}, ...]")
-    per_width: int = Field(300, description="每个结构宽度")
-    per_height: int = Field(180, description="每个结构高度")
+    compounds: List[dict] = Field(..., min_length=1, max_length=50, description="化合物列表 [{'smiles': '...', 'label': 'A'}, ...]")
+    per_width: int = Field(300, ge=100, le=2000, description="每个结构宽度")
+    per_height: int = Field(180, ge=50, le=2000, description="每个结构高度")
 
 
 class NameToSmilesRequest(BaseModel):
-    name: str = Field(..., description="化合物名称")
+    name: str = Field(..., min_length=1, max_length=200, description="化合物名称")
 
 
 class RouteDiagramRequest(BaseModel):
-    steps: List[dict] = Field(..., description="合成路线步骤数据")
-    title: str = Field("", description="路线标题")
+    steps: List[dict] = Field(..., min_length=1, max_length=20, description="合成路线步骤数据")
+    title: str = Field("", max_length=200, description="路线标题")
 
 
 @app.post("/api/render/svg")
@@ -630,6 +726,26 @@ def render_inline_svg(request: InlineSvgRequest):
 
     svg = renderer.render_svg(smiles, request.width, request.height, label="")
     return Response(content=svg, media_type="image/svg+xml")
+
+
+# ==================== 全局异常处理 ====================
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    """统一HTTP异常响应格式"""
+    return UTF8JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail},
+    )
+
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """全局未捕获异常处理器：不泄露内部错误详情"""
+    return UTF8JSONResponse(
+        status_code=500,
+        content={"detail": "服务器内部错误，请稍后重试"},
+    )
 
 
 # ==================== 生产模式：托管前端静态文件 ====================
