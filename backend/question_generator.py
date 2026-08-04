@@ -248,11 +248,19 @@ class QuestionGenerator:
 - 第(4)题必须是同分异构体题，含3个递进条件（①②③），难度hard
 - 第(5)题必须是合成路线设计题，含"已知"信息，明确写"制备化合物X"，难度hard
 - 分值严格按14分(2+2+2+3+5)或15分(2+2+3+3+5)分配
-- 🔴 所有化学方程式必须用A→[条件]B格式，条件在箭头上方方括号内
-- 🔴 绝对禁止A＋B→C格式！双反应物反应（Perkin/Knoevenagel/羟醛缩合）第二个反应物写入条件方括号内
-  ✅ Perkin正确：苯甲醛→[(CH₃CO)₂O, CH₃COONa, △]肉桂酸
-  ❌ Perkin错误：苯甲醛＋乙酸酐→[CH₃COONa, △]肉桂酸
-  ❌ Perkin错误：苯甲醛与乙酸酐在碱催化下反应生成肉桂酸
+
+🔴🔴 化学方程式格式（最高优先级！违反此条全部重做）🔴🔴
+- 唯一正确格式：{{{{结构式:SMILES}}}}→[条件] {{{{结构式:SMILES}}}}
+- →[条件]是一个整体！箭头后紧跟方括号，条件写在方括号内，渲染时条件显示在箭头上方
+- 绝对禁止：A＋B→C 或 A+B→C（双反应物反应，第二个反应物写入条件方括号内）
+- 绝对禁止：文字描述反应（如"在NaOH条件下反应得B""与乙酸酐反应生成C"）
+- 绝对禁止：→后没有方括号（如→NaOH B 或 →B）
+- 绝对禁止：→[]空条件方括号
+✅ Perkin正确：{{{{结构式:O=Cc1ccccc1}}}}→[(CH₃CO)₂O, CH₃COONa, △] {{{{结构式:O=C(O)/C=C/c1ccccc1}}}}
+❌ Perkin错误：苯甲醛＋乙酸酐→[CH₃COONa, △]肉桂酸
+❌ Perkin错误：苯甲醛与乙酸酐在碱催化下反应生成肉桂酸
+❌ Perkin错误：苯甲醛→乙酸酐肉桂酸（无条件方括号）
+
 - 条件中有(2)编号必须同时有(1)编号，不能只有(2)没有(1)
 - 条件必须极简！只写试剂名+条件符号，逗号分隔，严禁冗余词
 - 题干必须包含目标化合物的用途身份描述
@@ -351,6 +359,7 @@ class QuestionGenerator:
 注意：答案路线必须与题干路线不同！不能完全照抄题干路线。
 条件中如果有(2)编号，必须同时有(1)编号，不能只有(2)没有(1)！
 条件必须极简，只写试剂名+条件符号，逗号分隔，严禁"在...条件下""加热回流""催化""反应"等冗余词！
+所有方程式必须用→[条件]格式！禁止A+B→C、文字描述反应、→后无方括号！
 
 请重新生成完整的JSON命题（包含所有字段），确保第5题答案恰好5-7步。"""
         return self.llm.generate(
@@ -915,9 +924,13 @@ class QuestionGenerator:
 
     def _global_format_check(self, question_data: dict) -> list:
         """
-        🔴 全局格式扫描：检查所有字段中的A＋B→C格式错误。
+        🔴 全局格式扫描：检查所有字段中的格式错误。
         覆盖 stem、questions、answers、new_info、analysis 等所有文本字段。
-        这是防止双反应物格式错误的最后一道防线。
+        检查项：
+        1. A＋B→C / A+B→C 格式（全角/半角加号）
+        2. 文字描述反应（"在...条件下反应得""与...反应生成"等）
+        3. 箭头后无条件方括号（→ 后不是 [条件]）
+        4. 条件方括号内为空
         """
         import re
         issues = []
@@ -941,14 +954,56 @@ class QuestionGenerator:
                 texts_to_check.append((f"第{a.get('number', '?')}题答案", str(a.get("content", ""))))
         
         for field_name, text in texts_to_check:
-            # 检查A＋B→C格式（全角加号）
-            if re.search(r'＋', text):
+            if not text or len(text) < 3:
+                continue
+            
+            # === 1. 检查 A＋B→C 或 A+B→C 格式（全角和半角加号） ===
+            if re.search(r'[＋+]', text):
                 # 找到具体位置
-                matches = re.findall(r'[^{{]*?＋[^}]*?→', text)
+                matches = re.findall(r'[^{{]*?[＋+][^}]*?→', text)
                 for m in matches:
                     m_clean = m.strip()[:80]
-                    issues.append(f"【严重】{field_name}中发现A＋B→C格式：'{m_clean}...' —— 禁止使用＋号，第二个反应物必须写入条件方括号内！")
+                    issues.append(f"【严重】{field_name}中发现A+B→C格式：'{m_clean}...' —— 禁止使用＋/+号，第二个反应物必须写入条件方括号内！")
                     break  # 每个字段只报告一次
+            
+            # === 2. 检查文字描述反应（应使用→[条件]格式） ===
+            # 检测"在...条件下反应/得/生成"、"与...反应生成"、"经...得"等文字描述
+            text_desc_patterns = [
+                (r'在.{0,10}条件下.{0,5}(?:反应|得|生成)', '在...条件下反应得'),
+                (r'与.{0,10}反应.{0,5}(?:生成|得|制)', '与...反应生成'),
+                (r'经.{0,10}(?:得|生成|制得)', '经...得'),
+                (r'通过.{0,10}反应.{0,5}(?:生成|得)', '通过...反应生成'),
+                (r'发生.{0,10}反应.{0,5}(?:生成|得)', '发生...反应生成'),
+                (r'用.{0,10}(?:处理|氧化|还原|硝化|酯化|水解|酰化).{0,5}(?:得|生成)', '用...处理得'),
+            ]
+            for pattern, desc in text_desc_patterns:
+                if re.search(pattern, text):
+                    # 确认不是题目设问中的条件描述（如"在下列条件下能发生反应的是"）
+                    if not re.search(r'[能可][否以]|下列|选择|判断|满足|符合', text[max(0, text.find(re.search(pattern, text).group())-20):]):
+                        issues.append(f"【严重】{field_name}中使用文字描述反应（{desc}），必须改为→[条件]格式！条件写在箭头上方方括号内")
+                        break
+            
+            # === 3. 检查箭头后无条件方括号（仅当内容含结构式占位符或箭头时） ===
+            has_structure = re.search(r'\{结构式:', text)
+            has_arrow = re.search(r'→', text)
+            if has_structure or has_arrow:
+                # 情况A：有→但没有→[条件]格式
+                if has_arrow and not re.search(r'→\s*\[', text):
+                    # 排除题目设问中的箭头（如"→[条件]"本身是格式说明）
+                    if not re.search(r'→\s*\[条件\]', text):
+                        issues.append(f"【严重】{field_name}中有箭头→但没有→[条件]方括号格式，条件必须写在箭头上方方括号内！")
+                
+                # 情况B：有结构式占位符但没有箭头（可能是纯文字描述）
+                if has_structure and not has_arrow:
+                    # 检查是否包含反应描述关键词
+                    reaction_keywords = ['反应', '硝化', '还原', '氧化', '酯化', '水解', '酰化', '取代', '加成', '消去', '缩合', '溴代', '氯化']
+                    if any(kw in text for kw in reaction_keywords):
+                        issues.append(f"【严重】{field_name}中有结构式但用文字描述反应，必须使用→[条件]格式！")
+            
+            # === 4. 检查条件方括号内是否为空 ===
+            empty_conds = re.findall(r'→\s*\[\s*\]', text)
+            if empty_conds:
+                issues.append(f"【严重】{field_name}中有空条件方括号→[]，必须填写具体反应条件！")
         
         return issues
 
