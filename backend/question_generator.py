@@ -248,12 +248,18 @@ class QuestionGenerator:
 - 第(4)题必须是同分异构体题，含3个递进条件（①②③），难度hard
 - 第(5)题必须是合成路线设计题，含"已知"信息，明确写"制备化合物X"，难度hard
 - 分值严格按14分(2+2+2+3+5)或15分(2+2+3+3+5)分配
-- 所有化学方程式必须用A→[条件]B格式，条件在箭头上方方括号内
+- 🔴 所有化学方程式必须用A→[条件]B格式，条件在箭头上方方括号内
+- 🔴 绝对禁止A＋B→C格式！双反应物反应（Perkin/Knoevenagel/羟醛缩合）第二个反应物写入条件方括号内
+  ✅ Perkin正确：苯甲醛→[(CH₃CO)₂O, CH₃COONa, △]肉桂酸
+  ❌ Perkin错误：苯甲醛＋乙酸酐→[CH₃COONa, △]肉桂酸
+  ❌ Perkin错误：苯甲醛与乙酸酐在碱催化下反应生成肉桂酸
 - 条件中有(2)编号必须同时有(1)编号，不能只有(2)没有(1)
 - 条件必须极简！只写试剂名+条件符号，逗号分隔，严禁冗余词
 - 题干必须包含目标化合物的用途身份描述
+- 题干绝对不能描述合成路线步骤！只写背景用途+结尾"合成路线如下"
 - 已知信息必须包含{{{{结构式:SMILES}}}}占位符，格式与路线图一致
 - 已知信息的反应不能与题干路线重复
+- 已知信息中的双反应物反应也必须用A→[条件]B格式
 - 同分异构体条件①必须含官能团特征反应，②必须含谱学特征，③必须含结构限制
 - 第(5)题答案必须是5-7步，每步用→[条件]格式，条件在箭头上方
 - 答案路线必须与题干路线不同
@@ -672,6 +678,36 @@ class QuestionGenerator:
             stem = question_data["stem"]
             if not any(kw in stem for kw in ["中间体", "药物", "香料", "材料", "天然", "活性", "染料", "农药", "医药"]):
                 issues.append("【严重】题干必须包含目标化合物的用途身份描述（如'化合物X是某药物的中间体'）")
+            
+            # 🔴 检查题干是否描述了合成路线（绝对不能！）
+            route_patterns_in_stem = [
+                (r'→', '箭头符号'),
+                (r'经.*得', '经...得格式'),
+                (r'\[.*?\]', '方括号条件'),
+                (r'硝化.*得', '硝化反应描述'),
+                (r'还原.*得', '还原反应描述'),
+                (r'氧化.*得', '氧化反应描述'),
+                (r'酯化.*得', '酯化反应描述'),
+                (r'水解.*得', '水解反应描述'),
+                (r'酰化.*得', '酰化反应描述'),
+                (r'取代.*得', '取代反应描述'),
+                (r'加成.*得', '加成反应描述'),
+                (r'消去.*得', '消去反应描述'),
+                (r'第\d+步', '步骤编号'),
+                (r'第一步', '步骤描述'),
+                (r'化合物[A-Z]经', '化合物经...格式'),
+                (r'生成化合物', '生成化合物描述'),
+                (r'与.*反应', '反应描述'),
+                (r'在.*条件下', '条件描述'),
+            ]
+            for pattern, desc in route_patterns_in_stem:
+                if re.search(pattern, stem):
+                    issues.append(f"【严重】题干中出现了路线描述（{desc}）：题干只需写背景用途+'合成路线如下'，路线图单独展示")
+                    break  # 只报告一次
+            
+            # 题干过长也说明在描述路线
+            if len(stem) > 150:
+                issues.append(f"【严重】题干过长（{len(stem)}字），可能包含路线描述。题干应仅1-2句话（背景+合成路线如下）")
 
         # 检查合成路线设计：需包含已知信息和目标产物
         if "questions" in question_data:
@@ -722,8 +758,21 @@ class QuestionGenerator:
                 issues.append("【严重】已知信息(new_info)必须包含{{结构式:SMILES}}占位符")
             if not re.search(r'→\s*\[', new_info):
                 issues.append("【严重】已知信息(new_info)格式必须与路线图一致，使用A→[条件]B格式（条件在箭头上方）")
+            # 🔴 双反应物格式检查：Perkin/Knoevenagel/羟醛缩合等禁止A＋B→C格式
             if re.search(r'＋.*→', new_info):
-                issues.append("【严重】已知信息(new_info)禁止使用A＋B→C格式，必须使用A→[条件]B格式")
+                issues.append("【严重】已知信息(new_info)禁止使用A＋B→C格式，必须使用A→[条件]B格式（第二个反应物写入条件方括号内）")
+            # 🔴 检查双反应物反应是否用了错误格式
+            double_reactant_patterns = [
+                (r'苯甲醛.*乙酸酐|乙酸酐.*苯甲醛', 'Perkin反应：苯甲醛→[(CH₃CO)₂O, CH₃COONa, △]产物'),
+                (r'苯甲醛.*丙二酸|丙二酸.*苯甲醛', 'Knoevenagel反应：苯甲醛→[CH₂(COOH)₂, 哌啶, △]产物'),
+                (r'苯甲醛.*乙醛|乙醛.*苯甲醛', '羟醛缩合：苯甲醛→[CH₃CHO, NaOH, H₂O]产物'),
+                (r'醛.*酮.*缩合|酮.*醛.*缩合', 'Aldol缩合，第二个反应物写入条件'),
+            ]
+            for pattern, fix_hint in double_reactant_patterns:
+                if re.search(pattern, new_info, re.IGNORECASE):
+                    if re.search(r'＋', new_info) or not re.search(r'→\s*\[', new_info):
+                        issues.append(f"【严重】已知信息({fix_hint})——双反应物反应禁止A＋B→C格式，第二个反应物必须写入条件方括号内！")
+                        break
 
         # 检查第2题答案是否使用路线图格式
         if "answers" in question_data:
@@ -739,8 +788,13 @@ class QuestionGenerator:
                     # 检查是否使用了正确的路线图格式
                     if re.search(r'→', content) and not re.search(r'→\s*\[', content):
                         issues.append(f"【严重】第({num})题答案方程式格式错误，必须使用A→[条件]B格式（条件在箭头上方方括号内）")
+                    # 🔴 双反应物格式检查：禁止A＋B→C格式
                     if re.search(r'＋.*→', content):
-                        issues.append(f"【严重】第({num})题答案禁止使用A＋B→C格式，必须使用A→[条件]B格式")
+                        issues.append(f"【严重】第({num})题答案禁止使用A＋B→C格式，第二个反应物必须写入条件方括号内！→[试剂, 条件]B")
+                    # 🔴 检查答案中是否包含双反应物反应类型的错误格式
+                    if re.search(r'Perkin|Knoevenagel|羟醛缩合|Aldol|缩合', content, re.IGNORECASE):
+                        if re.search(r'＋', content):
+                            issues.append(f"【严重】第({num})题答案涉及双反应物反应（Perkin/Knoevenagel/羟醛缩合），禁止A＋B→C格式！第二个反应物必须写入条件方括号内")
                     
                     # 检查(2)必须有(1)规则（适用于所有含方程式的答案）
                     # 提取所有→[条件]中的条件文本
@@ -849,11 +903,54 @@ class QuestionGenerator:
                         if not has_structure:
                             issues.append("【严重】同分异构体条件③必须包含苯环取代位置或手性碳等结构限制")
 
+        # 🔴 全局格式扫描：检查所有字段中的A＋B→C格式
+        global_issues = self._global_format_check(question_data)
+        issues.extend(global_issues)
+
         return {
             "is_valid": len(issues) == 0,
             "issues": issues,
             "warnings": warnings,
         }
+
+    def _global_format_check(self, question_data: dict) -> list:
+        """
+        🔴 全局格式扫描：检查所有字段中的A＋B→C格式错误。
+        覆盖 stem、questions、answers、new_info、analysis 等所有文本字段。
+        这是防止双反应物格式错误的最后一道防线。
+        """
+        import re
+        issues = []
+        
+        # 收集所有需要检查的文本
+        texts_to_check = []
+        
+        if "stem" in question_data:
+            texts_to_check.append(("题干", str(question_data["stem"])))
+        if "new_info" in question_data and question_data["new_info"]:
+            texts_to_check.append(("已知信息", str(question_data["new_info"])))
+        if "analysis" in question_data and question_data["analysis"]:
+            texts_to_check.append(("解析", str(question_data["analysis"])))
+        
+        if "questions" in question_data:
+            for q in question_data["questions"]:
+                texts_to_check.append((f"第{q.get('number', '?')}题", str(q.get("content", ""))))
+        
+        if "answers" in question_data:
+            for a in question_data["answers"]:
+                texts_to_check.append((f"第{a.get('number', '?')}题答案", str(a.get("content", ""))))
+        
+        for field_name, text in texts_to_check:
+            # 检查A＋B→C格式（全角加号）
+            if re.search(r'＋', text):
+                # 找到具体位置
+                matches = re.findall(r'[^{{]*?＋[^}]*?→', text)
+                for m in matches:
+                    m_clean = m.strip()[:80]
+                    issues.append(f"【严重】{field_name}中发现A＋B→C格式：'{m_clean}...' —— 禁止使用＋号，第二个反应物必须写入条件方括号内！")
+                    break  # 每个字段只报告一次
+        
+        return issues
 
     def refine_question(self, question_data: dict, teacher_feedback: str) -> dict:
         """
