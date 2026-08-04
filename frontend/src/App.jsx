@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { id: 'input', icon: '📝', label: '合成路线输入', section: '工作区' },
   { id: 'preview', icon: '📋', label: '命题预览', section: '工作区', badge: true },
   { id: 'viewer', icon: '🔬', label: '结构式查看器', section: '工具' },
+  { id: 'about', icon: 'ℹ️', label: '关于本站', section: '其他' },
 ]
 
 const BREADCRUMB_MAP = {
@@ -16,6 +17,7 @@ const BREADCRUMB_MAP = {
   input: '合成路线输入',
   preview: '命题预览',
   viewer: '结构式查看器',
+  about: '关于本站',
 }
 
 export default function App() {
@@ -188,7 +190,7 @@ export default function App() {
         <div className="sidebar-brand">
           <span className="brand-icon">⚗</span>
           <h2>高考有机化学<br/>命题助手</h2>
-          <div className="brand-subtitle">AI-Powered</div>
+          <div className="brand-subtitle">v2.1 · AI-Powered</div>
         </div>
 
         <nav className="sidebar-nav">
@@ -345,6 +347,64 @@ export default function App() {
             </div>
           )}
 
+          {/* 关于本站 */}
+          {activeTab === 'about' && (
+            <div className="animate-fade-up">
+              <div className="about-page">
+                <div className="about-section">
+                  <h3>平台简介</h3>
+                  <p>
+                    本平台是一款基于人工智能技术的高考有机化学原创命题辅助工具。
+                    依托DeepSeek大语言模型，结合200+条精选合成路线库，
+                    能够自动生成符合高考命题规范的原创化学试题，涵盖官能团识别、
+                    结构推断、反应条件选择、同分异构体分析、合成路线设计等核心题型。
+                  </p>
+                </div>
+
+                <div className="about-section">
+                  <h3>技术架构</h3>
+                  <div className="tech-stack">
+                    <div className="tech-item">
+                      <span className="tech-label">AI模型</span>
+                      <span className="tech-value">DeepSeek 大语言模型</span>
+                    </div>
+                    <div className="tech-item">
+                      <span className="tech-label">结构渲染</span>
+                      <span className="tech-value">RDKit + ChemDraw 风格</span>
+                    </div>
+                    <div className="tech-item">
+                      <span className="tech-label">后端框架</span>
+                      <span className="tech-value">FastAPI (Python)</span>
+                    </div>
+                    <div className="tech-item">
+                      <span className="tech-label">前端框架</span>
+                      <span className="tech-value">React + Vite</span>
+                    </div>
+                    <div className="tech-item">
+                      <span className="tech-label">部署平台</span>
+                      <span className="tech-value">Railway (云端24小时运行)</span>
+                    </div>
+                    <div className="tech-item">
+                      <span className="tech-label">数据传输</span>
+                      <span className="tech-value">全站 HTTPS 加密</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="about-section">
+                  <h3>使用声明</h3>
+                  <ul className="disclaimer-list">
+                    <li>本平台仅供教学参考和命题辅助使用，生成内容需经教师审核后使用。</li>
+                    <li>AI生成的命题可能存在不完善之处，建议结合实际教学需求进行调整。</li>
+                    <li>所有命题数据在生成后不会存储在服务器中，保障用户隐私安全。</li>
+                    <li>合成路线库中的路线来源于公开的有机化学教材和文献资料。</li>
+                    <li>本平台为非商业性质的教育工具，免费提供给教师和学生使用。</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* 加载状态 */}
           {loading && (
             <div className="loading">
@@ -356,6 +416,22 @@ export default function App() {
             </div>
           )}
         </div>
+
+        {/* 底部资质栏 */}
+        <footer className="site-footer">
+          <div className="footer-content">
+            <div className="footer-left">
+              <span className="footer-brand">高考有机化学命题助手 v2.1</span>
+              <span className="footer-sep">|</span>
+              <span>基于 DeepSeek AI 驱动</span>
+            </div>
+            <div className="footer-right">
+              <span>© 2026 硫代丙酮 · 版权所有</span>
+              <span className="footer-sep">|</span>
+              <span>内容仅供教学参考，请以教材为准</span>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   )
