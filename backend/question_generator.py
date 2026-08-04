@@ -629,16 +629,28 @@ class QuestionGenerator:
                     if "制备" not in content and "合成" not in content:
                         issues.append("【严重】第(5)题必须明确写出'制备化合物X'（X=目标产物代号）")
 
-        # 检查"已知"是否重复出现
-        all_text = ""
-        if "stem" in question_data:
-            all_text += question_data["stem"]
-        if "questions" in question_data:
-            for q in question_data["questions"]:
-                all_text += q.get("content", "")
-        known_count = all_text.count("已知")
-        if known_count > 1:
-            issues.append(f"【严重】'已知'在题目中出现了{known_count}次，只允许出现1次（仅在new_info字段中）")
+        # 检查"已知"信息是否与题干路线重复
+        if "new_info" in question_data and question_data["new_info"]:
+            new_info = str(question_data["new_info"])
+            stem = question_data.get("stem", "")
+            # 提取题干路线中的反应条件关键词
+            route_conditions = set()
+            for match in re.finditer(r'→\s*\[([^\]]+)\]', stem):
+                for cond in match.group(1).split(','):
+                    cond = cond.strip()
+                    if cond:
+                        route_conditions.add(cond)
+            # 提取已知信息中的反应条件关键词
+            known_conditions = set()
+            for match in re.finditer(r'→\s*\[([^\]]+)\]', new_info):
+                for cond in match.group(1).split(','):
+                    cond = cond.strip()
+                    if cond:
+                        known_conditions.add(cond)
+            # 检查重叠
+            overlap = route_conditions & known_conditions
+            if overlap and len(overlap) >= 2:
+                warnings.append(f"已知信息中的条件与题干路线重叠: {overlap}，建议提供全新反应")
 
         # 检查 new_info 是否包含结构式占位符（ChemDraw格式）
         if "new_info" in question_data and question_data["new_info"]:
