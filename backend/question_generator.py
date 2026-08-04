@@ -12,7 +12,7 @@ from knowledge_base import (
 )
 from llm_client import llm_client
 from config import (
-    MAX_REACTION_STEPS, MIN_REACTION_STEPS, DEFAULT_DIFFICULTY,
+    MIN_REACTION_STEPS, DEFAULT_DIFFICULTY,
     TOTAL_SCORE, QUESTION_COUNT_RANGE,
 )
 
@@ -79,8 +79,7 @@ class QuestionGenerator:
         steps = route_data.get("steps", [])
         if len(steps) < MIN_REACTION_STEPS:
             return {"error": f"合成路线至少需要{MIN_REACTION_STEPS}步反应"}
-        if len(steps) > MAX_REACTION_STEPS:
-            return {"error": f"合成路线最多{MAX_REACTION_STEPS}步反应"}
+        # 题目路线不限步数上限，仅答案限制5-7步
 
         # 构建上下文
         context = self.build_context_prompt(route_data)
