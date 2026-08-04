@@ -6,12 +6,15 @@ const cache = {}
 /**
  * 内联结构式渲染组件
  * 输入化合物名称，自动查询PubChem并渲染SVG结构式
+ * @param {boolean} lazy - 是否启用懒加载（IntersectionObserver），默认false
  */
-export default function InlineStructure({ name, size = 'small', showLabel = true }) {
+export default function InlineStructure({ name, size = 'small', showLabel = true, lazy = false }) {
   const [svg, setSvg] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
+  const [visible, setVisible] = useState(!lazy) // 非懒加载时直接可见
   const mountedRef = useRef(true)
+  const containerRef = useRef(null)
 
   const sizes = {
     small:  { w: 120, h: 80 },
@@ -20,9 +23,27 @@ export default function InlineStructure({ name, size = 'small', showLabel = true
   }
   const { w, h } = sizes[size] || sizes.small
 
+  // 懒加载：IntersectionObserver
+  useEffect(() => {
+    if (!lazy || !containerRef.current) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { rootMargin: '200px' } // 提前200px开始加载
+    )
+    observer.observe(containerRef.current)
+    return () => observer.disconnect()
+  }, [lazy])
+
+  // 加载结构式
   useEffect(() => {
     mountedRef.current = true
     if (!name || !name.trim()) return
+    if (!visible) return // 懒加载：未进入视口不加载
 
     const load = async () => {
       // 检查缓存
@@ -67,12 +88,12 @@ export default function InlineStructure({ name, size = 'small', showLabel = true
 
     load()
     return () => { mountedRef.current = false }
-  }, [name, w, h])
+  }, [name, w, h, visible])
 
   if (!name || !name.trim()) return null
 
   return (
-    <span style={{
+    <span ref={containerRef} style={{
       display: 'inline-flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -93,6 +114,19 @@ export default function InlineStructure({ name, size = 'small', showLabel = true
           color: '#999',
         }}>
           ...
+        </span>
+      )}
+      {!visible && !loading && !svg && !error && (
+        <span style={{
+          width: w,
+          height: h,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: '#fafafa',
+          borderRadius: '4px',
+          border: '1px dashed #eee',
+        }}>
         </span>
       )}
       {error && (

@@ -30,7 +30,7 @@ DOUBAO_VISION_MODEL = os.getenv("DOUBAO_VISION_MODEL", "doubao-1.5-vision-32k")
 MOLSCRIBE_MODEL_PATH = os.getenv("MOLSCRIBE_MODEL_PATH", "")
 
 # 命题生成参数
-MAX_REACTION_STEPS = 8
+MAX_REACTION_STEPS = 12   # 路线输入最多12步（路线库有7-10步路线，答案要求5-7步）
 MIN_REACTION_STEPS = 2
 DEFAULT_DIFFICULTY = 0.55  # 默认难度系数 0.3-0.8
 

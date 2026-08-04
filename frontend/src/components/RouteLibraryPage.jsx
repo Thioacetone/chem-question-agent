@@ -69,6 +69,7 @@ export default function RouteLibraryPage({ onRouteSelect }) {
                   name={route.steps[route.steps.length - 1].product}
                   size="small"
                   showLabel={false}
+                  lazy={true}
                 />
               </div>
             </div>
