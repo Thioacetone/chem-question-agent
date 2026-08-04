@@ -176,6 +176,10 @@ class QuestionGenerator:
                 question_data["_validation_issues"] = validation["issues"]
                 question_data["_validation_retries"] = validation_retry_count
 
+            # === 🔴 终审格式审计：确认答案格式符合高考要求 ===
+            format_audit = self._final_format_audit(question_data)
+            question_data["_format_audit"] = format_audit
+
             return question_data
         except Exception as e:
             return {"error": f"命题生成失败: {str(e)}", "raw_response": getattr(self, '_last_raw', '')}
@@ -1005,6 +1009,212 @@ class QuestionGenerator:
                 issues.append(f"【严重】{field_name}中有空条件方括号→[]，必须填写具体反应条件！")
         
         return issues
+
+    def _final_format_audit(self, question_data: dict) -> dict:
+        """
+        🔴 终审格式审计：生成完成后对答案格式做最终确认。
+        逐项检查每个答案和已知信息，返回明确的通过/不通过报告。
+        这是格式合规的最后一道关卡，确保符合高考要求。
+        """
+        import re
+        items = []  # 每项检查结果
+        all_pass = True
+        
+        answers = question_data.get("answers", [])
+        new_info = str(question_data.get("new_info", ""))
+        
+        # === 1. 已知信息格式检查 ===
+        if new_info and new_info != "None" and len(new_info) > 5:
+            item = {"field": "已知信息(new_info)", "checks": []}
+            # 1a. 结构式占位符
+            has_placeholder = bool(re.search(r'\{结构式:', new_info))
+            item["checks"].append({
+                "check": "包含结构式占位符",
+                "pass": has_placeholder,
+                "detail": "✓" if has_placeholder else "缺少 {{结构式:SMILES}}"
+            })
+            if not has_placeholder:
+                all_pass = False
+            
+            # 1b. →[条件]格式
+            has_arrow_bracket = bool(re.search(r'→\s*\[', new_info))
+            item["checks"].append({
+                "check": "使用→[条件]格式",
+                "pass": has_arrow_bracket,
+                "detail": "✓" if has_arrow_bracket else "未使用→[条件]格式"
+            })
+            if not has_arrow_bracket:
+                all_pass = False
+            
+            # 1c. 无A+B→C格式
+            has_plus = bool(re.search(r'[＋+]', new_info))
+            item["checks"].append({
+                "check": "无A+B→C格式",
+                "pass": not has_plus,
+                "detail": "✓" if not has_plus else "存在A+B→C格式，第二个反应物应写入条件"
+            })
+            if has_plus:
+                all_pass = False
+            
+            # 1d. 无文字描述
+            has_text_desc = bool(re.search(r'在.{0,10}条件下.{0,5}(?:反应|得|生成)|与.{0,10}反应.{0,5}(?:生成|得)', new_info))
+            item["checks"].append({
+                "check": "无文字描述反应",
+                "pass": not has_text_desc,
+                "detail": "✓" if not has_text_desc else "使用了文字描述反应，应改为→[条件]格式"
+            })
+            if has_text_desc:
+                all_pass = False
+            
+            # 1e. 条件编号
+            conds = re.findall(r'→\s*\[([^\]]*)\]', new_info)
+            for cond in conds:
+                has2 = bool(re.search(r'\(2\)', cond))
+                has1 = bool(re.search(r'\(1\)', cond))
+                if has2 and not has1:
+                    item["checks"].append({
+                        "check": "条件编号完整",
+                        "pass": False,
+                        "detail": f"有(2)无(1)：→[{cond}]"
+                    })
+                    all_pass = False
+            
+            items.append(item)
+        
+        # === 2. 逐题答案格式检查 ===
+        for a in answers:
+            num = a.get("number", "?")
+            content = str(a.get("content", ""))
+            item = {"field": f"第{num}题答案", "checks": []}
+            
+            # 第1题和第4题通常不涉及方程式，跳过严格格式检查
+            if num in [1, "1", 4, "4"]:
+                # 但仍检查是否有格式问题
+                if re.search(r'[＋+]', content):
+                    item["checks"].append({
+                        "check": "无A+B→C格式",
+                        "pass": False,
+                        "detail": "存在A+B→C格式"
+                    })
+                    all_pass = False
+                items.append(item)
+                continue
+            
+            # 第2、3、5题：必须检查方程式格式
+            has_structure = bool(re.search(r'\{结构式:', content))
+            has_arrow = bool(re.search(r'→', content))
+            
+            if has_structure or has_arrow:
+                # 2a. →[条件]格式
+                has_arrow_bracket = bool(re.search(r'→\s*\[', content))
+                if has_arrow:
+                    item["checks"].append({
+                        "check": "使用→[条件]格式（条件在箭头上方）",
+                        "pass": has_arrow_bracket,
+                        "detail": "✓" if has_arrow_bracket else "箭头后缺少[条件]方括号"
+                    })
+                    if not has_arrow_bracket:
+                        all_pass = False
+                
+                # 2b. 无A+B→C格式
+                has_plus = bool(re.search(r'[＋+]', content))
+                item["checks"].append({
+                    "check": "无A+B→C格式",
+                    "pass": not has_plus,
+                    "detail": "✓" if not has_plus else "存在A+B→C格式，第二个反应物应写入条件"
+                })
+                if has_plus:
+                    all_pass = False
+                
+                # 2c. 无文字描述
+                has_text_desc = bool(re.search(r'在.{0,10}条件下.{0,5}(?:反应|得|生成)|与.{0,10}反应.{0,5}(?:生成|得)', content))
+                item["checks"].append({
+                    "check": "无文字描述反应",
+                    "pass": not has_text_desc,
+                    "detail": "✓" if not has_text_desc else "使用了文字描述反应"
+                })
+                if has_text_desc:
+                    all_pass = False
+                
+                # 2d. 条件编号规则
+                conds = re.findall(r'→\s*\[([^\]]*)\]', content)
+                for cond in conds:
+                    has2 = bool(re.search(r'\(2\)', cond))
+                    has1 = bool(re.search(r'\(1\)', cond))
+                    has3 = bool(re.search(r'\(3\)', cond))
+                    if has2 and not has1:
+                        item["checks"].append({
+                            "check": "条件编号完整",
+                            "pass": False,
+                            "detail": f"有(2)无(1)：→[{cond}]"
+                        })
+                        all_pass = False
+                    if has3 and (not has1 or not has2):
+                        item["checks"].append({
+                            "check": "条件编号完整",
+                            "pass": False,
+                            "detail": f"有(3)但缺(1)或(2)：→[{cond}]"
+                        })
+                        all_pass = False
+                
+                # 2e. 条件冗余词检查
+                verbose_patterns = ['加热回流', '搅拌', '室温', '过夜', '滴加', '催化', '溶液中', '作用下', '条件下']
+                for cond in conds:
+                    found_verbose = [v for v in verbose_patterns if v in cond]
+                    if found_verbose:
+                        item["checks"].append({
+                            "check": "条件极简（无冗余词）",
+                            "pass": False,
+                            "detail": f"→[{cond}] 含冗余词：{', '.join(found_verbose)}"
+                        })
+                        all_pass = False
+                        break
+            
+            # 第5题额外检查
+            if num in [5, "5"]:
+                # 步骤数
+                step_matches = re.findall(r'第(\d+)步|步骤(\d+)', content)
+                step_count = len(step_matches)
+                if step_count == 0:
+                    step_count = len(re.findall(r'→\s*\[', content))
+                in_range = 5 <= step_count <= 7
+                item["checks"].append({
+                    "check": f"步骤数5-7步（当前{step_count}步）",
+                    "pass": in_range,
+                    "detail": "✓" if in_range else f"步骤数{step_count}步不符合5-7步要求"
+                })
+                if not in_range:
+                    all_pass = False
+                
+                # 每步条件检查
+                steps_no_cond = 0
+                for i in range(1, step_count + 1):
+                    pattern = re.compile(rf'第{i}步[：:]\s*(.*?)(?=第\d+步[：:]|$)', re.DOTALL)
+                    sm = pattern.search(content)
+                    if sm:
+                        step_text = sm.group(1)
+                        if not re.search(r'→\s*\[([^\]]+)\]', step_text):
+                            steps_no_cond += 1
+                if steps_no_cond > 0:
+                    item["checks"].append({
+                        "check": "每步都有反应条件",
+                        "pass": False,
+                        "detail": f"有{steps_no_cond}步缺少条件"
+                    })
+                    all_pass = False
+            
+            items.append(item)
+        
+        return {
+            "all_pass": all_pass,
+            "status": "✅ 全部格式检查通过，符合高考要求" if all_pass else "❌ 存在格式问题，请查看详情",
+            "items": items,
+            "total_checks": sum(len(item["checks"]) for item in items),
+            "failed_checks": sum(
+                sum(1 for c in item["checks"] if not c["pass"])
+                for item in items
+            ),
+        }
 
     def refine_question(self, question_data: dict, teacher_feedback: str) -> dict:
         """
