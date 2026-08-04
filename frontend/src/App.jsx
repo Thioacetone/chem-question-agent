@@ -234,8 +234,20 @@ export default function App() {
         </nav>
 
         <div className="sidebar-footer">
-          <span className={`status-dot ${apiStatus}`} />
-          {apiStatus === 'online' ? 'DeepSeek 已连接' : apiStatus === 'checking' ? '检查连接中...' : 'API 未连接'}
+          <div className="security-badge">
+            <span className="ssl-icon">🔒</span>
+            <span>SSL 安全连接</span>
+          </div>
+          <div className="security-info">
+            <div className="security-row">
+              <span className={`status-dot ${apiStatus}`} />
+              {apiStatus === 'online' ? 'DeepSeek 已连接' : apiStatus === 'checking' ? '检查连接中...' : 'API 未连接'}
+            </div>
+            <div className="security-row" style={{ marginTop: '6px', fontSize: '10px', color: 'rgba(255,255,255,0.35)', lineHeight: '1.5' }}>
+              数据加密传输 · 不存储命题内容<br />
+              网页由硫代丙酮制作
+            </div>
+          </div>
         </div>
       </aside>
 
@@ -252,6 +264,9 @@ export default function App() {
             <span className="current">{BREADCRUMB_MAP[activeTab]}</span>
           </div>
           <div className="topbar-actions">
+            <span className="badge badge-secure" title="全站HTTPS加密，数据安全传输">
+              🔒 安全连接
+            </span>
             {error && (
               <span className="badge badge-warning" style={{ cursor: 'pointer' }} onClick={() => setError(null)}>
                 ⚠ {error}
