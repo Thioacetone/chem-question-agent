@@ -190,7 +190,7 @@ export default function App() {
         <div className="sidebar-brand">
           <span className="brand-icon">⚗</span>
           <h2>高考有机化学<br/>命题助手</h2>
-          <div className="brand-subtitle">v2.1 · AI-Powered</div>
+          <div className="brand-subtitle">v2.1 · AI-Powered · <span className="beta-tag">内测版</span></div>
         </div>
 
         <nav className="sidebar-nav">
@@ -266,6 +266,9 @@ export default function App() {
             <span className="current">{BREADCRUMB_MAP[activeTab]}</span>
           </div>
           <div className="topbar-actions">
+            <span className="badge badge-beta" title="当前为内测版本，功能持续完善中">
+              🧪 内测版
+            </span>
             <span className="badge badge-secure" title="全站HTTPS加密，数据安全传输">
               🔒 安全连接
             </span>
@@ -421,7 +424,7 @@ export default function App() {
         <footer className="site-footer">
           <div className="footer-content">
             <div className="footer-left">
-              <span className="footer-brand">高考有机化学命题助手 v2.1</span>
+              <span className="footer-brand">高考有机化学命题助手 v2.1 内测版</span>
               <span className="footer-sep">|</span>
               <span>基于 DeepSeek AI 驱动</span>
             </div>

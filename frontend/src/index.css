@@ -681,6 +681,27 @@ body {
   cursor: default;
 }
 
+.badge-beta {
+  background: rgba(255, 167, 38, 0.12);
+  color: #FFB74D;
+  border: 1px solid rgba(255, 167, 38, 0.25);
+  font-weight: 600;
+  cursor: default;
+}
+
+/* 内测标签（侧边栏内） */
+.beta-tag {
+  display: inline-block;
+  background: rgba(255, 167, 38, 0.2);
+  color: #FFB74D;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+}
+
 /* === 难度滑块 === */
 .difficulty-slider {
   display: flex;
