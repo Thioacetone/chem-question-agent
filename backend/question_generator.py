@@ -799,7 +799,11 @@ class QuestionGenerator:
                 if has_equation:
                     # 检查是否使用了正确的路线图格式
                     if re.search(r'→', content) and not re.search(r'→\s*\[', content):
-                        issues.append(f"【严重】第({num})题答案方程式格式错误，必须使用A→[条件]B格式（条件在箭头上方方括号内）")
+                        # 区分是花括号还是完全没有方括号
+                        if re.search(r'→\s*\{', content):
+                            issues.append(f"【严重】第({num})题答案使用花括号→{{条件}}，必须改为方括号→[条件]！条件写在箭头上方必须用[]")
+                        else:
+                            issues.append(f"【严重】第({num})题答案方程式格式错误，必须使用A→[条件]B格式（条件在箭头上方方括号内）")
                     # 🔴 双反应物格式检查：禁止A＋B→C格式
                     if re.search(r'＋.*→', content):
                         issues.append(f"【严重】第({num})题答案禁止使用A＋B→C格式，第二个反应物必须写入条件方括号内！→[试剂, 条件]B")
@@ -1007,6 +1011,11 @@ class QuestionGenerator:
             empty_conds = re.findall(r'→\s*\[\s*\]', text)
             if empty_conds:
                 issues.append(f"【严重】{field_name}中有空条件方括号→[]，必须填写具体反应条件！")
+            
+            # === 5. 🔴 检查花括号代替方括号（→{条件}错误格式） ===
+            curly_conds = re.findall(r'→\s*\{([^}]*)\}', text)
+            if curly_conds:
+                issues.append(f"【严重】{field_name}中使用了花括号→{{条件}}，必须改为方括号→[条件]！条件写在箭头上方必须用方括号[]")
         
         return issues
 
@@ -1078,6 +1087,16 @@ class QuestionGenerator:
                         "detail": f"有(2)无(1)：→[{cond}]"
                     })
                     all_pass = False
+            
+            # 1f. 🔴 花括号检查
+            has_curly = bool(re.search(r'→\s*\{', new_info))
+            item["checks"].append({
+                "check": "使用方括号[]而非花括号{}",
+                "pass": not has_curly,
+                "detail": "✓" if not has_curly else "使用了花括号→{条件}，必须改为方括号→[条件]"
+            })
+            if has_curly:
+                all_pass = False
             
             items.append(item)
         
@@ -1169,6 +1188,16 @@ class QuestionGenerator:
                         })
                         all_pass = False
                         break
+                
+                # 2f. 🔴 花括号检查
+                has_curly = bool(re.search(r'→\s*\{', content))
+                item["checks"].append({
+                    "check": "使用方括号[]而非花括号{}",
+                    "pass": not has_curly,
+                    "detail": "✓" if not has_curly else "→{条件}必须改为→[条件]（方括号！）"
+                })
+                if has_curly:
+                    all_pass = False
             
             # 第5题额外检查
             if num in [5, "5"]:
