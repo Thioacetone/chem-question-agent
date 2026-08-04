@@ -64,9 +64,7 @@ export default function QuestionPreview({ data, onRefine, onExport, loading, err
         {new_info && (
           <div style={{
             marginBottom: '16px',
-            padding: '8px 12px',
-            background: '#f9f9f9',
-            borderLeft: '2px solid #ccc',
+            padding: '8px 0',
             fontSize: '13px',
             lineHeight: '1.8',
           }}>

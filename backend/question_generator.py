@@ -659,7 +659,21 @@ class QuestionGenerator:
                 warnings.append("已知信息(new_info)建议包含{{结构式:SMILES}}占位符，以ChemDraw格式渲染结构式")
             # 检查已知信息格式是否与路线图一致（使用箭头→[条件]格式）
             if not re.search(r'→\s*\[', new_info):
-                warnings.append("已知信息(new_info)格式应与路线图一致，使用A→[条件]B格式（条件在箭头上方）")
+                issues.append("【严重】已知信息(new_info)格式必须与路线图一致，使用A→[条件]B格式（条件在箭头上方）")
+            # 检查是否使用了旧格式（A＋B→C）
+            if re.search(r'＋.*→', new_info):
+                issues.append("【严重】已知信息(new_info)禁止使用A＋B→C格式，必须使用A→[条件]B格式")
+
+        # 检查第2题答案是否使用路线图格式
+        if "answers" in question_data:
+            for a in question_data["answers"]:
+                if a.get("number") == 2 or a.get("number") == "2":
+                    content = a.get("content", "")
+                    if content and re.search(r'\{结构式:', content):
+                        if not re.search(r'→\s*\[', content) and re.search(r'→', content):
+                            issues.append("【严重】第(2)题答案方程式格式错误，必须使用A→[条件]B格式（条件在箭头上方）")
+                        if re.search(r'＋.*→', content):
+                            issues.append("【严重】第(2)题答案禁止使用A＋B→C格式，必须使用A→[条件]B格式")
 
         # 检查合成路线答案：5-7步、有结构式占位符、有试剂条件
         if "answers" in question_data:

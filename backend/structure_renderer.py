@@ -777,7 +777,7 @@ class StructureRenderer:
         # 提取内层SVG内容（去掉外层<svg:svg>标签）
         match = re.search(r'<svg:svg[^>]*>(.*?)</svg:svg>', svg, re.DOTALL)
         if match:
-            return f'<rect width="100%" height="100%" fill="white"/>\n{match.group(1)}'
+            return match.group(1)
         # 回退：尝试提取普通<svg>标签内容
         inner = re.sub(r'<\?xml[^>]*\?>', '', svg)
         inner = re.sub(r'<svg[^>]*>', '', inner)
@@ -1170,7 +1170,7 @@ class StructureRenderer:
         gt_pos = svg.find('>')
         svg_end = svg.rfind('</svg>')
         if gt_pos >= 0 and svg_end >= 0:
-            return f'<rect width="100%" height="100%" fill="white"/>\n{svg[gt_pos + 1:svg_end]}'
+            return svg[gt_pos + 1:svg_end]
         return svg
 
     @staticmethod
