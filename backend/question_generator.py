@@ -629,11 +629,25 @@ class QuestionGenerator:
                     if "制备" not in content and "合成" not in content:
                         issues.append("【严重】第(5)题必须明确写出'制备化合物X'（X=目标产物代号）")
 
+        # 检查"已知"是否重复出现
+        all_text = ""
+        if "stem" in question_data:
+            all_text += question_data["stem"]
+        if "questions" in question_data:
+            for q in question_data["questions"]:
+                all_text += q.get("content", "")
+        known_count = all_text.count("已知")
+        if known_count > 1:
+            issues.append(f"【严重】'已知'在题目中出现了{known_count}次，只允许出现1次（仅在new_info字段中）")
+
         # 检查 new_info 是否包含结构式占位符（ChemDraw格式）
         if "new_info" in question_data and question_data["new_info"]:
             new_info = str(question_data["new_info"])
             if not re.search(r'\{结构式:', new_info):
                 warnings.append("已知信息(new_info)建议包含{{结构式:SMILES}}占位符，以ChemDraw格式渲染结构式")
+            # 检查已知信息格式是否与路线图一致（使用箭头→[条件]格式）
+            if not re.search(r'→\s*\[', new_info):
+                warnings.append("已知信息(new_info)格式应与路线图一致，使用A→[条件]B格式（条件在箭头上方）")
 
         # 检查合成路线答案：5-7步、有结构式占位符、有试剂条件
         if "answers" in question_data:
