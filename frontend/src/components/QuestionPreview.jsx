@@ -9,7 +9,7 @@ export default function QuestionPreview({ data, onRefine, onExport, loading, err
 
   if (!data) return null
 
-  const { target_compound, stem, questions, answers, analysis, new_info, estimated_difficulty, validation, raw_route } = data
+  const { target_compound, stem, questions, answers, analysis, estimated_difficulty, validation, raw_route } = data
 
   const totalScore = questions?.reduce((sum, q) => sum + (q.score || 0), 0) || 15
 
@@ -57,18 +57,6 @@ export default function QuestionPreview({ data, onRefine, onExport, loading, err
         {stem && (
           <div style={{ marginBottom: '16px', textIndent: '2em' }}>
             <RichTextRenderer text={stem} structureSize="small" />
-          </div>
-        )}
-
-        {/* 新信息（如果有） */}
-        {new_info && (
-          <div style={{
-            marginBottom: '16px',
-            padding: '8px 0',
-            fontSize: '13px',
-            lineHeight: '1.8',
-          }}>
-            <RichTextRenderer text={new_info} structureSize="small" />
           </div>
         )}
 
