@@ -316,9 +316,13 @@ def generate_question(request: GenerateRequest):
     if "error" in result:
         raise HTTPException(status_code=400, detail=result["error"])
 
-    # 验证命题质量
+    # 验证命题质量（generate_from_route内部已做验证重试，这里做最终检查）
     validation = question_generator.validate_question(result)
     result["validation"] = validation
+    
+    # 如果仍有未修复的错误，在结果中标注
+    if result.get("_validation_issues"):
+        result["validation"]["unfixed_issues"] = result["_validation_issues"]
 
     return result
 

@@ -145,6 +145,38 @@ class QuestionGenerator:
             # 后处理：清洗答案中的冗余条件表述
             question_data = self._clean_answer_conditions(question_data)
 
+            # === 验证重试：基于validate_question结果自动修复错误 ===
+            validation = self.validate_question(question_data)
+            validation_retry_count = 0
+            max_validation_retries = 2
+            
+            while validation.get("issues") and len(validation["issues"]) > 0 and validation_retry_count < max_validation_retries:
+                validation_retry_count += 1
+                retry_response = self._retry_validation_issues(
+                    context, raw_response, validation["issues"], validation_retry_count
+                )
+                retry_data = self._parse_json_response(retry_response)
+                if retry_data and not retry_data.get("parse_error"):
+                    if retry_data.get("answers"):
+                        question_data["answers"] = retry_data["answers"]
+                    if retry_data.get("questions"):
+                        question_data["questions"] = retry_data["questions"]
+                    if retry_data.get("analysis"):
+                        question_data["analysis"] = retry_data["analysis"]
+                    if retry_data.get("stem"):
+                        question_data["stem"] = retry_data["stem"]
+                    if retry_data.get("new_info") is not None:
+                        question_data["new_info"] = retry_data["new_info"]
+                    raw_response = retry_response
+                    # 再次清洗条件
+                    question_data = self._clean_answer_conditions(question_data)
+                validation = self.validate_question(question_data)
+            
+            # 如果仍有错误，记录到结果中
+            if validation.get("issues") and len(validation["issues"]) > 0:
+                question_data["_validation_issues"] = validation["issues"]
+                question_data["_validation_retries"] = validation_retry_count
+
             return question_data
         except Exception as e:
             return {"error": f"命题生成失败: {str(e)}", "raw_response": getattr(self, '_last_raw', '')}
@@ -193,6 +225,45 @@ class QuestionGenerator:
                 if step_count < 5 or step_count > 7:
                     return step_count
         return 0
+
+    def _retry_validation_issues(self, context: str, previous_response: str, issues: list, retry_num: int) -> str:
+        """专门重试：修复validate_question检测到的所有错误"""
+        urgency = "🔴 这是最后一次修复机会！" if retry_num >= 2 else "🔴 请务必修复以下所有问题！"
+        issues_text = "\n".join(f"  {i+1}. {issue}" for i, issue in enumerate(issues))
+        
+        retry_prompt = f"""【严重错误】你生成的命题存在以下问题，必须全部修复！
+
+{urgency}
+
+=== 原始合成路线数据 ===
+{context}
+
+=== 需要修复的问题 ===
+{issues_text}
+
+=== 修复指南 ===
+- 第(1)题必须是基础识记题（官能团名称/反应类型/分子式），难度easy
+- 第(2)题若含方程式，必须用路线图格式：{{{{结构式:SMILES}}}}→[条件] {{{{结构式:SMILES}}}}
+- 第(3)题若含方程式，也必须用路线图格式
+- 第(4)题必须是同分异构体题，含3个递进条件（①②③），难度hard
+- 第(5)题必须是合成路线设计题，含"已知"信息，明确写"制备化合物X"，难度hard
+- 分值严格按14分(2+2+2+3+5)或15分(2+2+3+3+5)分配
+- 所有化学方程式必须用A→[条件]B格式，条件在箭头上方方括号内
+- 条件中有(2)编号必须同时有(1)编号，不能只有(2)没有(1)
+- 条件必须极简！只写试剂名+条件符号，逗号分隔，严禁冗余词
+- 题干必须包含目标化合物的用途身份描述
+- 已知信息必须包含{{{{结构式:SMILES}}}}占位符，格式与路线图一致
+- 已知信息的反应不能与题干路线重复
+- 同分异构体条件①必须含官能团特征反应，②必须含谱学特征，③必须含结构限制
+- 第(5)题答案必须是5-7步，每步用→[条件]格式，条件在箭头上方
+- 答案路线必须与题干路线不同
+
+请修复以上所有问题，重新输出完整的JSON命题（包含所有字段：stem, questions, answers, analysis, new_info）。"""
+        return self.llm.generate(
+            system_prompt="你是一位高考化学命题专家。请严格按照要求修复命题中的所有错误。必须修复全部问题，一条都不能遗漏！",
+            user_prompt=retry_prompt,
+            temperature=0.2,
+        )
 
     def _retry_combined(self, context: str, previous_response: str, issues: list, invalid_smiles: list) -> str:
         """合并重试：一次性修复结构式占位符缺失和SMILES无效问题"""
@@ -501,8 +572,10 @@ class QuestionGenerator:
 
     def validate_question(self, question_data: dict) -> dict:
         """
-        验证命题质量 v3.0 - 基于81道真题的严格验证
+        验证命题质量 v4.0 - 严格验证，错误必须修复
         检查项：化学正确性、格式规范性、题型分布、难度合理性、真题风格符合度
+        issues = 必须修复的严重错误（触发重试）
+        warnings = 建议修复的问题（仅提示）
         """
         issues = []
         warnings = []
@@ -517,87 +590,80 @@ class QuestionGenerator:
             n_questions = len(question_data["questions"])
             min_q, max_q = QUESTION_COUNT_RANGE
             if n_questions < min_q:
-                warnings.append(f"问题数量偏少({n_questions}个)，标准为{min_q}-{max_q}个")
+                issues.append(f"问题数量偏少({n_questions}个)，标准为{min_q}-{max_q}个")
             elif n_questions > max_q:
-                warnings.append(f"问题数量偏多({n_questions}个)，标准为{min_q}-{max_q}个")
+                issues.append(f"问题数量偏多({n_questions}个)，标准为{min_q}-{max_q}个")
 
             # 检查题型分布（基于81道真题数据）
             types = [q.get("type", "") for q in question_data["questions"]]
 
-            # 第1题：建议为基础识记
+            # 第1题：必须为基础识记
             if n_questions >= 1:
                 q1_type = types[0] if len(types) > 0 else ""
                 basic_types = ["官能团识别", "基础识记", "反应类型判断", "手性碳", "σ键/π键计数", "官能团", "反应类型", "分子式", "命名"]
                 if not any(t in q1_type for t in basic_types):
-                    warnings.append(f"第1题建议为基础识记题，当前为: {q1_type}")
+                    issues.append(f"【严重】第1题必须为基础识记题，当前为: {q1_type}")
 
-            # 第4题：建议为同分异构体
+            # 第4题：必须为同分异构体
             if n_questions >= 4:
                 q4_type = types[3] if len(types) > 3 else ""
                 if "同分异构" not in q4_type:
-                    warnings.append(f"第4题建议为同分异构体题，当前题型为: {q4_type}")
+                    issues.append(f"【严重】第4题必须为同分异构体题，当前题型为: {q4_type}")
 
-            # 第5题：建议为合成路线设计
+            # 第5题：必须为合成路线设计
             if n_questions >= 5:
                 q5_type = types[4] if len(types) > 4 else ""
                 if "合成路线" not in q5_type and "合成" not in q5_type:
-                    warnings.append(f"第5题建议为合成路线设计题，当前题型为: {q5_type}")
+                    issues.append(f"【严重】第5题必须为合成路线设计题，当前题型为: {q5_type}")
 
             # 检查难度递进
             difficulties = [q.get("difficulty", "") for q in question_data["questions"]]
             if len(difficulties) >= 5:
                 if difficulties[0] != "easy":
-                    warnings.append("第(1)题应为easy难度")
+                    issues.append("【严重】第(1)题应为easy难度")
                 if difficulties[3] != "hard":
-                    warnings.append("第(4)题应为hard难度")
+                    issues.append("【严重】第(4)题应为hard难度")
                 if difficulties[4] != "hard":
-                    warnings.append("第(5)题应为hard难度")
+                    issues.append("【严重】第(5)题应为hard难度")
 
-        # === 分值校验 v3.0 - 基于81道真题参考答案的严格分值检查 ===
+        # === 分值校验 v4.0 - 严格分值检查 ===
         if "questions" in question_data:
             questions = question_data["questions"]
             scores = [q.get("score", 0) for q in questions]
             total = sum(scores)
             n = len(scores)
 
-            # 标准分值分布（基于81道真题统计）
-            # 模式A: 2+2+3+3+5=15（最常见）
-            # 模式B: 2+2+2+3+5=14（较少见）
             if n >= 5:
-                # 第5题（合成路线设计）必须为5分
                 if scores[4] != 5:
-                    issues.append(f"第5题（合成路线设计）分值必须为5分，当前为{scores[4]}分")
-                # 第4题（同分异构体）建议为3分
+                    issues.append(f"【严重】第5题分值必须为5分，当前为{scores[4]}分")
                 if scores[3] != 3:
-                    warnings.append(f"第4题（同分异构体）分值建议为3分，当前为{scores[3]}分")
+                    issues.append(f"【严重】第4题分值必须为3分，当前为{scores[3]}分")
 
-            # 第1-3题分值检查
             for i in range(min(3, n)):
                 expected = scores[i]
                 if i in [0, 1] and expected not in [2]:
-                    warnings.append(f"第{i+1}题分值通常为2分，当前为{expected}分")
+                    issues.append(f"【严重】第{i+1}题分值必须为2分，当前为{expected}分")
                 if i == 2 and expected not in [2, 3]:
-                    warnings.append(f"第3题分值通常为2或3分，当前为{expected}分")
+                    issues.append(f"【严重】第3题分值必须为2或3分，当前为{expected}分")
 
-            # 总分检查
             if total not in [14, 15]:
-                issues.append(f"总分({total}分)不符合标准，江苏高考有机大题应为14或15分")
+                issues.append(f"【严重】总分({total}分)不符合标准，江苏高考有机大题应为14或15分")
             if total == 15:
                 if n >= 5 and scores[:4] != [2, 2, 3, 3]:
-                    warnings.append(f"15分制下，前4题分值应为2+2+3+3=10分，当前为{'+'.join(str(s) for s in scores[:4])}={sum(scores[:4])}分")
+                    issues.append(f"【严重】15分制下前4题分值应为2+2+3+3=10分，当前为{'+'.join(str(s) for s in scores[:4])}={sum(scores[:4])}分")
             elif total == 14:
                 if n >= 5 and scores[:4] != [2, 2, 2, 3]:
-                    warnings.append(f"14分制下，前4题分值应为2+2+2+3=9分，当前为{'+'.join(str(s) for s in scores[:4])}={sum(scores[:4])}分")
+                    issues.append(f"【严重】14分制下前4题分值应为2+2+2+3=9分，当前为{'+'.join(str(s) for s in scores[:4])}={sum(scores[:4])}分")
 
         if "total_score" in question_data:
             try:
                 score = float(question_data["total_score"])
                 if score not in [14, 15]:
-                    issues.append(f"total_score字段({score})与标准（14-15分）不符")
+                    issues.append(f"【严重】total_score字段({score})与标准（14-15分）不符")
                 if "questions" in question_data:
                     actual_total = sum(q.get("score", 0) for q in question_data["questions"])
                     if score != actual_total:
-                        issues.append(f"total_score({score})与各小题分数之和({actual_total})不一致")
+                        issues.append(f"【严重】total_score({score})与各小题分数之和({actual_total})不一致")
             except (ValueError, TypeError):
                 pass
 
@@ -605,7 +671,7 @@ class QuestionGenerator:
         if "stem" in question_data:
             stem = question_data["stem"]
             if not any(kw in stem for kw in ["中间体", "药物", "香料", "材料", "天然", "活性", "染料", "农药", "医药"]):
-                warnings.append("题干建议包含目标化合物的用途身份描述")
+                issues.append("【严重】题干必须包含目标化合物的用途身份描述（如'化合物X是某药物的中间体'）")
 
         # 检查合成路线设计：需包含已知信息和目标产物
         if "questions" in question_data:
@@ -615,19 +681,17 @@ class QuestionGenerator:
                     if "已知" not in content:
                         issues.append("【严重】第(5)题合成路线设计缺少'已知'信息，必须提供一个新反应")
                     else:
-                        # 检查已知信息质量：不能是课本内容
                         known_section = content.split("已知")[1] if "已知" in content else ""
                         bad_known = [
                             "格氏试剂", "Grignard", "醛酮反应", "酯化反应", "水解反应",
                             "消去反应", "加成反应", "取代反应", "氧化反应", "还原反应",
                         ]
                         has_bad_known = any(kw in known_section for kw in bad_known)
-                        # 检查是否给出了具体反应式（含→或箭头）
                         has_rxn_arrow = any(sym in known_section for sym in ['→', '->', '⟶'])
                         if has_bad_known and not has_rxn_arrow:
-                            warnings.append("第(5)题已知信息过于泛泛，建议给出具体反应式和条件")
+                            issues.append("【严重】第(5)题已知信息过于泛泛，必须给出具体反应方程式（含→[条件]格式）")
                         if not has_rxn_arrow and len(known_section) < 20:
-                            warnings.append("第(5)题已知信息过于简短，建议给出具体反应方程式")
+                            issues.append("【严重】第(5)题已知信息过于简短，必须给出具体反应方程式")
                     if "制备" not in content and "合成" not in content:
                         issues.append("【严重】第(5)题必须明确写出'制备化合物X'（X=目标产物代号）")
 
@@ -635,34 +699,29 @@ class QuestionGenerator:
         if "new_info" in question_data and question_data["new_info"]:
             new_info = str(question_data["new_info"])
             stem = question_data.get("stem", "")
-            # 提取题干路线中的反应条件关键词
             route_conditions = set()
             for match in re.finditer(r'→\s*\[([^\]]+)\]', stem):
                 for cond in match.group(1).split(','):
                     cond = cond.strip()
                     if cond:
                         route_conditions.add(cond)
-            # 提取已知信息中的反应条件关键词
             known_conditions = set()
             for match in re.finditer(r'→\s*\[([^\]]+)\]', new_info):
                 for cond in match.group(1).split(','):
                     cond = cond.strip()
                     if cond:
                         known_conditions.add(cond)
-            # 检查重叠
             overlap = route_conditions & known_conditions
             if overlap and len(overlap) >= 2:
-                warnings.append(f"已知信息中的条件与题干路线重叠: {overlap}，建议提供全新反应")
+                issues.append(f"【严重】已知信息中的条件与题干路线重复: {overlap}，必须提供全新反应")
 
-        # 检查 new_info 是否包含结构式占位符（ChemDraw格式）
+        # 检查 new_info 格式
         if "new_info" in question_data and question_data["new_info"]:
             new_info = str(question_data["new_info"])
             if not re.search(r'\{结构式:', new_info):
-                warnings.append("已知信息(new_info)建议包含{{结构式:SMILES}}占位符，以ChemDraw格式渲染结构式")
-            # 检查已知信息格式是否与路线图一致（使用箭头→[条件]格式）
+                issues.append("【严重】已知信息(new_info)必须包含{{结构式:SMILES}}占位符")
             if not re.search(r'→\s*\[', new_info):
                 issues.append("【严重】已知信息(new_info)格式必须与路线图一致，使用A→[条件]B格式（条件在箭头上方）")
-            # 检查是否使用了旧格式（A＋B→C）
             if re.search(r'＋.*→', new_info):
                 issues.append("【严重】已知信息(new_info)禁止使用A＋B→C格式，必须使用A→[条件]B格式")
 
@@ -725,31 +784,26 @@ class QuestionGenerator:
                         issues.append(f"【严重】合成路线答案步骤数({step_count}步)偏多，必须为5-7步")
                     # 检查是否有结构式占位符（支持单双大括号）
                     if not re.search(r'\{结构式:', answer_content):
-                        warnings.append("合成路线答案中建议包含结构式占位符，每步产物用{结构式:SMILES}标出")
+                        issues.append("【严重】合成路线答案必须包含结构式占位符，每步产物用{结构式:SMILES}标出")
                     # 检查每步是否包含试剂/条件信息（条件错或漏扣分）
                     if step_count > 0:
                         steps_without_condition = 0
-                        steps_verbose = 0  # 条件过于冗余的步骤数
-                        steps_bad_numbered = 0  # 有(2)无(1)的步骤数
+                        steps_verbose = 0
+                        steps_bad_numbered = 0
                         for i in range(1, step_count + 1):
-                            # 提取第i步的文本
                             pattern = re.compile(rf'第{i}步[：:]\s*(.*?)(?=第\d+步[：:]|$)', re.DOTALL)
                             step_match = pattern.search(answer_content)
                             if step_match:
                                 step_text = step_match.group(1)
-                                # 检查箭头格式：→[条件]
                                 cond_match = re.search(r'→\s*\[([^\]]*)\]', step_text)
                                 if cond_match:
                                     condition = cond_match.group(1).strip()
-                                    # 检查条件是否为空
                                     if not condition or len(condition) < 2:
                                         steps_without_condition += 1
-                                    # 检查(2)必须有(1)规则
                                     has_num2 = bool(re.search(r'\(2\)', condition))
                                     has_num1 = bool(re.search(r'\(1\)', condition))
                                     if has_num2 and not has_num1:
                                         steps_bad_numbered += 1
-                                    # 检查是否有冗余文字（高考真题风格应该是简洁的）
                                     verbose_patterns = [
                                         '在.*条件下', '反应', '加热回流', '搅拌',
                                         '室温', '过夜', '滴加', '缓慢', '催化',
@@ -757,11 +811,9 @@ class QuestionGenerator:
                                     ]
                                     if any(vp in condition for vp in verbose_patterns):
                                         steps_verbose += 1
-                                    # 检查是否使用了旧格式"/"分隔符（应用逗号）
                                     if '/' in condition and condition.count(',') == 0 and not has_num1:
                                         steps_verbose += 1
                                 else:
-                                    # 没有箭头格式，检查旧格式
                                     has_condition = any(kw in step_text for kw in [
                                         'KMnO₄', 'H₂SO₄', 'HNO₃', 'NaOH', 'HCl',
                                         'Pd', 'Ni', 'Fe', 'SOCl₂', 'Br₂', 'Cl₂',
@@ -771,11 +823,11 @@ class QuestionGenerator:
                                     if not has_condition:
                                         steps_without_condition += 1
                         if steps_without_condition > 0:
-                            warnings.append(f"第(5)题答案有{steps_without_condition}步缺少试剂/条件信息（条件错或漏扣分）")
+                            issues.append(f"【严重】第(5)题答案有{steps_without_condition}步缺少试剂/条件信息（条件错或漏扣分）")
                         if steps_verbose > 0:
-                            warnings.append(f"第(5)题答案有{steps_verbose}步条件表述过于冗余，应采用'试剂1, 试剂2, 条件'的极简格式")
+                            issues.append(f"【严重】第(5)题答案有{steps_verbose}步条件表述冗余，应采用'试剂1, 试剂2, △'的极简格式")
                         if steps_bad_numbered > 0:
-                            warnings.append(f"第(5)题答案有{steps_bad_numbered}步条件中有(2)但没有(1)，标号不完整")
+                            issues.append(f"【严重】第(5)题答案有{steps_bad_numbered}步条件中有(2)但没有(1)，标号不完整")
 
         # 检查同分异构体是否有3个条件，且条件合理
         if "questions" in question_data:
@@ -785,18 +837,17 @@ class QuestionGenerator:
                     # 检查是否包含①②③编号条件
                     cond_count = sum(1 for c in ['①', '②', '③', '条件1', '条件2', '条件3'] if c in content)
                     if cond_count < 2:
-                        warnings.append("同分异构体题应包含2-3个限定条件（①②③编号）")
+                        issues.append("【严重】同分异构体题必须包含3个限定条件（①②③编号）")
                     if cond_count == 3:
-                        # 检查条件是否合理（有官能团、谱学、结构三类条件）
                         has_func_group = any(kw in content for kw in ['遇FeCl₃', '银镜', 'NaHCO₃', 'Na₂CO₃', 'NaOH', '溴水', '褪色', '显色', '官能团', '能发生', '能与'])
                         has_spectrum = any(kw in content for kw in ['氢谱', '核磁', '峰组', '峰面积', '吸收峰', '化学位移', '红外', '质谱'])
                         has_structure = any(kw in content for kw in ['苯环', '手性碳', '对位', '间位', '邻位', '取代基', '对称', '碳原子数'])
                         if not has_func_group:
-                            warnings.append("同分异构体条件①建议包含官能团特征反应限制")
+                            issues.append("【严重】同分异构体条件①必须包含官能团特征反应限制")
                         if not has_spectrum:
-                            warnings.append("同分异构体条件②建议包含核磁共振氢谱等谱学限制")
+                            issues.append("【严重】同分异构体条件②必须包含核磁共振氢谱等谱学限制")
                         if not has_structure:
-                            warnings.append("同分异构体条件③建议包含苯环取代位置或手性碳等结构限制")
+                            issues.append("【严重】同分异构体条件③必须包含苯环取代位置或手性碳等结构限制")
 
         return {
             "is_valid": len(issues) == 0,
