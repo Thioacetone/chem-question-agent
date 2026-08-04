@@ -116,7 +116,9 @@ export default function QuestionPreview({ data, onRefine, onExport, loading, err
           </div>
           {answers.map((a, i) => {
             const isRouteAnswer = (a.number === 5 || a.number === '5') && a.content
-            const hasRouteDiagram = isRouteAnswer && parseAnswerRoute(a.content)
+            // 检查是否包含方程式格式 →[条件]，如果是则用路线图渲染
+            const hasEquation = a.content && typeof a.content === 'string' && /\{\{?结构式:/.test(a.content) && /→\s*\[/.test(a.content)
+            const hasRouteDiagram = (isRouteAnswer || hasEquation) && parseAnswerRoute(a.content)
             return (
             <div key={i} style={{ marginBottom: '8px' }}>
               <div style={{ fontWeight: 600 }}>（{a.number || i + 1}）</div>

@@ -272,6 +272,8 @@ class QuestionGenerator:
 （如有第6步和第7步，继续按此格式）
 
 注意：答案路线必须与题干路线不同！不能完全照抄题干路线。
+条件中如果有(2)编号，必须同时有(1)编号，不能只有(2)没有(1)！
+条件必须极简，只写试剂名+条件符号，逗号分隔，严禁"在...条件下""加热回流""催化""反应"等冗余词！
 
 请重新生成完整的JSON命题（包含所有字段），确保第5题答案恰好5-7步。"""
         return self.llm.generate(
@@ -418,7 +420,7 @@ class QuestionGenerator:
 
         # 第二级：单个冗余词
         redundant_words = [
-            '加热回流', '回流', '加热', '搅拌', '室温',
+            '加热回流', '回流', '搅拌', '室温',
             '过夜', '滴加', '缓慢', '反应', '催化',
             '溶液中', '作用下', '处理后', '条件下',
             '洗涤', '干燥', '过滤', '蒸馏', '萃取',
@@ -666,6 +668,34 @@ class QuestionGenerator:
 
         # 检查第2题答案是否使用路线图格式
         if "answers" in question_data:
+            for a in question_data["answers"]:
+                num = a.get("number", "?")
+                content = a.get("content", "")
+                if not isinstance(content, str) or not content:
+                    continue
+                
+                # 检查所有含方程式的答案（第2、3、5题）
+                has_equation = re.search(r'\{结构式:', content) or re.search(r'→', content)
+                if has_equation:
+                    # 检查是否使用了正确的路线图格式
+                    if re.search(r'→', content) and not re.search(r'→\s*\[', content):
+                        issues.append(f"【严重】第({num})题答案方程式格式错误，必须使用A→[条件]B格式（条件在箭头上方方括号内）")
+                    if re.search(r'＋.*→', content):
+                        issues.append(f"【严重】第({num})题答案禁止使用A＋B→C格式，必须使用A→[条件]B格式")
+                    
+                    # 检查(2)必须有(1)规则（适用于所有含方程式的答案）
+                    # 提取所有→[条件]中的条件文本
+                    cond_matches = re.findall(r'→\s*\[([^\]]*)\]', content)
+                    for cond in cond_matches:
+                        has_num2 = bool(re.search(r'\(2\)', cond))
+                        has_num1 = bool(re.search(r'\(1\)', cond))
+                        has_num3 = bool(re.search(r'\(3\)', cond))
+                        if has_num2 and not has_num1:
+                            issues.append(f"【严重】第({num})题答案条件中有(2)但没有(1)：→[{cond}]，标号不完整！")
+                        if has_num3 and (not has_num1 or not has_num2):
+                            issues.append(f"【严重】第({num})题答案条件中有(3)但缺少(1)或(2)：→[{cond}]，标号不完整！")
+            
+            # 专门检查第2题
             for a in question_data["answers"]:
                 if a.get("number") == 2 or a.get("number") == "2":
                     content = a.get("content", "")
