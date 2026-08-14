@@ -25,7 +25,7 @@ class QuestionGenerator:
 
     def build_context_prompt(self, route_data: dict) -> str:
         """
-        构建命题上下文 v5.0 — 精简聚焦，提供路线相关的知识参考
+        构建命题上下文 v6.0 — 丰富路线信息，引导LLM深度理解路线
         """
         import random
 
@@ -46,8 +46,37 @@ class QuestionGenerator:
         # 随机选择用途身份
         identity = random.choice(TARGET_IDENTITIES)
 
+        # 🔴 提取路线关键信息，帮助LLM精准设问
+        steps = route_data.get("steps", [])
+        route_summary = []
+        for i, step in enumerate(steps):
+            reactant = step.get("reactant", "?")
+            product = step.get("product", "?")
+            conditions = step.get("conditions", "?")
+            rxn_type = step.get("reaction_type", "?")
+            route_summary.append(
+                f"  第{i+1}步：{reactant} →[{conditions}] {product}（{rxn_type}）"
+            )
+        
+        # 提取关键中间体（路线中间位置的化合物，适用于第4题同分异构体）
+        mid_compounds = []
+        for i, step in enumerate(steps):
+            if i == 0:
+                mid_compounds.append(f"起始原料：{step.get('reactant', '?')}")
+            prod = step.get("product", "?")
+            if i < len(steps) - 1:
+                mid_compounds.append(f"中间体{chr(65+i+1)}：{prod}")
+            else:
+                mid_compounds.append(f"最终产物：{prod}")
+
         context = f"""【用户输入的合成路线】
 {json.dumps(route_data, ensure_ascii=False, indent=2)}
+
+【路线步骤概览】
+{chr(10).join(route_summary)}
+
+【路线中的化合物】
+{chr(10).join(mid_compounds)}
 
 【建议的目标化合物用途身份】
 {identity}
@@ -58,8 +87,13 @@ class QuestionGenerator:
 【相关高中反应参考】
 {chr(10).join(relevant_reactions[:8])}
 
-【重要提醒】
-第(5)题合成路线答案必须恰好5-7步，不能少于5步，也不能多于7步。这是硬性要求！
+【命题提示】
+1. 第(1)题从上述中间体中选择一个，问其官能团名称或某步反应类型
+2. 第(2)题选择路线中某一步转化，让学生书写反应方程式（→[条件]格式）
+3. 第(3)题选择需要特定试剂的步骤，问反应条件
+4. 第(4)题从上述中间体中选择一个，设计3个递进条件（①官能团特征反应②核磁氢谱③结构限制）
+5. 第(5)题已知信息优先使用路线中的特殊反应（人名反应等），答案路线必须与题干路线不同
+6. 第(5)题合成路线答案必须恰好5-7步，不能少于5步，也不能多于7步。这是硬性要求！
 🔴 单步路线（仅1步反应）绝对禁止！必须设计5-7步的完整合成路线。
 请基于以上合成路线，创作一道有机化学大题。命题要求已在系统提示中详细说明，请严格遵守。"""
         return context
@@ -245,10 +279,13 @@ class QuestionGenerator:
 {issues_text}
 
 === 修复指南 ===
-- 第(1)题必须是基础识记题（官能团名称/反应类型/分子式），难度easy
-- 第(2)题若含方程式，必须用路线图格式：{{{{结构式:SMILES}}}}→[条件] {{{{结构式:SMILES}}}}
-- 第(3)题若含方程式，也必须用路线图格式
+- 第(1)题必须是基础识记题（官能团名称/反应类型/分子式），难度easy，必须指定具体化合物代号
+- 第(2)题必须具体到某步转化（如"写出B→C反应的化学方程式"），若含方程式必须用路线图格式
+- 第(3)题必须具体到某步（如"B→C所需的试剂和条件为____"），若含方程式也必须用路线图格式
 - 第(4)题必须是同分异构体题，含3个递进条件（①②③），难度hard
+  - ①必须写具体官能团特征反应（如"遇FeCl₃溶液显紫色"），不能泛泛说"含有酚羟基"
+  - ②必须给出具体谱学数据（如"核磁共振氢谱显示有4组峰，峰面积比为1:2:2:3"）
+  - ③必须给出具体结构限制（如"苯环上的一氯代物只有2种"）
 - 第(5)题必须是合成路线设计题，含"已知"信息，明确写"制备化合物X"，难度hard
 - 分值严格按14分(2+2+2+3+5)或15分(2+2+3+3+5)分配
 
@@ -918,6 +955,82 @@ class QuestionGenerator:
                             issues.append("【严重】同分异构体条件②必须包含核磁共振氢谱等谱学限制")
                         if not has_structure:
                             issues.append("【严重】同分异构体条件③必须包含苯环取代位置或手性碳等结构限制")
+
+        # === 🔴 内容质量检查：设问必须具体，与路线紧密结合 ===
+        if "questions" in question_data:
+            for q in question_data["questions"]:
+                num = q.get("number", "?")
+                content = q.get("content", "")
+                
+                if num in [1, "1"]:
+                    # 第1题必须提到具体化合物或反应步骤
+                    has_compound = bool(re.search(r'化合物\s*[A-Z]', content))
+                    has_step = bool(re.search(r'[A-Z]\s*→\s*[A-Z]', content))
+                    has_type = bool(re.search(r'反应类型|官能团|分子式|命名', content))
+                    if not has_compound and not has_step:
+                        issues.append(f"【质量】第(1)题设问不够具体，应指定化合物代号（如'化合物C中含有的官能团'）")
+                    if not has_type:
+                        issues.append(f"【质量】第(1)题应考查官能团名称、反应类型或分子式")
+                
+                elif num in [2, "2"]:
+                    # 第2题必须提到具体反应步骤
+                    has_step = bool(re.search(r'[A-Z]\s*→\s*[A-Z]|制备|反应|方程式', content))
+                    if not has_step:
+                        issues.append(f"【质量】第(2)题应具体到某步转化（如'写出B→C反应的化学方程式'）")
+                
+                elif num in [3, "3"]:
+                    # 第3题必须问到试剂或条件
+                    has_reagent = bool(re.search(r'试剂|条件|选用|所需', content))
+                    if not has_reagent:
+                        issues.append(f"【质量】第(3)题应询问试剂或反应条件（如'C→D所需的试剂和条件为____'）")
+                
+                elif num in [4, "4"]:
+                    # 第4题同分异构体质量检查
+                    if "同分异构" in content:
+                        # 检查是否指定了具体化合物
+                        has_compound = bool(re.search(r'化合物\s*[A-Z]', content))
+                        if not has_compound:
+                            issues.append(f"【质量】第(4)题应指定具体化合物（如'化合物D的同分异构体中'）")
+                        
+                        # 检查条件①是否有具体官能团特征反应
+                        has_specific_func = bool(re.search(
+                            r'FeCl₃|银镜|NaHCO₃|Na₂CO₃|NaOH|溴水|褪色|显色|能与.*反应|发生.*反应',
+                            content
+                        ))
+                        if not has_specific_func:
+                            issues.append(f"【质量】第(4)题条件①过于泛泛，应写具体特征反应（如'遇FeCl₃显紫色'）")
+                        
+                        # 检查条件②是否有具体谱学数据
+                        has_specific_spectrum = bool(re.search(
+                            r'峰面积比|组峰.*面积|化学位移|吸收峰.*cm|质谱.*m/z',
+                            content
+                        ))
+                        if not has_specific_spectrum:
+                            issues.append(f"【质量】第(4)题条件②过于泛泛，应给出具体谱学数据（如'峰面积比为1:2:2:3'）")
+                        
+                        # 检查条件③是否有具体结构限制
+                        has_specific_structure = bool(re.search(
+                            r'一氯代物.*[1-9]种|手性碳.*[1-9]个|对位|间位|邻位|取代基.*[1-9]个|对称',
+                            content
+                        ))
+                        if not has_specific_structure:
+                            issues.append(f"【质量】第(4)题条件③过于泛泛，应给出具体结构限制（如'苯环上一氯代物只有2种'）")
+                
+                elif num in [5, "5"]:
+                    # 第5题质量检查
+                    if "合成" in content or "制备" in content:
+                        # 必须明确写"制备化合物X"
+                        has_prepare = bool(re.search(r'制备化合物\s*[A-Z]', content))
+                        if not has_prepare:
+                            issues.append(f"【质量】第(5)题应明确写'制备化合物X'（X为具体化合物代号）")
+                        
+                        # 已知信息不能太泛泛
+                        if "已知" in content:
+                            known_part = content.split("已知")[1] if "已知" in content else ""
+                            if len(known_part) < 15:
+                                issues.append(f"【质量】第(5)题已知信息过于简短，应给出具体反应方程式")
+                            if not re.search(r'\{结构式:', known_part):
+                                issues.append(f"【质量】第(5)题已知信息应包含结构式占位符")
 
         # 🔴 全局格式扫描：检查所有字段中的A＋B→C格式
         global_issues = self._global_format_check(question_data)
