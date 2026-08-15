@@ -760,17 +760,17 @@ class StructureRenderer:
             pass
         opts = drawer.drawOptions()
         # 仿真题ChemDraw风格参数
-        opts.bondLineWidth = 1.5          # 键线粗细（精细风格）
-        opts.fixedBondLength = 30         # 固定键长
+        opts.bondLineWidth = 1.8          # 键线粗细（稍粗，更清晰）
+        opts.fixedBondLength = 32         # 固定键长（增大，结构更舒展）
         opts.addStereoAnnotation = True
-        opts.multipleBondOffset = 0.18    # 双键/三键偏移
+        opts.multipleBondOffset = 0.20    # 双键/三键偏移
         opts.includeAtomTags = False
         opts.prepareMolsBeforeDrawing = True
         opts.clearBackground = True
         opts.useBWAtomPalette()             # 黑白原子颜色（高考风格）
-        opts.baseFontSize = 0.55           # 基础字号
-        opts.additionalAtomLabelPadding = 0.08
-        opts.minFontSize = 11
+        opts.baseFontSize = 0.60           # 基础字号（增大）
+        opts.additionalAtomLabelPadding = 0.10
+        opts.minFontSize = 12              # 最小字号（增大）
         drawer.DrawMolecule(mol)
         drawer.FinishDrawing()
         svg = drawer.GetDrawingText()
@@ -831,13 +831,13 @@ class StructureRenderer:
             rows = [(0, mid), (mid, n)]
 
         # === 布局参数（仿真题比例，兼顾可读性） ===
-        struct_w = 160       # 结构式宽
-        struct_h = 120       # 结构式高
-        min_arrow_w = 90     # 最小箭头宽度
-        top_margin = 56      # 顶留白（试剂标注在箭头上方）
-        bottom_margin = 34   # 底留白（化合物编号）
-        side_margin = 28     # 左右留白
-        row_gap = 76         # 行间距
+        struct_w = 180       # 结构式宽（增大，避免复杂分子被压缩）
+        struct_h = 130       # 结构式高（增大，原子标签更清晰）
+        min_arrow_w = 105    # 最小箭头宽度（增大，确保试剂文字不截断）
+        top_margin = 60      # 顶留白（试剂标注在箭头上方）
+        bottom_margin = 38   # 底留白（化合物编号）
+        side_margin = 32     # 左右留白
+        row_gap = 80         # 行间距（增大，两行不拥挤）
 
         row_total_h = struct_h + top_margin + bottom_margin
 
@@ -875,28 +875,30 @@ class StructureRenderer:
             # 单步条件：不拆分逗号（如 "浓HNO₃, 浓H₂SO₄, △" 应保持一行）
             return {"above": [text], "below": []}
 
-        def _estimate_text_width(text, font_size=12):
-            """估算文本渲染宽度（px），微软雅黑中文字符约1.05×字号，ASCII约0.55×字号"""
+        def _estimate_text_width(text, font_size=12.5):
+            """估算文本渲染宽度（px），微软雅黑中文字符约1.12×字号，ASCII约0.58×字号"""
             w = 0
             for ch in text:
                 if '\u4e00' <= ch <= '\u9fff' or '\u3000' <= ch <= '\u303f' or '\uff00' <= ch <= '\uffef':
-                    w += font_size * 1.05
+                    w += font_size * 1.12
                 elif ch in '₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎':
-                    w += font_size * 0.5
+                    w += font_size * 0.6
+                elif ch in '△▲▼▽▶◀◆◇○●□■☆★':
+                    w += font_size * 0.8
                 else:
-                    w += font_size * 0.55
+                    w += font_size * 0.58
             return max(w, 1)
 
         def _calc_arrow_width(reagent_text):
-            """根据试剂文字估算需要的箭头宽度"""
+            """根据试剂文字估算需要的箭头宽度（增加余量防止截断）"""
             if not reagent_text:
                 return min_arrow_w
             reagent = StructureRenderer._format_reagent(reagent_text)
             split = _split_reagent(reagent)
             all_lines = split.get("above", []) + split.get("below", [])
-            max_text_w = max(_estimate_text_width(line, 12) for line in all_lines) if all_lines else 0
-            # 箭头区 = 文字宽度 + 箭头尖(18px) + 两侧留白(40px)
-            return max(int(max_text_w + 58), min_arrow_w)
+            max_text_w = max(_estimate_text_width(line, 12.5) for line in all_lines) if all_lines else 0
+            # 箭头区 = 文字宽度 + 箭头尖(20px) + 两侧留白(52px)
+            return max(int(max_text_w + 72), min_arrow_w)
 
         # 预计算每个箭头的宽度（steps[i]的reagent是到下一个化合物的箭头）
         arrow_widths = []
@@ -958,15 +960,15 @@ class StructureRenderer:
                 parts = line.split('△')
                 svg_parts.append(
                     f'<text x="{line_center}" y="{line_y}" '
-                    f'text-anchor="middle" font-size="12" '
+                    f'text-anchor="middle" font-size="12.5" '
                     f'font-family="Microsoft YaHei,微软雅黑,SimHei,黑体,sans-serif" fill="#222">'
-                    f'{parts[0]}<tspan font-size="24" baseline-shift="-3">△</tspan>{parts[1] if len(parts) > 1 else ""}'
+                    f'{parts[0]}<tspan font-size="26" baseline-shift="-3">△</tspan>{parts[1] if len(parts) > 1 else ""}'
                     f'</text>'
                 )
             else:
                 svg_parts.append(
                     f'<text x="{line_center}" y="{line_y}" '
-                    f'text-anchor="middle" font-size="12" '
+                    f'text-anchor="middle" font-size="12.5" '
                     f'font-family="Microsoft YaHei,微软雅黑,SimHei,黑体,sans-serif" fill="#222">{line}</text>'
                 )
 
@@ -994,9 +996,9 @@ class StructureRenderer:
 
             svg_parts.append(
                 f'<line x1="{tx}" y1="{arrow_y}" x2="{hx}" y2="{arrow_y}" '
-                f'stroke="#222" stroke-width="1.5"/>'
-                f'<polygon points="{hx - 6},{arrow_y - 4} {ex},{arrow_y} {hx - 6},{arrow_y + 4}" '
-                f'fill="#222"/>'
+                f'stroke="#333" stroke-width="1.6"/>'
+                f'<polygon points="{hx - 6},{arrow_y - 4.5} {ex},{arrow_y} {hx - 6},{arrow_y + 4.5}" '
+                f'fill="#333"/>'
             )
 
         def _draw_arrow_left(x1, x2, base_y, h, reagent_text):
@@ -1026,9 +1028,9 @@ class StructureRenderer:
             # 左向箭头：箭尾在右(tx)，箭头尖在左(ex)
             svg_parts.append(
                 f'<line x1="{hx}" y1="{arrow_y}" x2="{tx}" y2="{arrow_y}" '
-                f'stroke="#222" stroke-width="1.5"/>'
-                f'<polygon points="{hx + 6},{arrow_y - 4} {ex},{arrow_y} {hx + 6},{arrow_y + 4}" '
-                f'fill="#222"/>'
+                f'stroke="#333" stroke-width="1.6"/>'
+                f'<polygon points="{hx + 6},{arrow_y - 4.5} {ex},{arrow_y} {hx + 6},{arrow_y + 4.5}" '
+                f'fill="#333"/>'
             )
 
         def render_row(start_idx, end_idx, row_idx, is_reversed=False):
@@ -1060,11 +1062,11 @@ class StructureRenderer:
                     )
 
                 label = step.get("label", chr(65 + idx))
-                label_y = struct_y + struct_h + 20
+                label_y = struct_y + struct_h + 22
                 svg_parts.append(
                     f'<text x="{x + struct_w / 2}" y="{label_y}" '
-                    f'text-anchor="middle" font-size="11" font-weight="bold" '
-                    f'font-family="Times New Roman,Times,serif" fill="#111">{label}</text>'
+                    f'text-anchor="middle" font-size="12" font-weight="bold" '
+                    f'font-family="Times New Roman,Times,serif" fill="#1a1a1a">{label}</text>'
                 )
 
                 if j < row_n - 1:
@@ -1107,20 +1109,20 @@ class StructureRenderer:
                 if abs(top_x - bot_x) < 5:
                     svg_parts.append(
                         f'<line x1="{top_x}" y1="{top_y + 24}" x2="{bot_x}" y2="{bot_y - 24}" '
-                        f'stroke="#222" stroke-width="1.5"/>'
+                        f'stroke="#333" stroke-width="1.6"/>'
                         f'<polygon points="{bot_x - 6},{bot_y - 24} {bot_x},{bot_y - 14} {bot_x + 6},{bot_y - 24}" '
-                        f'fill="#222"/>'
+                        f'fill="#333"/>'
                     )
                 else:
                     svg_parts.append(
                         f'<line x1="{top_x}" y1="{top_y + 24}" x2="{top_x}" y2="{mid_y}" '
-                        f'stroke="#222" stroke-width="1.5"/>'
+                        f'stroke="#333" stroke-width="1.6"/>'
                         f'<line x1="{top_x}" y1="{mid_y}" x2="{bot_x}" y2="{mid_y}" '
-                        f'stroke="#222" stroke-width="1.5"/>'
+                        f'stroke="#333" stroke-width="1.6"/>'
                         f'<line x1="{bot_x}" y1="{mid_y}" x2="{bot_x}" y2="{bot_y - 24}" '
-                        f'stroke="#222" stroke-width="1.5"/>'
+                        f'stroke="#333" stroke-width="1.6"/>'
                         f'<polygon points="{bot_x - 6},{bot_y - 24} {bot_x},{bot_y - 14} {bot_x + 6},{bot_y - 24}" '
-                        f'fill="#222"/>'
+                        f'fill="#333"/>'
                     )
 
             struct_y, row_start = render_row(start, end, ri, is_reversed)
