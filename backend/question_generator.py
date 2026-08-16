@@ -87,15 +87,22 @@ class QuestionGenerator:
 【相关高中反应参考】
 {chr(10).join(relevant_reactions[:8])}
 
-【命题提示】
-1. 第(1)题从上述中间体中选择一个，问其官能团名称或某步反应类型
-2. 第(2)题选择路线中某一步转化，让学生书写反应方程式（→[条件]格式）
-3. 第(3)题选择需要特定试剂的步骤，问反应条件
-4. 第(4)题从上述中间体中选择一个，设计3个递进条件（①官能团特征反应②核磁氢谱③结构限制）
-5. 第(5)题已知信息优先使用路线中的特殊反应（人名反应等），答案路线必须与题干路线不同
+【命题提示 — 请严格遵循以下指引】
+1. 第(1)题：从上述中间体C/D/E中选择一个，问其官能团名称、分子式、手性碳个数或某步反应类型
+   关键：必须指定具体化合物代号，不能泛泛而问
+2. 第(2)题：选择路线中某一步转化，让学生书写反应方程式或推断产物结构简式
+   关键：方程式必须用→[条件]格式，条件在箭头上方
+3. 第(3)题：选择需要特定试剂的步骤，问反应条件或试剂选择
+   关键：必须具体到某步（如"B→C所需的试剂和条件为____"）
+4. 第(4)题：从路线中间体中选择一个，设计3个递进条件（①官能团特征反应②核磁氢谱③结构限制）
+   关键：条件必须具体且有区分度，能唯一确定结构
+5. 第(5)题：已知信息优先使用路线中的特殊反应（人名反应等），设计不同于题干路线的合成路线
+   关键：目标产物是路线中某化合物的"类似物"（结构相近但不同），答案路线必须与题干路线不同
 6. 第(5)题合成路线答案必须恰好5-7步，不能少于5步，也不能多于7步。这是硬性要求！
 🔴 单步路线（仅1步反应）绝对禁止！必须设计5-7步的完整合成路线。
-请基于以上合成路线，创作一道有机化学大题。命题要求已在系统提示中详细说明，请严格遵守。"""
+7. 🔴 所有方程式必须使用→[条件]格式（条件在箭头上方方括号内），绝对禁止A+B→C格式
+8. 🔴 题干只写背景用途+结尾"合成路线如下"，不描述路线步骤
+请基于以上合成路线，创作一道高质量的原创有机化学大题。命题要求已在系统提示中详细说明，请严格遵守。"""
         return context
 
     def generate_from_route(self, route_data: dict, difficulty: float = DEFAULT_DIFFICULTY) -> dict:
@@ -1031,6 +1038,17 @@ class QuestionGenerator:
                                 issues.append(f"【质量】第(5)题已知信息过于简短，应给出具体反应方程式")
                             if not re.search(r'\{结构式:', known_part):
                                 issues.append(f"【质量】第(5)题已知信息应包含结构式占位符")
+                            # 已知信息必须有→[条件]格式
+                            if not re.search(r'→\s*\[', known_part):
+                                issues.append(f"【质量】第(5)题已知信息必须使用→[条件]格式（条件在箭头上方方括号内）")
+        
+        # === 🔴 化学准确性验证（新增） ===
+        chem_issues = self._check_chemical_accuracy(question_data)
+        issues.extend(chem_issues)
+        
+        # === 🔴 题目多样性检查（新增） ===
+        diversity_issues = self._check_question_diversity(question_data)
+        issues.extend(diversity_issues)
 
         # 🔴 全局格式扫描：检查所有字段中的A＋B→C格式
         global_issues = self._global_format_check(question_data)
@@ -1041,6 +1059,128 @@ class QuestionGenerator:
             "issues": issues,
             "warnings": warnings,
         }
+
+    def _check_chemical_accuracy(self, question_data: dict) -> list:
+        """
+        🔴 化学准确性验证：检查反应条件与反应类型是否匹配、试剂选择性是否正确等。
+        """
+        import re
+        issues = []
+        
+        answers = question_data.get("answers", [])
+        new_info = str(question_data.get("new_info", ""))
+        
+        all_texts = []
+        if new_info and new_info != "None":
+            all_texts.append(("已知信息", new_info))
+        for a in answers:
+            content = str(a.get("content", ""))
+            if content:
+                all_texts.append((f"第{a.get('number', '?')}题答案", content))
+        
+        for field_name, text in all_texts:
+            # 提取所有→[条件]
+            conds = re.findall(r'→\s*\[([^\]]*)\]', text)
+            for cond in conds:
+                cond_lower = cond.lower()
+                
+                # 1. 硝化反应检查
+                if re.search(r'硝化|nitr', cond_lower):
+                    if 'hno₃' not in cond_lower and 'hno3' not in cond_lower:
+                        issues.append(f"【化学】{field_name}：硝化反应条件中缺少HNO₃ →[{cond}]")
+                    if 'h₂so₄' not in cond_lower and 'h2so4' not in cond_lower and '浓硫酸' not in cond:
+                        issues.append(f"【化学】{field_name}：硝化反应条件中缺少浓H₂SO₄ →[{cond}]")
+                
+                # 2. 硝基还原检查
+                if re.search(r'还原.*硝基|硝基.*还原|fe.*hcl|sn.*hcl', cond_lower):
+                    if 'fe' not in cond_lower and 'sn' not in cond_lower and 'h₂' not in cond_lower and 'h2' not in cond_lower:
+                        issues.append(f"【化学】{field_name}：硝基还原需要Fe/HCl、Sn/HCl或H₂/Pd-C →[{cond}]")
+                
+                # 3. LiAlH₄ 使用检查
+                if 'lialh₄' in cond_lower or 'lialh4' in cond_lower:
+                    # LiAlH₄后通常需要水处理
+                    if 'h₂o' not in cond_lower and 'h2o' not in cond_lower and '(2)' not in cond:
+                        issues.append(f"【化学】{field_name}：LiAlH₄还原后需要水处理 →[{cond}]")
+                
+                # 4. NaBH₄ 使用检查
+                if 'nabh₄' in cond_lower or 'nabh4' in cond_lower:
+                    # NaBH₄只能还原醛酮，不能还原酯/羧酸/酰胺
+                    if re.search(r'酯|羧酸|酰胺|ester|carboxyl|amide', text):
+                        issues.append(f"【化学】{field_name}：NaBH₄不能还原酯基/羧基/酰胺基，只能还原醛酮羰基 →[{cond}]")
+                
+                # 5. 氧化反应检查
+                if re.search(r'kmno₄|kmno4|酸性高锰酸钾', cond_lower):
+                    # 酸性KMnO₄会氧化苯环侧链为羧基
+                    pass  # 这是正确的用法，无需警告
+                
+                # 6. 苯环卤代检查
+                if re.search(r'br₂|br2|cl₂|cl2', cond_lower):
+                    if re.search(r'苯环|aromatic|phenyl', cond_lower) or re.search(r'c1ccccc1', text):
+                        if 'febr₃' not in cond_lower and 'febr3' not in cond_lower and 'fecl₃' not in cond_lower and 'fecl3' not in cond_lower and 'alcl₃' not in cond_lower and 'alcl3' not in cond_lower and 'fe' not in cond_lower:
+                            issues.append(f"【化学】{field_name}：苯环卤代需要Lewis酸催化剂（FeBr₃/FeCl₃/AlCl₃/Fe） →[{cond}]")
+                
+                # 7. 酯化反应检查
+                if re.search(r'酯化|esterif', cond_lower):
+                    if 'h₂so₄' not in cond_lower and 'h2so4' not in cond_lower and '浓硫酸' not in cond:
+                        issues.append(f"【化学】{field_name}：酯化反应通常需要浓H₂SO₄催化 →[{cond}]")
+                
+                # 8. 消去反应检查
+                if re.search(r'消去|elimin', cond_lower):
+                    if 'naoh' in cond_lower and '醇' not in cond and 'alcohol' not in cond_lower and 'etoh' not in cond_lower:
+                        issues.append(f"【化学】{field_name}：卤代烃消去需要NaOH/醇溶液 →[{cond}]")
+        
+        return issues
+    
+    def _check_question_diversity(self, question_data: dict) -> list:
+        """
+        🔴 题目多样性检查：确保题目不模板化，各题有区分度。
+        """
+        import re
+        issues = []
+        warnings = []
+        
+        questions = question_data.get("questions", [])
+        if len(questions) < 5:
+            return issues
+        
+        # 第1题检查：不能总是问"官能团名称"
+        q1_content = questions[0].get("content", "")
+        if "官能团名称" in q1_content and "分子式" not in q1_content and "手性碳" not in q1_content and "反应类型" not in q1_content:
+            warnings.append("【多样性】第(1)题建议偶尔变换问法（分子式、手性碳、反应类型），避免总是问官能团名称")
+        
+        # 第2题检查：必须有具体转化
+        q2_content = questions[1].get("content", "")
+        if not re.search(r'[A-G]→[A-G]|[A-G]转化为[A-G]|由[A-G]制备[A-G]', q2_content):
+            warnings.append("【多样性】第(2)题建议指定具体转化步骤（如'写出B→C的化学方程式'）")
+        
+        # 第3题检查：必须有具体转化
+        q3_content = questions[2].get("content", "")
+        if not re.search(r'[A-G]→[A-G]|[A-G]转化为[A-G]|由[A-G]制备[A-G]', q3_content):
+            warnings.append("【多样性】第(3)题建议指定具体转化步骤（如'C→D所需的试剂和条件为____'）")
+        
+        # 第4题条件多样性检查
+        q4_content = questions[3].get("content", "")
+        # 检查三个条件是否都具体
+        if "FeCl₃" in q4_content and "银镜" not in q4_content and "NaHCO₃" not in q4_content and "溴水" not in q4_content:
+            warnings.append("【多样性】第(4)题条件①可变换特征反应类型，避免总是遇FeCl₃显紫色")
+        
+        # 第5题目标产物检查
+        q5_content = questions[4].get("content", "")
+        if "制备" in q5_content:
+            target_match = re.search(r'制备化合物\s*([A-Z])', q5_content)
+            if target_match:
+                target = target_match.group(1)
+                # 目标产物应与路线最终产物不同
+                route_last = question_data.get("target_compound", "")
+                if target in route_last:
+                    warnings.append(f"【多样性】第(5)题目标产物化合物{target}可能与题干路线最终产物相同，建议改为类似物")
+        
+        # 只将真正的严重问题返回为issues，warnings作为提示
+        # 多样性警告不应阻止出题，但会在日志中显示
+        if warnings:
+            print(f"  📝 多样性提示: {'; '.join(warnings)}")
+        
+        return issues  # 不将warnings转成issues，避免阻止出题
 
     def _global_format_check(self, question_data: dict) -> list:
         """
