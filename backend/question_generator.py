@@ -1177,7 +1177,7 @@ class QuestionGenerator:
     
     def _check_question_diversity(self, question_data: dict) -> list:
         """
-        🔴 题目多样性检查：确保题目不模板化，各题有区分度。
+        🔴 题目多样性检查（基于81道真题分析）：确保题目不模板化，各题有区分度。
         """
         import re
         issues = []
@@ -1187,44 +1187,76 @@ class QuestionGenerator:
         if len(questions) < 5:
             return issues
         
-        # 第1题检查：不能总是问"官能团名称"
+        q_types = [q.get("type", "") for q in questions]
+        
+        # === 第1题检查：从7种高频设问中随机选择 ===
+        q1_type = q_types[0]
         q1_content = questions[0].get("content", "")
-        if "官能团名称" in q1_content and "分子式" not in q1_content and "手性碳" not in q1_content and "反应类型" not in q1_content:
-            warnings.append("【多样性】第(1)题建议偶尔变换问法（分子式、手性碳、反应类型），避免总是问官能团名称")
+        valid_q1_types = ["官能团识别", "碳原子杂化", "σπ键计数", "手性碳", "酸碱性比较", "反应类型", "反应目的"]
+        if q1_type not in valid_q1_types and "官能团" in q1_type:
+            pass  # 近似匹配
+        elif q1_type not in valid_q1_types:
+            warnings.append(f"【多样性】第(1)题类型'{q1_type}'不在真题高频设问中，建议从{valid_q1_types}中选择")
         
-        # 第2题检查：必须有具体转化
+        # 第1题不能总是官能团识别
+        if "官能团名称" in q1_content and "分子式" not in q1_content and "杂化" not in q1_content and "σ键" not in q1_content and "手性碳" not in q1_content and "反应类型" not in q1_content and "酸性" not in q1_content and "碱性" not in q1_content:
+            warnings.append("【多样性】第(1)题建议变换问法，避免总是问官能团名称（真题中还有杂化、σ/π键、手性碳、酸碱性比较等）")
+        
+        # === 第2题检查：从5种高频设问中随机选择 ===
+        q2_type = q_types[1]
         q2_content = questions[1].get("content", "")
-        if not re.search(r'[A-G]→[A-G]|[A-G]转化为[A-G]|由[A-G]制备[A-G]', q2_content):
-            warnings.append("【多样性】第(2)题建议指定具体转化步骤（如'写出B→C的化学方程式'）")
+        valid_q2_types = ["结构推断", "反应类型", "副产物推断", "反应机理", "化学方程式"]
+        if q2_type not in valid_q2_types:
+            warnings.append(f"【多样性】第(2)题类型'{q2_type}'不在真题高频设问中，建议从{valid_q2_types}中选择")
         
-        # 第3题检查：必须有具体转化
+        # 第2题必须有具体转化
+        if not re.search(r'[A-G]→[A-G]|[A-G]转化为[A-G]|由[A-G]制备[A-G]|结构简式|反应类型|副产物|经历.*过程', q2_content):
+            warnings.append("【多样性】第(2)题建议指定具体转化步骤（如'D的结构简式为____'、'C→D的反应类型为____'）")
+        
+        # === 第3题检查：从5种高频设问中随机选择，与第2题不重复 ===
+        q3_type = q_types[2]
         q3_content = questions[2].get("content", "")
-        if not re.search(r'[A-G]→[A-G]|[A-G]转化为[A-G]|由[A-G]制备[A-G]', q3_content):
+        valid_q3_types = ["试剂条件", "反应类型+副产物", "中间体结构", "保护基目的", "试剂选择理由"]
+        if q3_type not in valid_q3_types:
+            warnings.append(f"【多样性】第(3)题类型'{q3_type}'不在真题高频设问中，建议从{valid_q3_types}中选择")
+        
+        # 第3题与第2题不能重复类型
+        if q2_type == q3_type:
+            issues.append(f"【严重】第(2)题和第(3)题类型相同（都是'{q2_type}'），真题中两题不会重复考查同一类型，必须更换其中一题")
+        
+        # 第3题必须有具体转化
+        if not re.search(r'[A-G]→[A-G]|[A-G]转化为[A-G]|由[A-G]制备[A-G]|试剂|条件|中间体|目的|加入.*是为了', q3_content):
             warnings.append("【多样性】第(3)题建议指定具体转化步骤（如'C→D所需的试剂和条件为____'）")
         
-        # 第4题条件多样性检查
+        # === 第4题同分异构体条件多样性检查 ===
         q4_content = questions[3].get("content", "")
-        # 检查三个条件是否都具体
-        if "FeCl₃" in q4_content and "银镜" not in q4_content and "NaHCO₃" not in q4_content and "溴水" not in q4_content:
-            warnings.append("【多样性】第(4)题条件①可变换特征反应类型，避免总是遇FeCl₃显紫色")
+        # 确保条件①不是总是FeCl₃
+        feature_conditions = ["FeCl₃", "银镜", "NaHCO₃", "溴水", "溴的四氯化碳", "水解", "显色", "NaOH"]
+        found_conditions = [c for c in feature_conditions if c in q4_content]
+        if len(found_conditions) < 2:
+            warnings.append("【多样性】第(4)题同分异构条件建议多样化，真题中常见组合：水解+银镜+氢谱、FeCl₃显色+水解+氢谱、NaHCO₃反应+氢谱+手性碳")
         
-        # 第5题目标产物检查
+        # 确保条件②有具体谱学数据
+        if "核磁" not in q4_content and "氢谱" not in q4_content and "红外" not in q4_content and "NMR" not in q4_content and "化学环境" not in q4_content:
+            issues.append("【严重】第(4)题同分异构条件缺少谱学数据（核磁共振氢谱/红外光谱），真题中条件②必须有谱学特征")
+        
+        # 确保条件③有具体结构限制
+        if "氯代物" not in q4_content and "手性碳" not in q4_content and "不含甲基" not in q4_content and "种官能团" not in q4_content and "取代基" not in q4_content:
+            warnings.append("【多样性】第(4)题条件③建议包含具体结构限制（如苯环上一氯代物X种、含N个手性碳、不含甲基等）")
+        
+        # === 第5题检查 ===
         q5_content = questions[4].get("content", "")
-        if "制备" in q5_content:
-            target_match = re.search(r'制备化合物\s*([A-Z])', q5_content)
-            if target_match:
-                target = target_match.group(1)
-                # 目标产物应与路线最终产物不同
-                route_last = question_data.get("target_compound", "")
-                if target in route_last:
-                    warnings.append(f"【多样性】第(5)题目标产物化合物{target}可能与题干路线最终产物相同，建议改为类似物")
+        if "制备" not in q5_content and "合成" not in q5_content:
+            issues.append("【严重】第(5)题必须包含'制备'或'合成'关键词")
         
-        # 只将真正的严重问题返回为issues，warnings作为提示
-        # 多样性警告不应阻止出题，但会在日志中显示
-        if warnings:
-            print(f"  📝 多样性提示: {'; '.join(warnings)}")
+        if "已知" not in q5_content:
+            issues.append("【严重】第(5)题必须包含'已知'信息（具体反应方程式），真题中第5题100%有已知信息")
         
-        return issues  # 不将warnings转成issues，避免阻止出题
+        # 已知信息必须包含具体反应式
+        if "已知" in q5_content and "→" not in q5_content:
+            issues.append("【严重】第(5)题已知信息必须包含具体反应方程式（→[条件]格式），不能是泛泛描述")
+        
+        return issues
 
     def _check_content_duplication(self, question_data: dict) -> list:
         """
