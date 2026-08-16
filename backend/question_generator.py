@@ -310,8 +310,18 @@ class QuestionGenerator:
 
 - 条件中有(2)编号必须同时有(1)编号，不能只有(2)没有(1)
 - 条件必须极简！只写试剂名+条件符号，逗号分隔，严禁冗余词
-- 题干必须包含目标化合物的用途身份描述
-- 题干绝对不能描述合成路线步骤！只写背景用途+结尾"合成路线如下"
+🔴🔴 题干格式（最高优先级！违反此条全部重做）🔴🔴
+- 题干只能写一句话：交代化合物用途身份（如"化合物G是某抗炎药物的关键中间体"）+ "合成路线如下"
+- 题干绝对不能描述任何合成路线步骤！禁止出现以下任何内容：
+  ❌ 禁止：化合物A经硝化得B，B经还原得C...
+  ❌ 禁止：A→[条件]B→[条件]C...
+  ❌ 禁止：化合物A与乙酸酐反应生成B...
+  ❌ 禁止：在Fe/HCl条件下还原得C...
+  ❌ 禁止：依次经硝化、还原、酰化得...
+  ❌ 禁止：以甲苯为原料，经...得...
+  ✅ 正确：化合物G是某抗炎药物的关键中间体，其合成路线如下：
+  ✅ 正确：化合物H是一种新型香料，可通过以下路线合成：
+- 题干绝对不能与已知信息重复任何内容！
 - 已知信息必须包含{{{{结构式:SMILES}}}}占位符，格式与路线图一致
 - 已知信息的反应不能与题干路线重复
 - 已知信息中的双反应物反应也必须用A→[条件]B格式
@@ -736,6 +746,7 @@ class QuestionGenerator:
                 issues.append("【严重】题干必须包含目标化合物的用途身份描述（如'化合物X是某药物的中间体'）")
             
             # 🔴 检查题干是否描述了合成路线（绝对不能！）
+            # 扩展检测模式：覆盖所有可能的路线描述形式
             route_patterns_in_stem = [
                 (r'→', '箭头符号'),
                 (r'经.*得', '经...得格式'),
@@ -749,21 +760,46 @@ class QuestionGenerator:
                 (r'取代.*得', '取代反应描述'),
                 (r'加成.*得', '加成反应描述'),
                 (r'消去.*得', '消去反应描述'),
+                (r'卤代.*得', '卤代反应描述'),
+                (r'溴代.*得', '溴代反应描述'),
+                (r'氯化.*得', '氯化反应描述'),
+                (r'缩合.*得', '缩合反应描述'),
+                (r'重氮化.*得', '重氮化反应描述'),
+                (r'偶联.*得', '偶联反应描述'),
                 (r'第\d+步', '步骤编号'),
                 (r'第一步', '步骤描述'),
+                (r'第二步', '步骤描述'),
+                (r'第三步', '步骤描述'),
                 (r'化合物[A-Z]经', '化合物经...格式'),
                 (r'生成化合物', '生成化合物描述'),
                 (r'与.*反应', '反应描述'),
+                (r'与.*缩合', '缩合反应描述'),
                 (r'在.*条件下', '条件描述'),
+                (r'经.*反应生成', '经...反应生成格式'),
+                (r'经.*反应得', '经...反应得格式'),
+                (r'在.*催化下', '催化条件描述'),
+                (r'以.*为原料.*经', '以...为原料经...格式'),
+                (r'通入.*得', '通入...得格式'),
+                (r'用.*处理.*得', '用...处理得格式'),
+                (r'通过.*反应', '通过...反应格式'),
+                (r'依次经', '依次经...格式'),
+                (r'再经', '再经...格式'),
+                (r'然后.*得', '然后...得格式'),
+                (r'接着.*得', '接着...得格式'),
+                (r'最后.*得', '最后...得格式'),
+                (r'进一步.*得', '进一步...得格式'),
+                (r'分别.*得', '分别...得格式'),
             ]
+            found_patterns = []
             for pattern, desc in route_patterns_in_stem:
                 if re.search(pattern, stem):
-                    issues.append(f"【严重】题干中出现了路线描述（{desc}）：题干只需写背景用途+'合成路线如下'，路线图单独展示")
-                    break  # 只报告一次
+                    found_patterns.append(desc)
+            if found_patterns:
+                issues.append(f"【严重】题干中出现了路线描述（{', '.join(found_patterns[:5])}等{len(found_patterns)}处）：题干只需写背景用途+'合成路线如下'，路线图单独展示。删除所有路线步骤描述！")
             
             # 题干过长也说明在描述路线
-            if len(stem) > 150:
-                issues.append(f"【严重】题干过长（{len(stem)}字），可能包含路线描述。题干应仅1-2句话（背景+合成路线如下）")
+            if len(stem) > 80:
+                issues.append(f"【严重】题干过长（{len(stem)}字），可能包含路线描述。题干应仅1句话（背景+合成路线如下），不超过80字")
 
         # 检查合成路线设计：需包含已知信息和目标产物
         if "questions" in question_data:
@@ -1050,6 +1086,10 @@ class QuestionGenerator:
         diversity_issues = self._check_question_diversity(question_data)
         issues.extend(diversity_issues)
 
+        # === 🔴 内容重复检测（新增） ===
+        duplication_issues = self._check_content_duplication(question_data)
+        issues.extend(duplication_issues)
+
         # 🔴 全局格式扫描：检查所有字段中的A＋B→C格式
         global_issues = self._global_format_check(question_data)
         issues.extend(global_issues)
@@ -1181,6 +1221,97 @@ class QuestionGenerator:
             print(f"  📝 多样性提示: {'; '.join(warnings)}")
         
         return issues  # 不将warnings转成issues，避免阻止出题
+
+    def _check_content_duplication(self, question_data: dict) -> list:
+        """
+        🔴 内容重复检测：确保题干、已知信息、题目、答案之间不重复。
+        检测项：
+        1. 题干 vs 已知信息：是否有相同或高度相似的内容
+        2. 题目 vs 答案：答案中是否直接复述了题目内容
+        3. 题干 vs 路线描述：题干是否包含了路线步骤
+        4. 各小题之间：是否有重复的设问
+        """
+        import re
+        issues = []
+        
+        stem = str(question_data.get("stem", ""))
+        new_info = str(question_data.get("new_info", ""))
+        questions = question_data.get("questions", [])
+        answers = question_data.get("answers", [])
+        
+        # === 1. 题干 vs 已知信息重复检测 ===
+        if stem and new_info and new_info != "None":
+            # 提取关键化合物名称和结构式
+            stem_compounds = set(re.findall(r'化合物\s*[A-Z]', stem))
+            new_info_compounds = set(re.findall(r'化合物\s*[A-Z]', new_info))
+            overlap_compounds = stem_compounds & new_info_compounds
+            if overlap_compounds:
+                # 如果题干和已知信息提到了相同的化合物，检查是否重复描述了反应
+                stem_sentences = [s.strip() for s in re.split(r'[。，；]', stem) if len(s.strip()) > 10]
+                for sent in stem_sentences:
+                    # 检查题干句子是否描述了反应（含"得""生成""反应"等词）
+                    if re.search(r'得|生成|反应|转化|制备', sent):
+                        # 检查已知信息中是否有相似内容
+                        words_in_sent = set(re.findall(r'[\u4e00-\u9fff]{2,}', sent))
+                        words_in_new = set(re.findall(r'[\u4e00-\u9fff]{2,}', new_info))
+                        common_words = words_in_sent & words_in_new
+                        if len(common_words) >= 3:
+                            issues.append(f"【重复】题干与已知信息内容重复：题干句子'{sent[:50]}...'与已知信息高度相似。题干不能描述反应步骤，已知信息不能重复题干内容")
+                            break
+                
+                # 检查结构式是否重复
+                stem_smiles = set(re.findall(r'\{结构式:([^}]+)\}', stem))
+                new_info_smiles = set(re.findall(r'\{结构式:([^}]+)\}', new_info))
+                overlap_smiles = stem_smiles & new_info_smiles
+                if overlap_smiles:
+                    issues.append(f"【重复】题干与已知信息使用了相同的结构式（共{len(overlap_smiles)}个），已知信息必须提供全新反应")
+        
+        # === 2. 题目 vs 答案重复检测 ===
+        for q in questions:
+            q_num = q.get("number", "?")
+            q_content = str(q.get("content", ""))
+            for a in answers:
+                a_num = a.get("number", "?")
+                a_content = str(a.get("content", ""))
+                if q_num == a_num:
+                    # 同题号的题目和答案对比
+                    # 提取题目中的关键短语
+                    q_keywords = re.findall(r'[\u4e00-\u9fff]{5,}', q_content)
+                    a_keywords = re.findall(r'[\u4e00-\u9fff]{5,}', a_content)
+                    # 如果答案中出现了题目的完整句子（超过10个字相同），说明重复
+                    for qk in q_keywords:
+                        if len(qk) >= 10 and qk in a_content:
+                            issues.append(f"【重复】第{q_num}题答案中直接复述了题目内容'{qk[:30]}...'，答案不应重复题目设问")
+                            break
+        
+        # === 3. 各小题之间的重复检测 ===
+        for i in range(len(questions)):
+            for j in range(i+1, len(questions)):
+                qi = questions[i]
+                qj = questions[j]
+                ci = str(qi.get("content", ""))
+                cj = str(qj.get("content", ""))
+                # 提取关键短语
+                ki = re.findall(r'[\u4e00-\u9fff]{5,}', ci)
+                kj = re.findall(r'[\u4e00-\u9fff]{5,}', cj)
+                common = len(set(ki) & set(kj))
+                if common >= 3:
+                    issues.append(f"【重复】第{qi.get('number')}题与第{qj.get('number')}题设问高度相似（{common}处相同），两题应该有区分度")
+        
+        # === 4. 题干 vs 答案重复检测 ===
+        if stem:
+            for a in answers:
+                a_content = str(a.get("content", ""))
+                a_num = a.get("number", "?")
+                # 题干中不应出现 →[条件] 格式，但如果在答案中发现的格式也出现在题干中，说明重复
+                stem_arrows = re.findall(r'→\s*\[([^\]]*)\]', stem)
+                answer_arrows = re.findall(r'→\s*\[([^\]]*)\]', a_content)
+                if stem_arrows and answer_arrows:
+                    common_arrows = set(stem_arrows) & set(answer_arrows)
+                    if common_arrows:
+                        issues.append(f"【重复】题干与第{a_num}题答案中出现了相同的反应条件→{[list(common_arrows)[0][:30]]}...，题干不能包含路线步骤")
+        
+        return issues
 
     def _global_format_check(self, question_data: dict) -> list:
         """
