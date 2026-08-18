@@ -38,7 +38,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "6-氨基己酸", reagent: "NaNO₂, HCl, 0-5°C", product: "6-羟基己酸", reaction_type: "取代反应" },
       { step_number: 5, reactant: "6-羟基己酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "6-羟基己酸甲酯", reaction_type: "酯化反应" },
       { step_number: 6, reactant: "6-羟基己酸甲酯", reagent: "KMnO₄, H⁺, 0°C", product: "己二酸单甲酯", reaction_type: "氧化反应" },
-      { step_number: 7, reactant: "己二酸单甲酯", reagent: "NaOH, H₂O, △; (2) HCl", product: "己二酸", reaction_type: "水解反应" }
+      { step_number: 7, reactant: "己二酸单甲酯", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "己二酸", reaction_type: "水解反应" }
     ]
   },
   {
@@ -66,7 +66,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "对硝基苯甲酸", reagent: "SOCl₂, △", product: "对硝基苯甲酰氯", reaction_type: "取代反应" },
       { step_number: 5, reactant: "对硝基苯甲酰氯", reagent: "NH₃, 0°C", product: "对硝基苯甲酰胺", reaction_type: "取代反应" },
       { step_number: 6, reactant: "对硝基苯甲酰胺", reagent: "Fe, HCl", product: "对氨基苯甲酰胺", reaction_type: "还原反应" },
-      { step_number: 7, reactant: "对氨基苯甲酰胺", reagent: "NaOH, H₂O, △; (2) HCl", product: "对氨基苯甲酸", reaction_type: "水解反应" }
+      { step_number: 7, reactant: "对氨基苯甲酰胺", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "对氨基苯甲酸", reaction_type: "水解反应" }
     ]
   },
   {
@@ -93,7 +93,7 @@ const ROUTE_LIBRARY = [
       { step_number: 3, reactant: "苯胺", reagent: "(CH₃CO)₂O, △", product: "乙酰苯胺", reaction_type: "取代反应" },
       { step_number: 4, reactant: "乙酰苯胺", reagent: "浓HNO₃, 浓H₂SO₄", product: "对硝基乙酰苯胺", reaction_type: "取代反应" },
       { step_number: 5, reactant: "对硝基乙酰苯胺", reagent: "NaOH, H₂O, △", product: "对硝基苯胺", reaction_type: "水解反应" },
-      { step_number: 6, reactant: "对硝基苯胺", reagent: "NaNO₂, HCl, 0-5°C; (2) H₂O, △", product: "对硝基苯酚", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "对硝基苯胺", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) H₂O, △", product: "对硝基苯酚", reaction_type: "取代反应" },
       { step_number: 7, reactant: "对硝基苯酚", reagent: "C₂H₅Br, K₂CO₃, DMF", product: "对硝基苯乙醚", reaction_type: "取代反应" }
     ]
   },
@@ -121,8 +121,8 @@ const ROUTE_LIBRARY = [
       { step_number: 3, reactant: "邻乙酰氧基肉桂酸", reagent: "△, 减压", product: "香豆素", reaction_type: "消去反应" },
       { step_number: 4, reactant: "香豆素", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "6-硝基香豆素", reaction_type: "取代反应" },
       { step_number: 5, reactant: "6-硝基香豆素", reagent: "Fe, HCl, △", product: "6-氨基香豆素", reaction_type: "还原反应" },
-      { step_number: 6, reactant: "6-氨基香豆素", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCN, △", product: "6-氰基香豆素", reaction_type: "取代反应" },
-      { step_number: 7, reactant: "6-氰基香豆素", reagent: "NaOH, H₂O, △; (2) HCl", product: "6-羧基香豆素", reaction_type: "水解反应" },
+      { step_number: 6, reactant: "6-氨基香豆素", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuCN, △", product: "6-氰基香豆素", reaction_type: "取代反应" },
+      { step_number: 7, reactant: "6-氰基香豆素", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "6-羧基香豆素", reaction_type: "水解反应" },
       { step_number: 8, reactant: "6-羧基香豆素", reagent: "CH₃OH, 浓H₂SO₄, △", product: "6-羧基香豆素甲酯", reaction_type: "酯化反应" }
     ]
   },
@@ -165,7 +165,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "5-羟基戊酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "5-羟基戊酸甲酯", reaction_type: "酯化反应" },
       { step_number: 5, reactant: "5-羟基戊酸甲酯", reagent: "PBr₃, 0°C", product: "5-溴戊酸甲酯", reaction_type: "取代反应" },
       { step_number: 6, reactant: "5-溴戊酸甲酯", reagent: "KCN, DMSO, △", product: "5-氰基戊酸甲酯", reaction_type: "取代反应" },
-      { step_number: 7, reactant: "5-氰基戊酸甲酯", reagent: "NaOH, H₂O, △; (2) HCl", product: "戊二酸", reaction_type: "水解反应" }
+      { step_number: 7, reactant: "5-氰基戊酸甲酯", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "戊二酸", reaction_type: "水解反应" }
     ]
   },
   {
@@ -177,10 +177,10 @@ const ROUTE_LIBRARY = [
       { step_number: 2, reactant: "苯乙酮", reagent: "NaBH₄, CH₃OH", product: "1-苯乙醇", reaction_type: "还原反应" },
       { step_number: 3, reactant: "1-苯乙醇", reagent: "PBr₃, 0°C", product: "1-苯基溴乙烷", reaction_type: "取代反应" },
       { step_number: 4, reactant: "1-苯基溴乙烷", reagent: "Mg, 无水乙醚", product: "1-苯乙基溴化镁", reaction_type: "加成反应" },
-      { step_number: 5, reactant: "1-苯乙基溴化镁", reagent: "HCHO, 无水乙醚; (2) H₂O", product: "2-苯基丙醇", reaction_type: "加成反应" },
+      { step_number: 5, reactant: "1-苯乙基溴化镁", reagent: "(1) HCHO, 无水乙醚; (2) H₂O", product: "2-苯基丙醇", reaction_type: "加成反应" },
       { step_number: 6, reactant: "2-苯基丙醇", reagent: "PBr₃, 0°C", product: "2-苯基丙基溴", reaction_type: "取代反应" },
       { step_number: 7, reactant: "2-苯基丙基溴", reagent: "KCN, C₂H₅OH, △", product: "3-苯基丁腈", reaction_type: "取代反应" },
-      { step_number: 8, reactant: "3-苯基丁腈", reagent: "NaOH, H₂O, △; (2) HCl", product: "3-苯基丁酸", reaction_type: "水解反应" }
+      { step_number: 8, reactant: "3-苯基丁腈", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "3-苯基丁酸", reaction_type: "水解反应" }
     ]
   },
   {
@@ -193,8 +193,8 @@ const ROUTE_LIBRARY = [
       { step_number: 3, reactant: "对硝基苯甲酸钾", reagent: "HCl, H₂O", product: "对硝基苯甲酸", reaction_type: "酸碱反应" },
       { step_number: 4, reactant: "对硝基苯甲酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "对硝基苯甲酸乙酯", reaction_type: "酯化反应" },
       { step_number: 5, reactant: "对硝基苯甲酸乙酯", reagent: "Fe, HCl", product: "对氨基苯甲酸乙酯", reaction_type: "还原反应" },
-      { step_number: 6, reactant: "对氨基苯甲酸乙酯", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCN, △", product: "对氰基苯甲酸乙酯", reaction_type: "取代反应" },
-      { step_number: 7, reactant: "对氰基苯甲酸乙酯", reagent: "NaOH, H₂O, △; (2) HCl", product: "对羧基苯甲酸", reaction_type: "水解反应" }
+      { step_number: 6, reactant: "对氨基苯甲酸乙酯", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuCN, △", product: "对氰基苯甲酸乙酯", reaction_type: "取代反应" },
+      { step_number: 7, reactant: "对氰基苯甲酸乙酯", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "对羧基苯甲酸", reaction_type: "水解反应" }
     ]
   },
   {
@@ -206,7 +206,7 @@ const ROUTE_LIBRARY = [
       { step_number: 2, reactant: "对硝基甲苯", reagent: "KMnO₄, OH⁻, △", product: "对硝基苯甲酸钾", reaction_type: "氧化反应" },
       { step_number: 3, reactant: "对硝基苯甲酸钾", reagent: "HCl, H₂O", product: "对硝基苯甲酸", reaction_type: "酸碱反应" },
       { step_number: 4, reactant: "对硝基苯甲酸", reagent: "Fe, HCl", product: "对氨基苯甲酸", reaction_type: "还原反应" },
-      { step_number: 5, reactant: "对氨基苯甲酸", reagent: "NaNO₂, HCl, 0-5°C; (2) CuBr, △", product: "对溴苯甲酸", reaction_type: "取代反应" },
+      { step_number: 5, reactant: "对氨基苯甲酸", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuBr, △", product: "对溴苯甲酸", reaction_type: "取代反应" },
       { step_number: 6, reactant: "对溴苯甲酸", reagent: "SOCl₂, △", product: "对溴苯甲酰氯", reaction_type: "取代反应" },
       { step_number: 7, reactant: "对溴苯甲酰氯", reagent: "CH₃OH, 吡啶", product: "对溴苯甲酸甲酯", reaction_type: "取代反应" }
     ]
@@ -246,11 +246,11 @@ const ROUTE_LIBRARY = [
     steps: [
       { step_number: 1, reactant: "甲苯", reagent: "Cl₂, 光照", product: "苄基氯", reaction_type: "取代反应" },
       { step_number: 2, reactant: "苄基氯", reagent: "KCN, C₂H₅OH, △", product: "苯乙腈", reaction_type: "取代反应" },
-      { step_number: 3, reactant: "苯乙腈", reagent: "NaOH, H₂O, △; (2) HCl", product: "苯乙酸", reaction_type: "水解反应" },
+      { step_number: 3, reactant: "苯乙腈", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "苯乙酸", reaction_type: "水解反应" },
       { step_number: 4, reactant: "苯乙酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "苯乙酸乙酯", reaction_type: "酯化反应" },
       { step_number: 5, reactant: "苯乙酸乙酯", reagent: "LiAlH₄, 无水乙醚", product: "苯乙醇", reaction_type: "还原反应" },
       { step_number: 6, reactant: "苯乙醇", reagent: "PBr₃, 0°C", product: "苯乙基溴", reaction_type: "取代反应" },
-      { step_number: 7, reactant: "苯乙基溴", reagent: "Mg, 无水乙醚; (2) CO₂; (3) H₂O", product: "苯丙酸", reaction_type: "加成反应" }
+      { step_number: 7, reactant: "苯乙基溴", reagent: "(1) Mg, 无水乙醚; (2) CO₂; (3) H₂O", product: "苯丙酸", reaction_type: "加成反应" }
     ]
   },
   {
@@ -263,7 +263,7 @@ const ROUTE_LIBRARY = [
       { step_number: 3, reactant: "苯磺酰氯", reagent: "NH₃, 0°C", product: "苯磺酰胺", reaction_type: "取代反应" },
       { step_number: 4, reactant: "苯磺酰胺", reagent: "浓HNO₃, 浓H₂SO₄", product: "对硝基苯磺酰胺", reaction_type: "取代反应" },
       { step_number: 5, reactant: "对硝基苯磺酰胺", reagent: "Fe, HCl", product: "对氨基苯磺酰胺", reaction_type: "还原反应" },
-      { step_number: 6, reactant: "对氨基苯磺酰胺", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCl, △", product: "对氯苯磺酰胺", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "对氨基苯磺酰胺", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuCl, △", product: "对氯苯磺酰胺", reaction_type: "取代反应" },
       { step_number: 7, reactant: "对氯苯磺酰胺", reagent: "NaOH, H₂O, △", product: "对氯苯磺酸钠", reaction_type: "水解反应" },
       { step_number: 8, reactant: "对氯苯磺酸钠", reagent: "HCl, H₂O", product: "对氯苯磺酸", reaction_type: "酸碱反应" }
     ]
@@ -280,7 +280,7 @@ const ROUTE_LIBRARY = [
       { step_number: 5, reactant: "吲哚", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "3-硝基吲哚", reaction_type: "取代反应" },
       { step_number: 6, reactant: "3-硝基吲哚", reagent: "Fe, HCl", product: "3-氨基吲哚", reaction_type: "还原反应" },
       { step_number: 7, reactant: "3-氨基吲哚", reagent: "CH₃COCl, 吡啶", product: "3-乙酰氨基吲哚", reaction_type: "取代反应" },
-      { step_number: 8, reactant: "3-乙酰氨基吲哚", reagent: "NaOH, H₂O, △; (2) HCl", product: "3-氨基吲哚", reaction_type: "水解反应" }
+      { step_number: 8, reactant: "3-乙酰氨基吲哚", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "3-氨基吲哚", reaction_type: "水解反应" }
     ]
   },
   {
@@ -290,11 +290,11 @@ const ROUTE_LIBRARY = [
     steps: [
       { step_number: 1, reactant: "苯酚", reagent: "CH₂=CHCH₂Br, K₂CO₃, DMF", product: "苯基烯丙基醚", reaction_type: "取代反应" },
       { step_number: 2, reactant: "苯基烯丙基醚", reagent: "△, 200°C", product: "邻烯丙基苯酚", reaction_type: "重排反应" },
-      { step_number: 3, reactant: "邻烯丙基苯酚", reagent: "O₃, CH₂Cl₂; (2) Zn, H₂O", product: "邻羟基苯乙醛", reaction_type: "氧化反应" },
+      { step_number: 3, reactant: "邻烯丙基苯酚", reagent: "(1) O₃, CH₂Cl₂; (2) Zn, H₂O", product: "邻羟基苯乙醛", reaction_type: "氧化反应" },
       { step_number: 4, reactant: "邻羟基苯乙醛", reagent: "H⁺, △", product: "苯并呋喃", reaction_type: "消去反应" },
       { step_number: 5, reactant: "苯并呋喃", reagent: "Br₂, CCl₄", product: "2,3-二溴苯并呋喃", reaction_type: "加成反应" },
       { step_number: 6, reactant: "2,3-二溴苯并呋喃", reagent: "KOH, C₂H₅OH, △", product: "2-溴苯并呋喃", reaction_type: "消去反应" },
-      { step_number: 7, reactant: "2-溴苯并呋喃", reagent: "Mg, 无水乙醚; (2) CO₂; (3) H₂O", product: "苯并呋喃-2-甲酸", reaction_type: "加成反应" },
+      { step_number: 7, reactant: "2-溴苯并呋喃", reagent: "(1) Mg, 无水乙醚; (2) CO₂; (3) H₂O", product: "苯并呋喃-2-甲酸", reaction_type: "加成反应" },
       { step_number: 8, reactant: "苯并呋喃-2-甲酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "苯并呋喃-2-甲酸甲酯", reaction_type: "酯化反应" }
     ]
   },
@@ -308,7 +308,7 @@ const ROUTE_LIBRARY = [
       { step_number: 3, reactant: "苯胺", reagent: "(CH₃CO)₂O, △", product: "乙酰苯胺", reaction_type: "取代反应" },
       { step_number: 4, reactant: "乙酰苯胺", reagent: "CH₃COCl, AlCl₃", product: "对乙酰氨基苯乙酮", reaction_type: "取代反应" },
       { step_number: 5, reactant: "对乙酰氨基苯乙酮", reagent: "NaOH, H₂O, △", product: "对氨基苯乙酮", reaction_type: "水解反应" },
-      { step_number: 6, reactant: "对氨基苯乙酮", reagent: "NaNO₂, HCl, 0-5°C; (2) H₂O, △", product: "对羟基苯乙酮", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "对氨基苯乙酮", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) H₂O, △", product: "对羟基苯乙酮", reaction_type: "取代反应" },
       { step_number: 7, reactant: "对羟基苯乙酮", reagent: "CH₃I, K₂CO₃, DMF", product: "对甲氧基苯乙酮", reaction_type: "取代反应" },
       { step_number: 8, reactant: "对甲氧基苯乙酮", reagent: "(1) Br₂, NaOH, △; (2) HCl; (3) HBr, △", product: "对羟基苯甲酸", reaction_type: "取代反应" }
     ]
@@ -570,7 +570,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "对甲基乙酰苯胺", reagent: "KMnO₄, OH⁻, △", product: "对乙酰氨基苯甲酸钾", reaction_type: "氧化反应" },
       { step_number: 5, reactant: "对乙酰氨基苯甲酸钾", reagent: "HCl, H₂O", product: "对乙酰氨基苯甲酸", reaction_type: "酸碱反应" },
       { step_number: 6, reactant: "对乙酰氨基苯甲酸", reagent: "Fe, HCl, △", product: "对氨基苯甲酸", reaction_type: "还原反应" },
-      { step_number: 7, reactant: "对氨基苯甲酸", reagent: "NaOH, H₂O, △; (2) HCl", product: "对甲苯胺", reaction_type: "脱羧反应" }
+      { step_number: 7, reactant: "对氨基苯甲酸", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "对甲苯胺", reaction_type: "脱羧反应" }
     ]
   },
   {
@@ -682,7 +682,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "对硝基苯甲酸", reagent: "SOCl₂, △", product: "对硝基苯甲酰氯", reaction_type: "取代反应" },
       { step_number: 5, reactant: "对硝基苯甲酰氯", reagent: "NH₃, 0°C", product: "对硝基苯甲酰胺", reaction_type: "取代反应" },
       { step_number: 6, reactant: "对硝基苯甲酰胺", reagent: "Fe, HCl, △", product: "对氨基苯甲酰胺", reaction_type: "还原反应" },
-      { step_number: 7, reactant: "对氨基苯甲酰胺", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCN, △", product: "对氰基苯甲酰胺", reaction_type: "取代反应" }
+      { step_number: 7, reactant: "对氨基苯甲酰胺", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuCN, △", product: "对氰基苯甲酰胺", reaction_type: "取代反应" }
     ]
   },
   {
@@ -711,7 +711,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "对甲基苯重氮盐", reagent: "H₂O, △", product: "对甲苯酚", reaction_type: "取代反应" },
       { step_number: 5, reactant: "对甲苯酚", reagent: "(1) NaHSO₃, NH₃, △; (2) NaOH", product: "对甲苯胺", reaction_type: "取代反应" },
       { step_number: 6, reactant: "对甲苯胺", reagent: "(CH₃CO)₂O, 吡啶", product: "N-乙酰基对甲苯胺", reaction_type: "取代反应" },
-      { step_number: 7, reactant: "N-乙酰基对甲苯胺", reagent: "NaNO₂, HCl, 0-5°C; (2) CuBr, △", product: "N-乙酰基对溴苯胺", reaction_type: "取代反应" }
+      { step_number: 7, reactant: "N-乙酰基对甲苯胺", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuBr, △", product: "N-乙酰基对溴苯胺", reaction_type: "取代反应" }
     ]
   },
   {
@@ -725,7 +725,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "邻甲基乙酰苯胺", reagent: "KMnO₄, OH⁻, △", product: "邻乙酰氨基苯甲酸钾", reaction_type: "氧化反应" },
       { step_number: 5, reactant: "邻乙酰氨基苯甲酸钾", reagent: "HCl, H₂O", product: "邻乙酰氨基苯甲酸", reaction_type: "酸碱反应" },
       { step_number: 6, reactant: "邻乙酰氨基苯甲酸", reagent: "HCl, H₂O, △", product: "邻氨基苯甲酸", reaction_type: "水解反应" },
-      { step_number: 7, reactant: "邻氨基苯甲酸", reagent: "NaNO₂, HCl, 0-5°C; (2) CuBr, △", product: "邻溴苯甲酸", reaction_type: "取代反应" }
+      { step_number: 7, reactant: "邻氨基苯甲酸", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuBr, △", product: "邻溴苯甲酸", reaction_type: "取代反应" }
     ]
   },
   {
@@ -811,7 +811,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "乙酰苯胺", reagent: "ClSO₃H, △", product: "对乙酰氨基苯磺酰氯", reaction_type: "取代反应" },
       { step_number: 5, reactant: "对乙酰氨基苯磺酰氯", reagent: "苯胺, NaOH, 0°C", product: "对乙酰氨基苯磺酰苯胺", reaction_type: "取代反应" },
       { step_number: 6, reactant: "对乙酰氨基苯磺酰苯胺", reagent: "HCl, H₂O, △", product: "对氨基苯磺酰苯胺", reaction_type: "水解反应" },
-      { step_number: 7, reactant: "对氨基苯磺酰苯胺", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCl, △", product: "对氯苯磺酰苯胺", reaction_type: "取代反应" }
+      { step_number: 7, reactant: "对氨基苯磺酰苯胺", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuCl, △", product: "对氯苯磺酰苯胺", reaction_type: "取代反应" }
     ]
   },
   {
@@ -856,7 +856,7 @@ const ROUTE_LIBRARY = [
       { step_number: 5, reactant: "对硝基苯甲酰氯", reagent: "LiAlH(OtBu)₃, 无水乙醚, −78°C", product: "对硝基苯甲醇", reaction_type: "还原反应" },
       { step_number: 6, reactant: "对硝基苯甲醇", reagent: "PCC, CH₂Cl₂", product: "对硝基苯甲醛", reaction_type: "氧化反应" },
       { step_number: 7, reactant: "对硝基苯甲醛", reagent: "Fe, HCl, △", product: "对氨基苯甲醛", reaction_type: "还原反应" },
-      { step_number: 8, reactant: "对氨基苯甲醛", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCN, △", product: "对氰基苯甲醛", reaction_type: "取代反应" }
+      { step_number: 8, reactant: "对氨基苯甲醛", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuCN, △", product: "对氰基苯甲醛", reaction_type: "取代反应" }
     ]
   },
   {
@@ -928,7 +928,7 @@ const ROUTE_LIBRARY = [
       { step_number: 3, reactant: "苯甲醇", reagent: "PCC, CH₂Cl₂", product: "苯甲醛", reaction_type: "氧化反应" },
       { step_number: 4, reactant: "苯甲醛", reagent: "浓HNO₃, 浓H₂SO₄", product: "间硝基苯甲醛", reaction_type: "取代反应" },
       { step_number: 5, reactant: "间硝基苯甲醛", reagent: "Fe, HCl, △", product: "间氨基苯甲醛", reaction_type: "还原反应" },
-      { step_number: 6, reactant: "间氨基苯甲醛", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCl, △", product: "间氯苯甲醛", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "间氨基苯甲醛", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) CuCl, △", product: "间氯苯甲醛", reaction_type: "取代反应" },
       { step_number: 7, reactant: "间氯苯甲醛", reagent: "Ag(NH₃)₂OH, △", product: "间氯苯甲酸铵", reaction_type: "氧化反应" },
       { step_number: 8, reactant: "间氯苯甲酸铵", reagent: "HCl, H₂O", product: "间氯苯甲酸", reaction_type: "酸碱反应" }
     ]
@@ -972,7 +972,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "间氨基苯乙酮", reagent: "(CH₃CO)₂O, 吡啶", product: "间乙酰氨基苯乙酮", reaction_type: "取代反应" },
       { step_number: 5, reactant: "间乙酰氨基苯乙酮", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "间乙酰氨基对硝基苯乙酮", reaction_type: "取代反应" },
       { step_number: 6, reactant: "间乙酰氨基对硝基苯乙酮", reagent: "HCl, H₂O, △", product: "间氨基对硝基苯乙酮", reaction_type: "水解反应" },
-      { step_number: 7, reactant: "间氨基对硝基苯乙酮", reagent: "NaNO₂, HCl, 0-5°C; (2) H₃PO₂, H₂O", product: "对硝基苯乙酮", reaction_type: "取代反应" },
+      { step_number: 7, reactant: "间氨基对硝基苯乙酮", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) H₃PO₂, H₂O", product: "对硝基苯乙酮", reaction_type: "取代反应" },
       { step_number: 8, reactant: "对硝基苯乙酮", reagent: "NH₂OH·HCl, NaOAc, △", product: "对硝基苯乙酮肟", reaction_type: "加成反应" }
     ]
   },
@@ -987,7 +987,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "苯甲醛", reagent: "浓HNO₃, 浓H₂SO₄", product: "间硝基苯甲醛", reaction_type: "取代反应" },
       { step_number: 5, reactant: "间硝基苯甲醛", reagent: "Ag(NH₃)₂OH, △", product: "间硝基苯甲酸铵", reaction_type: "氧化反应" },
       { step_number: 6, reactant: "间硝基苯甲酸铵", reagent: "HCl, H₂O", product: "间硝基苯甲酸", reaction_type: "酸碱反应" },
-      { step_number: 7, reactant: "间硝基苯甲酸", reagent: "SOCl₂, △; (2) NH₃, 0°C", product: "间硝基苯甲酰胺", reaction_type: "取代反应" }
+      { step_number: 7, reactant: "间硝基苯甲酸", reagent: "(1) SOCl₂, △; (2) NH₃, 0°C", product: "间硝基苯甲酰胺", reaction_type: "取代反应" }
     ]
   },
   {
@@ -1042,7 +1042,7 @@ const ROUTE_LIBRARY = [
       { step_number: 2, reactant: "硝基苯", reagent: "Fe, HCl, △", product: "苯胺", reaction_type: "还原反应" },
       { step_number: 3, reactant: "苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "苯重氮盐", reaction_type: "取代反应" },
       { step_number: 4, reactant: "苯重氮盐", reagent: "CuCN, △", product: "苯甲腈", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "苯甲腈", reagent: "CH₃MgBr, 无水乙醚; (2) H₂O", product: "苯乙酮", reaction_type: "加成反应" },
+      { step_number: 5, reactant: "苯甲腈", reagent: "(1) CH₃MgBr, 无水乙醚; (2) H₂O", product: "苯乙酮", reaction_type: "加成反应" },
       { step_number: 6, reactant: "苯乙酮", reagent: "Br₂, CH₃COOH, 0°C", product: "α-溴苯乙酮", reaction_type: "取代反应" },
       { step_number: 7, reactant: "α-溴苯乙酮", reagent: "NaN₃, DMF, 0°C", product: "α-叠氮苯乙酮", reaction_type: "取代反应" }
     ]
@@ -1130,7 +1130,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "1-苯基溴乙烷", reagent: "KOH, C₂H₅OH, △", product: "苯乙烯", reaction_type: "消去反应" },
       { step_number: 5, reactant: "苯乙烯", reagent: "Br₂, CCl₄, 0°C", product: "1,2-二溴-1-苯乙烷", reaction_type: "加成反应" },
       { step_number: 6, reactant: "1,2-二溴-1-苯乙烷", reagent: "KOH, C₂H₅OH, △", product: "苯乙炔", reaction_type: "消去反应" },
-      { step_number: 7, reactant: "苯乙炔", reagent: "NaNH₂, NH₃(液); (2) C₆H₅Br, CuI", product: "二苯乙炔", reaction_type: "取代反应" }
+      { step_number: 7, reactant: "苯乙炔", reagent: "(1) NaNH₂, NH₃(液); (2) C₆H₅Br, CuI", product: "二苯乙炔", reaction_type: "取代反应" }
     ]
   },
   {
@@ -1361,7 +1361,7 @@ const ROUTE_LIBRARY = [
       { step_number: 3, reactant: "苯胺", reagent: "(CH₃CO)₂O, △", product: "乙酰苯胺", reaction_type: "取代反应" },
       { step_number: 4, reactant: "乙酰苯胺", reagent: "CH₃COCl, AlCl₃", product: "对乙酰氨基苯乙酮", reaction_type: "取代反应" },
       { step_number: 5, reactant: "对乙酰氨基苯乙酮", reagent: "NaOH, H₂O, △", product: "对氨基苯乙酮", reaction_type: "水解反应" },
-      { step_number: 6, reactant: "对氨基苯乙酮", reagent: "NaNO₂, HCl, 0-5°C; (2) H₂O, △", product: "对羟基苯乙酮", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "对氨基苯乙酮", reagent: "(1) NaNO₂, HCl, 0-5°C; (2) H₂O, △", product: "对羟基苯乙酮", reaction_type: "取代反应" },
       { step_number: 7, reactant: "对羟基苯乙酮", reagent: "NH₂OH·HCl, NaOAc, △", product: "对羟基苯乙酮肟", reaction_type: "加成反应" }
     ]
   },
@@ -1376,7 +1376,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "乙酰乙酸乙酯钠盐", reagent: "C₂H₅Br, △", product: "α-乙基乙酰乙酸乙酯", reaction_type: "取代反应" },
       { step_number: 5, reactant: "α-乙基乙酰乙酸乙酯", reagent: "浓NaOH, H₂O, △", product: "丁酸钠", reaction_type: "水解反应" },
       { step_number: 6, reactant: "丁酸钠", reagent: "(1) HCl, H₂O; (2) C₂H₅OH, 浓H₂SO₄, △", product: "丁酸乙酯", reaction_type: "酯化反应" },
-      { step_number: 7, reactant: "丁酸乙酯", reagent: "NaOH, H₂O, △; (2) HCl", product: "丁酸", reaction_type: "水解反应" }
+      { step_number: 7, reactant: "丁酸乙酯", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "丁酸", reaction_type: "水解反应" }
     ]
   },
   {
@@ -1474,7 +1474,7 @@ const ROUTE_LIBRARY = [
       { step_number: 4, reactant: "2-戊酮", reagent: "NaBH₄, CH₃OH", product: "2-戊醇", reaction_type: "还原反应" },
       { step_number: 5, reactant: "2-戊醇", reagent: "PBr₃, 0°C", product: "2-溴戊烷", reaction_type: "取代反应" },
       { step_number: 6, reactant: "2-溴戊烷", reagent: "Mg, 无水乙醚", product: "2-戊基溴化镁", reaction_type: "加成反应" },
-      { step_number: 7, reactant: "2-戊基溴化镁", reagent: "CH₃CHO, 无水乙醚; (2) H₂O", product: "3-己醇", reaction_type: "加成反应" },
+      { step_number: 7, reactant: "2-戊基溴化镁", reagent: "(1) CH₃CHO, 无水乙醚; (2) H₂O", product: "3-己醇", reaction_type: "加成反应" },
       { step_number: 8, reactant: "3-己醇", reagent: "PCC, CH₂Cl₂", product: "3-己酮", reaction_type: "氧化反应" }
     ]
   },
@@ -1530,7 +1530,7 @@ const ROUTE_LIBRARY = [
     steps: [
       { step_number: 1, reactant: "1,4-丁二醇", reagent: "PBr₃, 0°C", product: "1,4-二溴丁烷", reaction_type: "取代反应" },
       { step_number: 2, reactant: "1,4-二溴丁烷", reagent: "KCN, C₂H₅OH, △", product: "己二腈", reaction_type: "取代反应" },
-      { step_number: 3, reactant: "己二腈", reagent: "NaOH, H₂O, △; (2) HCl", product: "己二酸", reaction_type: "水解反应" },
+      { step_number: 3, reactant: "己二腈", reagent: "(1) NaOH, H₂O, △; (2) HCl", product: "己二酸", reaction_type: "水解反应" },
       { step_number: 4, reactant: "己二酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "己二酸二乙酯", reaction_type: "酯化反应" },
       { step_number: 5, reactant: "己二酸二乙酯", reagent: "NaOEt, C₂H₅OH, △", product: "2-乙氧羰基环戊酮", reaction_type: "缩合反应" },
       { step_number: 6, reactant: "2-乙氧羰基环戊酮", reagent: "NaOH, H₂O, △", product: "2-羧基环戊酮钠", reaction_type: "水解反应" },
