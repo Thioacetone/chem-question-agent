@@ -132,6 +132,12 @@ class QuestionGenerator:
             question_data = self._parse_json_response(raw_response)
             question_data["raw_route"] = route_data
             question_data["generated_by"] = "DeepSeek-Chemistry-Agent-v3.0"
+            
+            # 🔴 提取hidden_structure（结构推断题专用）
+            hidden_structure = question_data.get("hidden_structure")
+            if hidden_structure and hidden_structure != "null" and hidden_structure != "None":
+                question_data["raw_route"]["hidden_structure"] = hidden_structure
+                print(f"  🔍 结构推断题：隐藏化合物 {hidden_structure} 的结构式")
 
             # 检查答案是否包含 {{结构式:...}} 占位符和SMILES有效性
             # 步骤数问题是最高优先级，必须修复
@@ -288,6 +294,7 @@ class QuestionGenerator:
 === 修复指南 ===
 - 第(1)题必须是基础识记题（官能团名称/反应类型/分子式），难度easy，必须指定具体化合物代号
 - 第(2)题必须具体到某步转化（如"写出B→C反应的化学方程式"），若含方程式必须用路线图格式
+- 🔴 结构推断题：若第(2)题为结构推断，必须设置hidden_structure字段为被隐藏的化合物代号（如"D"），且不能隐藏起始原料A
 - 第(3)题必须具体到某步（如"B→C所需的试剂和条件为____"），若含方程式也必须用路线图格式
 - 第(4)题必须是同分异构体题，含3个递进条件（①②③），难度hard
   - ①必须写具体官能团特征反应（如"遇FeCl₃溶液显紫色"），不能泛泛说"含有酚羟基"
@@ -1212,6 +1219,22 @@ class QuestionGenerator:
         # 第2题必须有具体转化
         if not re.search(r'[A-G]→[A-G]|[A-G]转化为[A-G]|由[A-G]制备[A-G]|结构简式|反应类型|副产物|经历.*过程', q2_content):
             warnings.append("【多样性】第(2)题建议指定具体转化步骤（如'D的结构简式为____'、'C→D的反应类型为____'）")
+        
+        # 🔴 结构推断题：检查hidden_structure是否设置
+        if "结构推断" in q2_type or "结构简式" in q2_content:
+            hidden = question_data.get("hidden_structure")
+            if not hidden or hidden == "null" or hidden == "None":
+                issues.append("【严重】第(2)题为结构推断题，但hidden_structure字段未设置。必须设置hidden_structure为被隐藏结构的化合物代号（如'D'）")
+            else:
+                # 检查hidden_structure是否为有效的化合物代号
+                if not re.match(r'^[A-Z]$', hidden):
+                    issues.append(f"【严重】hidden_structure字段值'{hidden}'不是有效的化合物代号（应为单个大写字母如'A''B''C'等）")
+                # 检查隐藏的不能是起始原料A
+                if hidden == "A":
+                    issues.append("【严重】不能隐藏起始原料A的结构，请选择中间产物（如B、C、D等）")
+                # 检查设问中是否包含了hidden_structure对应的化合物
+                if hidden not in q2_content:
+                    warnings.append(f"【多样性】第(2)题设问中未出现被隐藏的化合物{hidden}，建议在设问中明确写出'化合物{hidden}的结构简式为____'")
         
         # === 第3题检查：从5种高频设问中随机选择，与第2题不重复 ===
         q3_type = q_types[2]

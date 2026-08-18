@@ -788,6 +788,7 @@ class StructureRenderer:
     def render_route_diagram_svg(
         steps: List[dict],
         title: str = "",
+        hidden_structure: str = None,
     ) -> str:
         """
         渲染合成路线图 — 严格仿照江苏高考真题格式
@@ -804,6 +805,7 @@ class StructureRenderer:
         - 化合物编号(A/B/C...)在结构正下方，Times New Roman粗体
         - 5步以上自动换2行，行间用竖直箭头连接
         - 结构式紧凑排列，仿真题比例
+        - hidden_structure: 当某题需要推断结构时，隐藏该化合物的结构式，仅显示字母代号
         """
         n = len(steps)
         if n == 0:
@@ -1046,7 +1048,22 @@ class StructureRenderer:
 
                 smiles = step.get("smiles", "")
                 mol = StructureRenderer.smiles_to_mol(smiles) if smiles else None
-                if mol:
+                label = step.get("label", chr(65 + idx))
+                
+                # 🔴 结构推断题：隐藏指定化合物的结构式，仅显示字母代号
+                if hidden_structure and label == hidden_structure:
+                    # 绘制虚线框占位，内部显示字母代号
+                    svg_parts.append(
+                        f'<rect x="{x + 8}" y="{struct_y + 8}" '
+                        f'width="{struct_w - 16}" height="{struct_h - 16}" '
+                        f'fill="none" stroke="#999" stroke-width="1.2" stroke-dasharray="6,3" rx="4"/>'
+                    )
+                    svg_parts.append(
+                        f'<text x="{x + struct_w / 2}" y="{struct_y + struct_h / 2 + 6}" '
+                        f'text-anchor="middle" font-size="28" font-weight="bold" '
+                        f'font-family="Times New Roman,Times,serif" fill="#999">{label}</text>'
+                    )
+                elif mol:
                     svg_content = StructureRenderer._mol_to_svg_content(mol, struct_w, struct_h)
                     svg_parts.append(
                         f'<g transform="translate({x}, {struct_y})">'

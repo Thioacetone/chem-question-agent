@@ -25,6 +25,7 @@ export default function RouteDiagram({ routeData, title = '' }) {
           body: JSON.stringify({
             steps: routeData.steps,
             title: title || routeData.title || '',
+            hidden_structure: routeData.hidden_structure || null,
           }),
         })
         if (!res.ok) {

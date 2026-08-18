@@ -511,6 +511,7 @@ class NameToSmilesRequest(BaseModel):
 class RouteDiagramRequest(BaseModel):
     steps: List[dict] = Field(..., min_length=1, max_length=20, description="合成路线步骤数据")
     title: str = Field("", max_length=200, description="路线标题")
+    hidden_structure: Optional[str] = Field(None, description="结构推断题：隐藏指定化合物的结构式，仅显示字母代号")
 
 
 @app.post("/api/render/svg")
@@ -654,7 +655,7 @@ def render_route_diagram(request: RouteDiagramRequest):
     if len(diagram_steps) < 2:
         raise HTTPException(status_code=400, detail="至少需要2个化合物才能生成路线图")
 
-    svg = renderer.render_route_diagram_svg(diagram_steps, request.title)
+    svg = renderer.render_route_diagram_svg(diagram_steps, request.title, request.hidden_structure)
     if not svg:
         raise HTTPException(status_code=500, detail="路线图渲染失败")
 
