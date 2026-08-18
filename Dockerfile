@@ -6,6 +6,7 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm ci 2>/dev/null || npm install
+# Force cache bust: 2026-08-18-v2
 COPY frontend/ ./
 RUN npm run build
 
