@@ -329,7 +329,7 @@ class QuestionGenerator:
   ✅ 正确：化合物G是某抗炎药物的关键中间体。
   ✅ 正确：化合物H是一种新型香料的主要成分。
 - 题干绝对不能与已知信息重复任何内容！
-- 已知信息必须包含{{{{结构式:SMILES}}}}占位符，格式与路线图一致
+- 已知信息只能出现在第(5)题设问中，答案中不要重复"已知："，解析中不要复述
 - 已知信息的反应不能与题干路线重复
 - 已知信息中的双反应物反应也必须用A→[条件]B格式
 - 同分异构体条件①必须含官能团特征反应，②必须含谱学特征，③必须含结构限制
@@ -876,6 +876,23 @@ class QuestionGenerator:
                     if re.search(r'＋', new_info) or not re.search(r'→\s*\[', new_info):
                         issues.append(f"【严重】已知信息({fix_hint})——双反应物反应禁止A＋B→C格式，第二个反应物必须写入条件方括号内！")
                         break
+
+        # 🔴 已知信息重复检测：已知信息只能在第(5)题设问中出现一次
+        if "new_info" in question_data and question_data["new_info"]:
+            new_info = str(question_data["new_info"])
+            # 检查答案中是否重复了已知信息
+            if "answers" in question_data:
+                for a in question_data["answers"]:
+                    num = a.get("number", "?")
+                    content = str(a.get("content", ""))
+                    if num == 5 and "已知" in content:
+                        issues.append("【严重】第(5)题答案中重复了'已知'信息。已知信息只能出现在第(5)题设问中，答案直接写合成路线即可，不要重复'已知：...'")
+            # 检查解析中是否重复了已知信息
+            analysis = str(question_data.get("analysis", ""))
+            if "已知" in analysis and "→" in analysis:
+                # 检查是否在复述已知信息反应式
+                if re.search(r'已知.*→.*\[', analysis):
+                    issues.append("【严重】解析中重复了已知信息。已知信息只能出现在第(5)题设问中，解析中不要复述")
 
         # 检查第2题答案是否使用路线图格式
         if "answers" in question_data:
