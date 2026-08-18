@@ -8,13 +8,14 @@ import InlineStructure from './InlineStructure.jsx'
  */
 export default function RouteLibraryPage({ onRouteSelect }) {
   const [hoveredId, setHoveredId] = useState(null)
-  const [filter, setFilter] = useState('all') // all | 7 | 8 | 9 | 10
+  const [filter, setFilter] = useState('all')
 
   const filteredRoutes = filter === 'all'
     ? ROUTE_LIBRARY
     : ROUTE_LIBRARY.filter(r => r.steps.length === parseInt(filter))
 
-  const stepCounts = [7, 8, 9, 10]
+  // 动态计算步数分布
+  const stepCounts = [...new Set(ROUTE_LIBRARY.map(r => r.steps.length))].sort()
   const counts = {}
   stepCounts.forEach(n => {
     counts[n] = ROUTE_LIBRARY.filter(r => r.steps.length === n).length
