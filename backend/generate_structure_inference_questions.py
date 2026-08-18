@@ -180,6 +180,10 @@ for i, route in enumerate(selected_routes[:MAX_QUESTIONS]):
 - 方程式使用→[条件]格式，条件写在箭头上方方括号内
 - 化学结构式用{{{{结构式:SMILES}}}}占位符
 
+【解析 analysis】
+- 🔴 解析中绝对不能出现"已知"二字！禁止写"利用已知信息""运用已知的XX反应""已知的XX"等任何含"已知"的表述
+- 解析只分析各小题考查的知识点和解题思路，不提及已知信息
+
 === 输出JSON格式 ===
 {{
   "target_compound": "目标化合物及用途",
@@ -197,10 +201,10 @@ for i, route in enumerate(selected_routes[:MAX_QUESTIONS]):
     {{"number": 2, "content": "第(2)题答案（{hidden_structure}的结构简式）"}},
     {{"number": 3, "content": "第(3)题完整答案"}},
     {{"number": 4, "content": "第(4)题完整答案"}},
-    {{"number": 5, "content": "第(5)题答案（5-7步合成路线，→[条件]格式，不含'已知：'）"}}
+    {{"number": 5, "content": "第(5)题答案（5-7步合成路线，→[条件]格式，绝对不能出现'已知'二字）"}}
   ],
   "new_info": "第(5)题已知信息（含具体反应方程式）",
-  "analysis": "试题解析（不含已知信息）"
+  "analysis": "试题解析（绝对不能出现'已知'二字，只分析考查知识点和解题思路）"
 }}
 
 合成路线如下：
