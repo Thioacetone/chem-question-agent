@@ -71,20 +71,6 @@ const ROUTE_LIBRARY = [
   },
   {
     id: 6,
-    title: "二苯甲酮合成路线",
-    desc: "苯 → 二苯甲酮（7步），溴代→Grignard试剂→Friedel-Crafts酰化→卤仿反应→酰氯化→Friedel-Crafts，经典光引发剂合成",
-    steps: [
-      { step_number: 1, reactant: "苯", reagent: "Br₂, FeBr₃", product: "溴苯", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "溴苯", reagent: "Mg, 无水乙醚", product: "苯基溴化镁", reaction_type: "加成反应" },
-      { step_number: 3, reactant: "苯", reagent: "CH₃COCl, AlCl₃", product: "苯乙酮", reaction_type: "取代反应" },
-      { step_number: 4, reactant: "苯乙酮", reagent: "Br₂, NaOH, △", product: "苯甲酸钠", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "苯甲酸钠", reagent: "HCl, H₂O", product: "苯甲酸", reaction_type: "酸碱反应" },
-      { step_number: 6, reactant: "苯甲酸", reagent: "SOCl₂, △", product: "苯甲酰氯", reaction_type: "取代反应" },
-      { step_number: 7, reactant: "苯甲酰氯", reagent: "苯基溴化镁, 无水乙醚, −78°C; (2) H₂O", product: "二苯甲酮", reaction_type: "加成反应" }
-    ]
-  },
-  {
-    id: 7,
     title: "己二酸二甲酯合成路线",
     desc: "环己醇 → 己二酸二甲酯（7步），消去→环氧化→水解→氧化断裂→酸化→酰氯化→酯化，经典尼龙单体合成变体",
     steps: [
@@ -98,7 +84,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 8,
+    id: 7,
     title: "对硝基苯乙醚合成路线",
     desc: "苯 → 对硝基苯乙醚（7步），硝化→还原→乙酰化保护→硝化→脱保护→重氮化水解→Williamson醚化，经典对位硝基芳醚合成",
     steps: [
@@ -112,7 +98,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 9,
+    id: 8,
     title: "对硝基苯甲腈合成路线",
     desc: "苯 → 对硝基苯胺（7步），硝化→还原→乙酰化保护→硝化→水解→重氮化→Sandmeyer氰化，经典硝基芳胺合成",
     steps: [
@@ -126,7 +112,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 10,
+    id: 9,
     title: "6-羧基香豆素甲酯合成路线",
     desc: "苯酚 → 6-羧基香豆素甲酯（8步），Reimer-Tiemann甲酰化→Perkin缩合→内酯化→硝化→还原→重氮化/Sandmeyer氰化→水解→酯化，经典香豆素衍生物全合成",
     steps: [
@@ -141,7 +127,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 11,
+    id: 10,
     title: "对甲氧基苯甲酸甲酯合成路线",
     desc: "甲苯 → 对甲氧基苯甲酸甲酯（7步），磺化→碱熔→甲基化保护→氧化→酸化→酯化，经典茴香酸酯合成",
     steps: [
@@ -155,7 +141,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 12,
+    id: 11,
     title: "肉桂醛合成路线",
     desc: "苯甲醛 → 肉桂醛（7步），Knoevenagel缩合→酰氯化→酯化→溴代→消除→Na/NH₃还原→DIBAL-H选择性还原，经典α,β-不饱和醛合成",
     steps: [
@@ -169,7 +155,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 13,
+    id: 12,
     title: "戊二酸合成路线",
     desc: "环戊酮 → 戊二酸（7步），Baeyer-Villiger氧化→水解→酯化→还原→卤代→腈化→水解，经典二羧酸合成策略",
     steps: [
@@ -183,7 +169,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 14,
+    id: 13,
     title: "3-苯基丁酸合成路线",
     desc: "苯 → 3-苯基丁酸（8步），Friedel-Crafts酰化→还原→卤代→Grignard→甲醛加成→卤代→腈化→水解，经典苯基取代丁酸合成",
     steps: [
@@ -198,7 +184,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 15,
+    id: 14,
     title: "对羧基苯甲酸合成路线",
     desc: "甲苯 → 对羧基苯甲酸（7步），硝化→氧化→酯化→还原→重氮化/Sandmeyer氰化→水解→酸化，经典对苯二甲酸单酯前体合成",
     steps: [
@@ -212,7 +198,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 16,
+    id: 15,
     title: "对溴苯甲酸甲酯合成路线",
     desc: "甲苯 → 对溴苯甲酸甲酯（7步），硝化→氧化→酸化→还原→重氮化/Sandmeyer溴代→酰氯化→酯化，经典对溴苯甲酸酯合成",
     steps: [
@@ -226,7 +212,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 17,
+    id: 16,
     title: "苯甲酰苯胺合成路线",
     desc: "苯 → 苯甲酰苯胺（7步），Friedel-Crafts酰化→卤仿→酸化→酰氯化→酰胺化→Hofmann重排→Schotten-Baumann，经典芳酰胺合成",
     steps: [
@@ -240,7 +226,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 18,
+    id: 17,
     title: "对羟基苯甲醛合成路线",
     desc: "苯酚 → 对羟基苯甲醛（7步），甲基化保护→Friedel-Crafts酰化→卤仿反应→酰氯化→选择性还原→脱甲基，经典对位羟基芳醛合成",
     steps: [
@@ -254,7 +240,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 19,
+    id: 18,
     title: "苯丙酸合成路线",
     desc: "甲苯 → 苯丙酸（7步），自由基卤代→腈化→水解→酯化→还原→卤代→Grignard羧化，经典芳基链酸合成",
     steps: [
@@ -268,7 +254,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 20,
+    id: 19,
     title: "对氯苯磺酸合成路线",
     desc: "苯 → 对氯苯磺酸（8步），磺化→酰氯化→酰胺化→硝化→还原→重氮化/Sandmeyer氯代→水解→酸化，经典对氯苯磺酸合成",
     steps: [
@@ -283,22 +269,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 21,
-    title: "二苯乙酸合成路线",
-    desc: "甲苯/苯 → 二苯乙酸（8步），自由基卤代→水解→氧化→溴代→Grignard→加成→卤代→腈化水解，经典二苯乙酸合成",
-    steps: [
-      { step_number: 1, reactant: "甲苯", reagent: "Cl₂, 光照", product: "苄基氯", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "苄基氯", reagent: "NaOH, H₂O, △", product: "苯甲醇", reaction_type: "取代反应" },
-      { step_number: 3, reactant: "苯甲醇", reagent: "PCC, CH₂Cl₂", product: "苯甲醛", reaction_type: "氧化反应" },
-      { step_number: 4, reactant: "苯", reagent: "Br₂, FeBr₃", product: "溴苯", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "溴苯", reagent: "Mg, 无水乙醚", product: "苯基溴化镁", reaction_type: "加成反应" },
-      { step_number: 6, reactant: "苯基溴化镁", reagent: "苯甲醛, 无水乙醚; (2) H₂O", product: "二苯甲醇", reaction_type: "加成反应" },
-      { step_number: 7, reactant: "二苯甲醇", reagent: "PBr₃, 0°C", product: "二苯溴甲烷", reaction_type: "取代反应" },
-      { step_number: 8, reactant: "二苯溴甲烷", reagent: "(1) KCN, C₂H₅OH, △; (2) NaOH, H₂O, △; (3) HCl", product: "二苯乙酸", reaction_type: "取代反应" }
-    ]
-  },
-  {
-    id: 22,
+    id: 20,
     title: "3-氨基吲哚合成路线",
     desc: "苯胺 → 吲哚（8步），重氮化→还原→Fischer吲哚合成，经典含氮杂环合成",
     steps: [
@@ -313,7 +284,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 23,
+    id: 21,
     title: "苯并呋喃-2-甲酸甲酯合成路线",
     desc: "苯酚 → 苯并呋喃（8步），O-烷基化→Claisen重排→臭氧化→环化脱水，经典苯并杂环合成",
     steps: [
@@ -328,7 +299,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 24,
+    id: 22,
     title: "对羟基苯甲酸合成路线",
     desc: "苯 → 对羟基苯甲酸（8步），硝化→还原→乙酰化保护→Friedel-Crafts酰化→脱保护→重氮化水解→Williamson醚化→卤仿/酸化，经典对羟基苯甲酸合成",
     steps: [
@@ -343,21 +314,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 25,
-    title: "对溴苯甲酸甲酯合成路线",
-    desc: "甲苯 → 对溴苯甲酸甲酯（7步），硝化→还原→重氮化→Sandmeyer溴代→氧化→酰氯化→酯化，经典对溴苯甲酸酯合成",
-    steps: [
-      { step_number: 1, reactant: "甲苯", reagent: "浓HNO₃, 浓H₂SO₄", product: "对硝基甲苯", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "对硝基甲苯", reagent: "Fe, HCl", product: "对氨基甲苯", reaction_type: "还原反应" },
-      { step_number: 3, reactant: "对氨基甲苯", reagent: "NaNO₂, HCl, 0-5°C", product: "对甲苯重氮盐", reaction_type: "取代反应" },
-      { step_number: 4, reactant: "对甲苯重氮盐", reagent: "CuBr, △", product: "对溴甲苯", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "对溴甲苯", reagent: "KMnO₄, OH⁻, △", product: "对溴苯甲酸钾", reaction_type: "氧化反应" },
-      { step_number: 6, reactant: "对溴苯甲酸钾", reagent: "HCl, H₂O", product: "对溴苯甲酸", reaction_type: "酸碱反应" },
-      { step_number: 7, reactant: "对溴苯甲酸", reagent: "(1) SOCl₂, △; (2) CH₃OH, 吡啶", product: "对溴苯甲酸甲酯", reaction_type: "取代反应" }
-    ]
-  },
-  {
-    id: 26,
+    id: 23,
     title: "N-乙酰扁桃酰胺合成路线",
     desc: "苯甲醛 → N-乙酰扁桃酰胺（7步），氰醇化→水解→酯化→酰胺化→脱水→还原→乙酰化，经典α-羟基酰胺衍生物合成",
     steps: [
@@ -371,7 +328,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 27,
+    id: 24,
     title: "对氯苯甲酸合成路线",
     desc: "苯→对氯苯甲酸(7步)，FC烷基化→硝化→还原→重氮化→Sandmeyer氯代→KMnO₄氧化→酸化，经典对位取代苯甲酸合成",
     steps: [
@@ -385,7 +342,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 28,
+    id: 25,
     title: "苯甲酸乙酯合成路线",
     desc: "苯→苯甲酸乙酯(7步)，FC烷基化→自由基卤代→水解→氧化→酸化→酰氯化→酯化，经典芳香酯合成",
     steps: [
@@ -399,21 +356,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 29,
-    title: "对羟基苯甲酸合成路线",
-    desc: "苯酚→对羟基苯甲酸(7步)，Williamson醚化→FC烷基化→自由基卤代→水解→KMnO₄氧化→酸化→HI醚键断裂，经典酚酸合成",
-    steps: [
-      { step_number: 1, reactant: "苯酚", reagent: "CH₃I, K₂CO₃, DMF", product: "苯甲醚", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "苯甲醚", reagent: "CH₃Cl, AlCl₃, △", product: "对甲基苯甲醚", reaction_type: "取代反应" },
-      { step_number: 3, reactant: "对甲基苯甲醚", reagent: "Cl₂, 光照", product: "对氯甲基苯甲醚", reaction_type: "取代反应" },
-      { step_number: 4, reactant: "对氯甲基苯甲醚", reagent: "NaOH, H₂O, △", product: "对甲氧基苯甲醇", reaction_type: "水解反应" },
-      { step_number: 5, reactant: "对甲氧基苯甲醇", reagent: "KMnO₄, OH⁻, △", product: "对甲氧基苯甲酸钾", reaction_type: "氧化反应" },
-      { step_number: 6, reactant: "对甲氧基苯甲酸钾", reagent: "HCl, H₂O", product: "对甲氧基苯甲酸", reaction_type: "酸碱反应" },
-      { step_number: 7, reactant: "对甲氧基苯甲酸", reagent: "HI, △", product: "对羟基苯甲酸", reaction_type: "取代反应" }
-    ]
-  },
-  {
-    id: 30,
+    id: 26,
     title: "苯甲酰氯合成路线",
     desc: "苯→苯甲酰氯(7步)，FC烷基化→自由基卤代→水解→PCC氧化→KMnO₄氧化→酸化→SOCl₂酰氯化，经典酰氯合成",
     steps: [
@@ -427,7 +370,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 31,
+    id: 27,
     title: "苯甲酸丙酯合成路线",
     desc: "苯→苯甲酸丙酯(7步)，FC烷基化→自由基卤代→水解→氧化→酸化→酰氯化→丙醇酯化，经典芳香酯合成",
     steps: [
@@ -441,7 +384,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 32,
+    id: 28,
     title: "对硝基苯甲酸甲酯合成路线",
     desc: "甲苯→对硝基苯甲酸甲酯(7步)，硝化→自由基卤代→水解→KMnO₄氧化→酸化→酯化，经典硝基芳香酯合成",
     steps: [
@@ -455,7 +398,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 33,
+    id: 29,
     title: "对苯二甲酸单甲酯合成路线",
     desc: "对二甲苯→对苯二甲酸单甲酯(8步)，自由基卤代→水解→PCC氧化→银镜反应→酸化→酯化→KMnO₄氧化→酸化，经典对苯二甲酸单酯合成",
     steps: [
@@ -470,7 +413,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 34,
+    id: 30,
     title: "对甲氧基苯甲酰氯合成路线",
     desc: "苯酚→对甲氧基苯甲酰氯(8步)，Williamson醚化→FC烷基化→自由基卤代→水解→PCC氧化→银镜反应→酸化→SOCl₂酰氯化，经典对位取代芳香酰氯合成",
     steps: [
@@ -485,7 +428,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 35,
+    id: 31,
     title: "苯乙酸乙酯合成路线",
     desc: "苯→苯乙酸乙酯(7步)，FC烷基化→自由基卤代→氰基取代→水解→酰氯化→酯化→氨解，经典苯乙酸酯合成",
     steps: [
@@ -499,7 +442,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 36,
+    id: 32,
     title: "间溴苯甲酸合成路线",
     desc: "苯→间溴苯甲酸(8步)，FC烷基化→自由基卤代→水解→氧化→酸化→硝化→还原→重氮化+Sandmeyer溴代，经典间位取代苯甲酸合成",
     steps: [
@@ -514,7 +457,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 37,
+    id: 33,
     title: "对氨基苯甲酸甲酯合成路线",
     desc: "甲苯→对氨基苯甲酸甲酯(8步)，硝化→自由基卤代→水解→KMnO₄氧化→酸化→酰氯化→酯化→Fe/HCl还原，经典PABA甲酯合成",
     steps: [
@@ -529,7 +472,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 38,
+    id: 34,
     title: "邻氯苯甲酸甲酯合成路线",
     desc: "苯胺→邻氯苯甲酸甲酯(7步)，乙酰化保护→邻位氯代→水解→重氮化→Sandmeyer氰化→水解→酯化，经典邻位取代苯甲酸酯合成",
     steps: [
@@ -543,7 +486,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 39,
+    id: 35,
     title: "对甲基苯甲酸乙酯合成路线",
     desc: "对二甲苯→对甲基苯甲酸乙酯(8步)，自由基卤代→水解→PCC氧化→银镜反应→酸化→酰氯化→甲醇酯化→酯交换，经典对位甲基芳香酯合成",
     steps: [
@@ -558,7 +501,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 40,
+    id: 36,
     title: "间苯二甲酸合成路线",
     desc: "间二甲苯→间苯二甲酸(8步)，自由基卤代→水解→PCC氧化→银镜反应→酸化→酯化保护→KMnO₄氧化→水解酸化，经典苯二甲酸合成",
     steps: [
@@ -573,7 +516,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 41,
+    id: 37,
     title: "肉桂酸乙酯合成路线",
     desc: "苯→肉桂酸乙酯(8步)，FC烷基化→自由基卤代→水解→PCC氧化→羟醛缩合→银镜反应→酸化→酯化，经典α,β-不饱和芳香酯合成",
     steps: [
@@ -588,7 +531,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 42,
+    id: 38,
     title: "对乙酰氨基苯甲酸合成路线",
     desc: "甲苯→对乙酰氨基苯甲酸(8步)，硝化→自由基卤代→水解→Fe/HCl还原→乙酰化保护→PCC氧化→银镜反应→酸化，经典对乙酰氨基苯甲酸合成",
     steps: [
@@ -603,7 +546,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 43,
+    id: 39,
     title: "对乙酰基苯甲腈合成路线",
     desc: "苯→对乙酰基苯甲腈(7步)，硝化→还原→乙酰化保护→FC酰基化→水解→重氮化→Sandmeyer氰化，经典对位氰基芳酮合成",
     steps: [
@@ -617,7 +560,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 44,
+    id: 40,
     title: "对甲苯胺合成路线",
     desc: "甲苯→对甲苯胺(7步)，硝化→还原→乙酰化→氧化→酸化→还原→脱保护，经典甲基苯胺合成",
     steps: [
@@ -631,7 +574,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 45,
+    id: 41,
     title: "间溴硝基苯合成路线",
     desc: "苯→间溴硝基苯(7步)，硝化→还原→乙酰化→硝化→水解脱保护→重氮化→Sandmeyer溴代，利用乙酰氨基的间位定位效应",
     steps: [
@@ -645,7 +588,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 46,
+    id: 42,
     title: "N-甲基对溴苯胺合成路线",
     desc: "苯→N-甲基对溴苯胺(7步)，硝化→还原→乙酰化→N-甲基化→水解→重氮化→Sandmeyer溴代，经典对溴-N-甲基苯胺合成",
     steps: [
@@ -659,7 +602,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 47,
+    id: 43,
     title: "邻氯溴苯合成路线",
     desc: "苯→邻氯溴苯(7步)，硝化→还原→乙酰化→邻位氯化→水解→重氮化→Sandmeyer溴代，利用乙酰氨基的邻对位定位效应",
     steps: [
@@ -673,21 +616,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 48,
-    title: "对羟基苯甲酸合成路线",
-    desc: "苯→对羟基苯甲酸(7步)，硝化→还原→重氮化→水解→亚硝化→还原→重氮化/Sandmeyer氰化→水解，经苯酚中间体的对位亚硝化策略",
-    steps: [
-      { step_number: 1, reactant: "苯", reagent: "浓HNO₃, 浓H₂SO₄", product: "硝基苯", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "硝基苯", reagent: "Fe, HCl, △", product: "苯胺", reaction_type: "还原反应" },
-      { step_number: 3, reactant: "苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "苯重氮盐", reaction_type: "取代反应" },
-      { step_number: 4, reactant: "苯重氮盐", reagent: "H₂O, △", product: "苯酚", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "苯酚", reagent: "NaNO₂, HCl, 0-5°C", product: "对亚硝基苯酚", reaction_type: "取代反应" },
-      { step_number: 6, reactant: "对亚硝基苯酚", reagent: "Na₂S₂O₄, NaOH, H₂O", product: "对氨基苯酚", reaction_type: "还原反应" },
-      { step_number: 7, reactant: "对氨基苯酚", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCN, △; (3) NaOH, H₂O, △; (4) HCl", product: "对羟基苯甲酸", reaction_type: "取代反应" }
-    ]
-  },
-  {
-    id: 49,
+    id: 44,
     title: "对溴碘苯合成路线",
     desc: "苯→对溴碘苯(7步)，硝化→还原→乙酰化→溴化→水解→重氮化→Sandmeyer碘代，乙酰氨基定位的对位溴代策略",
     steps: [
@@ -701,7 +630,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 50,
+    id: 45,
     title: "对硝基溴苯合成路线",
     desc: "苯→对硝基溴苯(7步)，硝化→还原→乙酰化→硝化→水解→重氮化→Sandmeyer溴代，利用乙酰氨基定位的二次硝化",
     steps: [
@@ -715,21 +644,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 51,
-    title: "对氯苯磺酸合成路线",
-    desc: "苯→对氯苯磺酸(7步)，硝化→还原→乙酰化→氯磺化→水解→重氮化→Sandmeyer氯代，经乙酰苯胺氯磺化策略",
-    steps: [
-      { step_number: 1, reactant: "苯", reagent: "浓HNO₃, 浓H₂SO₄", product: "硝基苯", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "硝基苯", reagent: "Fe, HCl, △", product: "苯胺", reaction_type: "还原反应" },
-      { step_number: 3, reactant: "苯胺", reagent: "(CH₃CO)₂O, 吡啶", product: "乙酰苯胺", reaction_type: "取代反应" },
-      { step_number: 4, reactant: "乙酰苯胺", reagent: "ClSO₃H, △", product: "对乙酰氨基苯磺酰氯", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "对乙酰氨基苯磺酰氯", reagent: "H₂O, △", product: "对乙酰氨基苯磺酸", reaction_type: "水解反应" },
-      { step_number: 6, reactant: "对乙酰氨基苯磺酸", reagent: "HCl, H₂O, △", product: "对氨基苯磺酸", reaction_type: "水解反应" },
-      { step_number: 7, reactant: "对氨基苯磺酸", reagent: "NaNO₂, HCl, 0-5°C; (2) CuCl, △", product: "对氯苯磺酸", reaction_type: "取代反应" }
-    ]
-  },
-  {
-    id: 52,
+    id: 46,
     title: "苯肼合成路线",
     desc: "苯→苯肼(7步)，硝化→还原→重氮化→还原→乙酰化→硝化→还原，经典重氮盐还原法",
     steps: [
@@ -743,7 +658,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 53,
+    id: 47,
     title: "对二溴苯合成路线",
     desc: "苯→对二溴苯(7步)，硝化→还原→乙酰化→硝化→水解→还原→重氮化/Sandmeyer溴代，经典对二卤代苯合成",
     steps: [
@@ -757,7 +672,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 54,
+    id: 48,
     title: "对氰基苯甲酰胺合成路线",
     desc: "甲苯→对氰基苯甲酰胺(7步)，硝化→氧化→酸化→酰氯化→酰胺化→还原→重氮化/Sandmeyer氰化，PABA衍生物合成",
     steps: [
@@ -771,7 +686,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 55,
+    id: 49,
     title: "2,4-二甲基苯胺合成路线",
     desc: "间二甲苯→2,4-二甲基苯胺(8步)，硝化→还原→重氮化→Sandmeyer氰化→水解→酰氯化→酰胺化→Hofmann重排，巧妙利用Hofmann重排循环",
     steps: [
@@ -786,7 +701,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 56,
+    id: 50,
     title: "N-乙酰基对溴苯胺合成路线",
     desc: "甲苯→N-乙酰基对溴苯胺(7步)，硝化→还原→重氮化→水解→Bucherer胺化→乙酰化→重氮化/Sandmeyer溴代，经酚中间体Bucherer胺化策略",
     steps: [
@@ -800,7 +715,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 57,
+    id: 51,
     title: "邻溴苯甲酸合成路线",
     desc: "甲苯→邻溴苯甲酸(7步)，硝化→还原→乙酰化→KMnO₄氧化→酸化→水解脱保护→重氮化/Sandmeyer溴代，利用乙酰基保护氨基的氧化策略",
     steps: [
@@ -814,7 +729,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 58,
+    id: 52,
     title: "对氨基苯甲腈合成路线",
     desc: "甲苯→对氨基苯甲腈(7步)，硝化→氧化→酸化→酰氯化→酰胺化→脱水→还原，经酰胺脱水的腈基引入策略",
     steps: [
@@ -828,7 +743,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 59,
+    id: 53,
     title: "对溴-4′-硝基偶氮苯合成路线",
     desc: "苯→对溴-4′-硝基偶氮苯(7步)，硝化→还原→重氮化→偶合→重氮化→Sandmeyer溴代→硝化，重氮偶合与Sandmeyer策略",
     steps: [
@@ -842,7 +757,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 60,
+    id: 54,
     title: "对溴苯乙酸合成路线",
     desc: "甲苯→对溴苯乙酸(7步)，硝化→自由基卤代→腈化→水解→还原→重氮化→Sandmeyer溴代，硝基保护下的侧链延伸策略",
     steps: [
@@ -856,7 +771,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 61,
+    id: 55,
     title: "间氨基苯酚合成路线",
     desc: "苯→间氨基苯酚(8步)，硝化→还原→重氮化→水解→磺化→硝化→碱熔→还原，经磺化碱熔的间位定位策略",
     steps: [
@@ -871,7 +786,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 62,
+    id: 56,
     title: "对氨基-N,N-二甲基苯胺合成路线",
     desc: "苯→对氨基-N,N-二甲基苯胺(8步)，硝化→还原→重氮化→Sandmeyer氯代→硝化→还原→N,N-二甲基化→氨解，经对氯硝基苯策略",
     steps: [
@@ -886,7 +801,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 63,
+    id: 57,
     title: "对氯苯磺酰苯胺合成路线",
     desc: "苯→对氯苯磺酰苯胺(7步)，硝化→还原→乙酰化→氯磺化→Schotten-Baumann酰胺化→水解→重氮化/Sandmeyer氯代，磺胺类衍生物合成",
     steps: [
@@ -900,7 +815,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 64,
+    id: 58,
     title: "对溴偶氮苯合成路线",
     desc: "苯→对溴偶氮苯(8步)，硝化→还原→重氮化→偶合→重氮化→Sandmeyer溴代→纯化→纯化，经典偶氮染料中间体合成",
     steps: [
@@ -915,7 +830,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 65,
+    id: 59,
     title: "邻氨基苯甲酰胺合成路线",
     desc: "甲苯→邻氨基苯甲酰胺(8步)，硝化→还原→乙酰化→KMnO₄氧化→酸化→水解脱保护→酰氯化→酰胺化，经典邻位取代苯甲酰胺合成",
     steps: [
@@ -930,7 +845,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 66,
+    id: 60,
     title: "对氰基苯甲醛合成路线",
     desc: "甲苯→对氰基苯甲醛(8步)，硝化→氧化→酸化→酰氯化→LiAlH₄还原→PCC氧化→还原→重氮化/Sandmeyer氰化，经对硝基苯甲酰氯部分还原策略",
     steps: [
@@ -945,7 +860,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 67,
+    id: 61,
     title: "苯磺酰胺合成路线",
     desc: "苯→苯磺酰胺(8步)，硝化→还原→乙酰化→氯磺化→酰胺化→水解脱保护→重氮化→脱氨基，经对氨基苯磺酰胺脱氨基的经典策略",
     steps: [
@@ -960,7 +875,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 68,
+    id: 62,
     title: "对溴苯乙酸乙酯合成路线",
     desc: "甲苯→对溴苯乙酸乙酯(8步)，硝化→自由基卤代→腈化→水解→酯化→还原→重氮化→Sandmeyer溴代，侧链延伸与氨基保护策略",
     steps: [
@@ -975,7 +890,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 69,
+    id: 63,
     title: "水杨醛合成路线",
     desc: "苯→水杨醛(7步)，硝化→还原→重氮化→水解→Reimer-Tiemann→加成→酸化，经典邻羟基芳醛合成",
     steps: [
@@ -989,7 +904,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 70,
+    id: 64,
     title: "4,4′-二甲基二苯甲酮肟合成路线",
     desc: "甲苯→4,4′-二甲基二苯甲酮肟(8步)，硝化→还原→重氮化→Sandmeyer氰化→水解→酰氯化→FC酰基化→肟化，经典甲基二苯甲酮肟合成",
     steps: [
@@ -1004,7 +919,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 71,
+    id: 65,
     title: "邻氯苯甲酸合成路线",
     desc: "甲苯→邻氯苯甲酸(8步)，自由基卤代→水解→PCC氧化→硝化→还原→重氮化/Sandmeyer氯代→银镜反应→酸化，经典邻位氯代苯甲酸合成",
     steps: [
@@ -1019,7 +934,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 72,
+    id: 66,
     title: "α-叠氮苯丙酮合成路线",
     desc: "苯→α-叠氮苯丙酮(7步)，FC酰基化→卤仿→酸化→酰氯化→Grignard加成→α-溴代→叠氮取代，经典α-叠氮芳酮合成",
     steps: [
@@ -1033,7 +948,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 73,
+    id: 67,
     title: "对甲氧基苯乙酮肟合成路线",
     desc: "苯酚→对甲氧基苯乙酮肟(7步)，Williamson醚化→FC酰基化→卤仿→酸化→酰氯化→Grignard→肟化，经典对甲氧基芳酮肟合成",
     steps: [
@@ -1047,7 +962,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 74,
+    id: 68,
     title: "对硝基苯乙酮肟合成路线",
     desc: "苯→对硝基苯乙酮肟(8步)，FC酰基化→硝化→还原→乙酰化→硝化→水解→重氮化→脱氨基→肟化，利用乙酰氨基定位的对位硝化策略",
     steps: [
@@ -1062,7 +977,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 75,
+    id: 69,
     title: "间硝基苯甲酸合成路线",
     desc: "甲苯→间硝基苯甲酸(7步)，自由基卤代→水解→PCC氧化→硝化(间位)→银镜反应→酸化→纯化，利用甲酰基间位定位效应",
     steps: [
@@ -1076,7 +991,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 76,
+    id: 70,
     title: "对羟基苯丙酮肟合成路线",
     desc: "苯酚→对羟基苯丙酮肟(8步)，Williamson醚化→FC酰基化→卤仿→酸化→酰氯化→Grignard→醚键断裂→肟化，经典对羟基芳酮肟合成",
     steps: [
@@ -1091,7 +1006,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 77,
+    id: 71,
     title: "α-叠氮苯丁酮合成路线",
     desc: "苯→α-叠氮苯丁酮(7步)，FC酰基化→卤仿→酸化→酰氯化→Grignard加成→α-溴代→叠氮取代，经典α-叠氮芳酮合成",
     steps: [
@@ -1105,7 +1020,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 78,
+    id: 72,
     title: "对羟基苯丙酮合成路线",
     desc: "苯酚→对羟基苯丙酮(7步)，Williamson醚化→FC酰基化→卤仿→酸化→酰氯化→Grignard→醚键断裂，经典对羟基芳酮合成",
     steps: [
@@ -1119,7 +1034,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 79,
+    id: 73,
     title: "α-叠氮苯乙酮合成路线",
     desc: "苯→α-叠氮苯乙酮(7步)，硝化→还原→重氮化→Sandmeyer氰化→甲基Grignard加成→α-溴代→叠氮取代，经典α-叠氮芳酮合成",
     steps: [
@@ -1133,7 +1048,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 80,
+    id: 74,
     title: "间甲基苯甲醛合成路线",
     desc: "间二甲苯→间甲基苯甲醛(8步)，自由基卤代→水解→PCC氧化→加成→酸化→氧化→酸化→Rosenmund还原，经典间位甲基芳醛合成",
     steps: [
@@ -1148,7 +1063,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 81,
+    id: 75,
     title: "4-羟基二苯甲酮肟合成路线",
     desc: "苯酚→4-羟基二苯甲酮肟(8步)，Williamson醚化→FC酰基化→卤仿→酸化→酰氯化→FC酰基化→醚键断裂→肟化，经典羟基二苯甲酮肟合成",
     steps: [
@@ -1163,7 +1078,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 82,
+    id: 76,
     title: "α-叠氮对甲氧基苯丙酮合成路线",
     desc: "苯甲醚→α-叠氮对甲氧基苯丙酮(7步)，FC酰基化→卤仿→酸化→酰氯化→Grignard加成→α-溴代→叠氮取代，经典对甲氧基α-叠氮芳酮合成",
     steps: [
@@ -1177,7 +1092,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 83,
+    id: 77,
     title: "α-叠氮对溴苯乙酮合成路线",
     desc: "苯→α-叠氮对溴苯乙酮(7步)，硝化→还原→重氮化→Sandmeyer溴代→FC酰基化→α-溴代→叠氮取代，经典对溴α-叠氮芳酮合成",
     steps: [
@@ -1191,7 +1106,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 84,
+    id: 78,
     title: "4-甲基二苯甲酮合成路线",
     desc: "甲苯→4-甲基二苯甲酮(7步)，硝化→还原→重氮化→Sandmeyer氰化→水解→酰氯化→FC酰基化，经典不对称甲基二苯甲酮合成",
     steps: [
@@ -1205,7 +1120,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 85,
+    id: 79,
     title: "二苯乙炔合成路线",
     desc: "苯→二苯乙炔(7步)，FC酰基化→还原→卤代→消去→溴代→消去→纯化，经二苯乙烯二溴化的经典二苯乙炔合成",
     steps: [
@@ -1219,7 +1134,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 86,
+    id: 80,
     title: "4-溴-4′-甲基二苯甲酮肟合成路线",
     desc: "甲苯→4-溴-4′-甲基二苯甲酮肟(8步)，硝化→还原→重氮化→Sandmeyer氰化→水解→酰氯化→FC酰基化→肟化，经典不对称卤代二苯甲酮肟合成",
     steps: [
@@ -1234,7 +1149,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 87,
+    id: 81,
     title: "N-苯甲酰甲基乙酰胺合成路线",
     desc: "苯→N-苯甲酰甲基乙酰胺(7步)，FC酰基化→α-溴代→Gabriel胺化→水解→乙酰化→硝化→还原，经典α-氨基酮衍生物合成",
     steps: [
@@ -1248,7 +1163,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 88,
+    id: 82,
     title: "对苯二酚合成路线",
     desc: "苯→对苯二酚(7步)，硝化→还原→重氮化水解→亚硝化→还原→重氮化→水解",
     steps: [
@@ -1262,7 +1177,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 89,
+    id: 83,
     title: "对氨基苯乙醚合成路线",
     desc: "苯→对氨基苯乙醚(7步)，硝化→还原→重氮化→水解→Williamson醚化→硝化→还原",
     steps: [
@@ -1276,7 +1191,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 90,
+    id: 84,
     title: "对氯苯酚合成路线",
     desc: "苯→对氯苯酚(7步)，硝化→还原→重氮化Sandmeyer氯代→硝化→还原→重氮化→水解",
     steps: [
@@ -1290,21 +1205,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 91,
-    title: "邻甲基水杨酸合成路线",
-    desc: "甲苯→邻甲基水杨酸(7步)，硝化→还原→重氮化→水解→成盐→Kolbe-Schmitt羧化→酸化",
-    steps: [
-      { step_number: 1, reactant: "甲苯", reagent: "浓HNO₃, 浓H₂SO₄", product: "邻硝基甲苯(主)和对硝基甲苯", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "邻硝基甲苯", reagent: "Fe, HCl, △", product: "邻甲苯胺", reaction_type: "还原反应" },
-      { step_number: 3, reactant: "邻甲苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "邻甲基苯重氮盐", reaction_type: "取代反应" },
-      { step_number: 4, reactant: "邻甲基苯重氮盐", reagent: "H₂O, △", product: "邻甲苯酚", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "邻甲苯酚", reagent: "NaOH, H₂O", product: "邻甲苯酚钠", reaction_type: "酸碱反应" },
-      { step_number: 6, reactant: "邻甲苯酚钠", reagent: "CO₂, 加压, 120°C", product: "邻甲基水杨酸钠", reaction_type: "取代反应" },
-      { step_number: 7, reactant: "邻甲基水杨酸钠", reagent: "HCl, H₂O", product: "邻甲基水杨酸", reaction_type: "酸碱反应" }
-    ]
-  },
-  {
-    id: 92,
+    id: 85,
     title: "4-溴-1-萘酚合成路线",
     desc: "萘→4-溴-1-萘酚(7步)，硝化→还原→乙酰化→溴代→水解脱保护→重氮化→水解",
     steps: [
@@ -1318,7 +1219,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 93,
+    id: 86,
     title: "对溴苯酚合成路线",
     desc: "苯→对溴苯酚(7步)，硝化→还原→重氮化Sandmeyer溴代→硝化→还原→重氮化→水解",
     steps: [
@@ -1332,7 +1233,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 94,
+    id: 87,
     title: "2,4-二溴苯酚合成路线",
     desc: "苯→2,4-二溴苯酚(7步)，硝化→还原→乙酰化→对位溴代→邻位溴代→水解脱保护→重氮化水解",
     steps: [
@@ -1346,7 +1247,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 95,
+    id: 88,
     title: "间苯二酚合成路线",
     desc: "苯→间苯二酚(8步)，磺化→硝化→还原→重氮化→水解→再磺化→碱熔→酸化",
     steps: [
@@ -1361,7 +1262,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 96,
+    id: 89,
     title: "1,4-萘醌合成路线",
     desc: "萘→1,4-萘醌(8步)，硝化→还原→乙酰化→磺化→碱熔→水解脱保护→重氮化水解→氧化",
     steps: [
@@ -1376,7 +1277,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 97,
+    id: 90,
     title: "对碘苯酚合成路线",
     desc: "苯→对碘苯酚(8步)，硝化→还原→重氮化→Sandmeyer碘代→硝化→还原→重氮化→水解",
     steps: [
@@ -1391,7 +1292,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 98,
+    id: 91,
     title: "邻氯硝基苯合成路线",
     desc: "苯→邻氯硝基苯(8步)，硝化→还原→乙酰化→对位氯代→邻位硝化→水解脱保护→重氮化→脱氨基还原",
     steps: [
@@ -1406,22 +1307,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 99,
-    title: "间溴苯甲酸合成路线",
-    desc: "甲苯→间溴苯甲酸(8步)，硝化→还原→乙酰化→溴代→水解脱保护→重氮化→脱氨基还原→氧化",
-    steps: [
-      { step_number: 1, reactant: "甲苯", reagent: "浓HNO₃, 浓H₂SO₄", product: "对硝基甲苯(主)和邻硝基甲苯", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "对硝基甲苯", reagent: "Fe, HCl, △", product: "对甲苯胺", reaction_type: "还原反应" },
-      { step_number: 3, reactant: "对甲苯胺", reagent: "(CH₃CO)₂O, 吡啶", product: "对甲基乙酰苯胺", reaction_type: "取代反应" },
-      { step_number: 4, reactant: "对甲基乙酰苯胺", reagent: "Br₂, CH₃COOH", product: "2-溴-4-甲基乙酰苯胺", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "2-溴-4-甲基乙酰苯胺", reagent: "NaOH, H₂O, △", product: "2-溴-4-甲基苯胺", reaction_type: "水解反应" },
-      { step_number: 6, reactant: "2-溴-4-甲基苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "2-溴-4-甲基苯重氮盐", reaction_type: "取代反应" },
-      { step_number: 7, reactant: "2-溴-4-甲基苯重氮盐", reagent: "H₃PO₂, H₂O", product: "间溴甲苯", reaction_type: "取代反应" },
-      { step_number: 8, reactant: "间溴甲苯", reagent: "KMnO₄, H₂O, △", product: "间溴苯甲酸", reaction_type: "氧化反应" }
-    ]
-  },
-  {
-    id: 100,
+    id: 92,
     title: "5-硝基水杨酸合成路线",
     desc: "苯→5-硝基水杨酸(8步)，硝化→还原→重氮化→水解→成盐→Kolbe-Schmitt羧化→酸化→硝化",
     steps: [
@@ -1436,7 +1322,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 101,
+    id: 93,
     title: "2,4-二甲基苯酚合成路线",
     desc: "间二甲苯→2,4-二甲基苯酚(8步)，硝化→还原→乙酰化→磺化→碱熔→酸化→重氮化→脱氨基还原",
     steps: [
@@ -1451,7 +1337,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 102,
+    id: 94,
     title: "2-溴-1,4-二氯苯合成路线",
     desc: "苯→2-溴-1,4-二氯苯(8步)，硝化→还原→乙酰化→对位氯代→邻位溴代→水解脱保护→重氮化→Sandmeyer氯代，经典多卤代芳烃合成",
     steps: [
@@ -1466,7 +1352,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 103,
+    id: 95,
     title: "对羟基苯乙酮肟合成路线",
     desc: "苯→对羟基苯乙酮肟(7步)，硝化→还原→乙酰化保护→Friedel-Crafts酰化→脱保护→重氮化水解→肟化，经典对位羟基芳酮肟合成",
     steps: [
@@ -1480,7 +1366,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 104,
+    id: 96,
     title: "丁酸合成路线",
     desc: "乙酸→丁酸(7步)，酯化→Claisen缩合→成盐→烷基化→酸式水解→酯化→水解，经乙酰乙酸乙酯法合成丁酸",
     steps: [
@@ -1494,7 +1380,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 105,
+    id: 97,
     title: "正丁醇合成路线",
     desc: "丙酸→正丁醇(7步)，酰氯化→酯化→还原→卤代→腈化→水解→还原，经腈水解法增碳合成正丁醇",
     steps: [
@@ -1508,7 +1394,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 106,
+    id: 98,
     title: "2-乙基戊酸合成路线",
     desc: "丙二酸二乙酯→2-乙基戊酸(7步)，成盐→烷基化→成盐→烷基化→水解→酸化→脱羧，经丙二酸酯双烷基化法合成",
     steps: [
@@ -1522,7 +1408,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 107,
+    id: 99,
     title: "己酸乙酯合成路线",
     desc: "丙二酸二乙酯→己酸乙酯(7步)，成盐→烷基化→水解→酸化→脱羧→酰氯化→酯化，经丙二酸酯法合成",
     steps: [
@@ -1536,7 +1422,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 108,
+    id: 100,
     title: "2-甲基丁酸乙酯合成路线",
     desc: "丙二酸二乙酯→2-甲基丁酸乙酯(7步)，成盐→烷基化→水解→酸化→脱羧→酰氯化→酯化，经丙二酸酯法合成",
     steps: [
@@ -1550,7 +1436,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 109,
+    id: 101,
     title: "N-乙基丁胺合成路线",
     desc: "正丁醇→N-乙基丁胺(7步)，卤代→腈化→水解→酰氯化→酰胺化→Hofmann降解→还原胺化，经Hofmann重排合成",
     steps: [
@@ -1564,7 +1450,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 110,
+    id: 102,
     title: "丁酸乙酯合成路线",
     desc: "乙酸→丁酸乙酯(7步)，酯化→Claisen缩合→成盐→烷基化→酸式水解→酸化→酯化，经乙酰乙酸乙酯法合成",
     steps: [
@@ -1578,7 +1464,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 111,
+    id: 103,
     title: "3-己酮合成路线",
     desc: "乙酰乙酸乙酯→3-己酮(8步)，成盐→烷基化→酮式水解→还原→卤代→Grignard试剂→醛加成→氧化，经Grignard增碳合成",
     steps: [
@@ -1593,7 +1479,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 112,
+    id: 104,
     title: "N-乙基戊胺合成路线",
     desc: "正戊醇→N-乙基戊胺(8步)，卤代→腈化→水解→酰氯化→酰胺化→Hofmann降解→乙酰化→还原，经Hofmann重排合成",
     steps: [
@@ -1608,7 +1494,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 113,
+    id: 105,
     title: "2-乙基戊醇合成路线",
     desc: "丙二酸二乙酯→2-乙基戊醇(8步)，成盐→烷基化→成盐→烷基化→水解→酸化→脱羧→还原，经丙二酸酯双烷基化法合成",
     steps: [
@@ -1623,7 +1509,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 114,
+    id: 106,
     title: "1-庚醇合成路线",
     desc: "丙二酸二乙酯→1-庚醇(8步)，成盐→烷基化→水解→酸化→脱羧→酰氯化→酯化→还原，经丙二酸酯法合成",
     steps: [
@@ -1638,22 +1524,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 115,
-    title: "N,N-二乙基环己胺合成路线",
-    desc: "环己醇→N,N-二乙基环己胺(8步)，卤代→Gabriel合成→肼解→乙酰化→还原→乙酰化→还原→季铵化，经Gabriel法合成",
-    steps: [
-      { step_number: 1, reactant: "环己醇", reagent: "PBr₃, 0°C", product: "溴代环己烷", reaction_type: "取代反应" },
-      { step_number: 2, reactant: "邻苯二甲酰亚胺", reagent: "KOH, C₂H₅OH", product: "邻苯二甲酰亚胺钾", reaction_type: "酸碱反应" },
-      { step_number: 3, reactant: "邻苯二甲酰亚胺钾", reagent: "溴代环己烷, DMF, △", product: "N-环己基邻苯二甲酰亚胺", reaction_type: "取代反应" },
-      { step_number: 4, reactant: "N-环己基邻苯二甲酰亚胺", reagent: "H₂NNH₂, C₂H₅OH, △", product: "环己胺", reaction_type: "取代反应" },
-      { step_number: 5, reactant: "环己胺", reagent: "CH₃COCl, 吡啶", product: "N-乙酰基环己胺", reaction_type: "取代反应" },
-      { step_number: 6, reactant: "N-乙酰基环己胺", reagent: "LiAlH₄, 无水乙醚", product: "N-乙基环己胺", reaction_type: "还原反应" },
-      { step_number: 7, reactant: "N-乙基环己胺", reagent: "CH₃COCl, 吡啶", product: "N-乙酰基-N-乙基环己胺", reaction_type: "取代反应" },
-      { step_number: 8, reactant: "N-乙酰基-N-乙基环己胺", reagent: "LiAlH₄, 无水乙醚", product: "N,N-二乙基环己胺", reaction_type: "还原反应" }
-    ]
-  },
-  {
-    id: 116,
+    id: 107,
     title: "环戊酮合成路线",
     desc: "1,4-丁二醇→环戊酮(8步)，卤代→腈化→水解→酯化→Dieckmann缩合→水解→酸化→脱羧，经Dieckmann环化合成",
     steps: [
@@ -1668,7 +1539,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 117,
+    id: 108,
     title: "6-乙酰氨基己酸合成路线",
     desc: "环己醇→6-乙酰氨基己酸(8步)，氧化→肟化→Beckmann重排→水解→酯化→乙酰化→水解→酸化，经Beckmann重排合成",
     steps: [
@@ -1683,7 +1554,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 118,
+    id: 109,
     title: "3-乙酰氨基-2-苯基吲哚合成路线",
     desc: "苯胺→3-乙酰氨基-2-苯基吲哚(7步)，重氮化→还原→苯腙化→Fischer吲哚合成→硝化→还原→乙酰化，经典含氮杂环合成",
     steps: [
@@ -1697,7 +1568,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 119,
+    id: 110,
     title: "2-呋喃乙酸乙酯合成路线",
     desc: "呋喃→2-呋喃乙酸乙酯(7步)，Friedel-Crafts→还原→卤代→腈化→水解→酸化→酯化，经典含氧杂环衍生物合成",
     steps: [
@@ -1711,7 +1582,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 120,
+    id: 111,
     title: "2-噻吩甲胺合成路线",
     desc: "噻吩→2-噻吩甲胺(7步)，溴代→Grignard→CO₂羧化→酸化→酰氯化→酰胺化→LiAlH₄还原，经典含硫杂环衍生物合成",
     steps: [
@@ -1725,7 +1596,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 121,
+    id: 112,
     title: "2-吡咯甲醛合成路线",
     desc: "吡咯→2-吡咯甲醛(7步)，Friedel-Crafts→卤仿反应→酸化→酰氯化→酯化→LiAlH₄还原→PCC氧化，经典含氮杂环醛合成",
     steps: [
@@ -1739,7 +1610,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 122,
+    id: 113,
     title: "3-氨基吡啶合成路线",
     desc: "吡啶→3-氨基吡啶(7步)，溴代→Grignard→CO₂羧化→酸化→酰氯化→酰胺化→Hofmann重排，经典含氮杂环胺合成",
     steps: [
@@ -1753,7 +1624,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 123,
+    id: 114,
     title: "5-溴-2-吡啶甲酸合成路线",
     desc: "吡啶→5-溴-2-吡啶甲酸(7步)，氨基化→乙酰化→溴代→水解→重氮化→Sandmeyer氰化→水解，经典含氮杂环卤代酸合成",
     steps: [
@@ -1767,7 +1638,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 124,
+    id: 115,
     title: "2-乙酰氨基-4-甲基噻唑合成路线",
     desc: "乙酸→2-乙酰氨基-4-甲基噻唑(7步)，酯化→Claisen缩合→酸化→酮式水解→α-溴代→Hantzsch噻唑合成→乙酰化，经典含硫氮杂环合成",
     steps: [
@@ -1781,7 +1652,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 125,
+    id: 116,
     title: "酪氨醇合成路线",
     desc: "苯酚→酪氨醇(8步)，Reimer-Tiemann→Perkin缩合→水解→催化氢化→HVZ溴代→氨解→酯化→LiAlH₄还原，经典芳香族氨基醇合成",
     steps: [
@@ -1796,7 +1667,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 126,
+    id: 117,
     title: "2-乙酰氨基喹啉合成路线",
     desc: "苯胺→2-乙酰氨基喹啉(8步)，乙酰化→Doebner-Miller环化→KMnO₄氧化→酸化→酰氯化→酰胺化→Hofmann重排→乙酰化，经典含氮杂环合成",
     steps: [
@@ -1811,7 +1682,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 127,
+    id: 118,
     title: "3,5-二甲基-4-吡唑甲酸合成路线",
     desc: "乙酰乙酸乙酯→3,5-二甲基-4-吡唑甲酸(8步)，成盐→乙酰化→肼环化→硝化→还原→重氮化→Sandmeyer氰化→水解，经典含氮杂环合成",
     steps: [
@@ -1826,7 +1697,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 128,
+    id: 119,
     title: "2-氨基-4,6-二甲基-5-嘧啶甲酸合成路线",
     desc: "乙酰丙酮→2-氨基-4,6-二甲基-5-嘧啶甲酸(8步)，环化→氯化→氨解→硝化→还原→重氮化→Sandmeyer氰化→水解，经典含氮杂环合成",
     steps: [
@@ -1841,7 +1712,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 129,
+    id: 120,
     title: "2-(1-苯乙基)呋喃合成路线",
     desc: "呋喃→2-(1-苯乙基)呋喃(8步)，溴代→Grignard→醛加成→PCC氧化→Clemmensen还原→溴代→消去→催化氢化，经典含氧杂环芳基化合成",
     steps: [
@@ -1856,7 +1727,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 130,
+    id: 121,
     title: "5-溴-2-呋喃乙酸乙酯合成路线",
     desc: "呋喃→5-溴-2-呋喃乙酸乙酯(8步)，溴代→Friedel-Crafts→还原→卤代→腈化→水解→酸化→酯化，经典含氧杂环卤代酯合成",
     steps: [
@@ -1871,7 +1742,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 131,
+    id: 122,
     title: "5,6-二乙酰氨基苯并噻唑合成路线",
     desc: "苯胺→5,6-二乙酰氨基苯并噻唑(8步)，乙酰化→氯磺化→还原→环化→重氮化脱氨→苯环硝化→还原→乙酰化，经典含硫氮杂环合成",
     steps: [
@@ -1886,7 +1757,7 @@ const ROUTE_LIBRARY = [
     ]
   },
   {
-    id: 132,
+    id: 123,
     title: "2-氨基-5-硝基-4,6-二(氰甲基)嘧啶合成路线",
     desc: "乙酰丙酮→2-氨基-5-硝基-4,6-二(氰甲基)嘧啶(8步)，环化→乙酰化保护→硝化→自由基溴代→腈化→脱保护→成盐→中和，经典含氮杂环多官能团合成",
     steps: [
@@ -1898,6 +1769,1084 @@ const ROUTE_LIBRARY = [
       { step_number: 6, reactant: "2-乙酰氨基-5-硝基-4,6-二(氰甲基)嘧啶", reagent: "NaOH, H₂O, 0°C", product: "2-氨基-5-硝基-4,6-二(氰甲基)嘧啶", reaction_type: "水解反应" },
       { step_number: 7, reactant: "2-氨基-5-硝基-4,6-二(氰甲基)嘧啶", reagent: "HCl, 乙醚", product: "2-氨基-5-硝基-4,6-二(氰甲基)嘧啶盐酸盐", reaction_type: "酸碱反应" },
       { step_number: 8, reactant: "2-氨基-5-硝基-4,6-二(氰甲基)嘧啶盐酸盐", reagent: "NaOH, H₂O", product: "2-氨基-5-硝基-4,6-二(氰甲基)嘧啶", reaction_type: "酸碱反应" }
+    ]
+  },
+  {
+    id: 124,
+    title: "对苯二甲酸合成路线",
+    desc: "对二甲苯 → 对苯二甲酸（7步），氧化→酯化→硝化→还原→重氮化→氰基化→水解",
+    steps: [
+      { step_number: 1, reactant: "对二甲苯", reagent: "KMnO₄, H₂O, 100°C, 酸性", product: "对甲基苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "对甲基苯甲酸", reagent: "CH₃OH, 浓H₂SO₄, 回流", product: "对甲基苯甲酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 3, reactant: "对甲基苯甲酸甲酯", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "对硝基苯甲酸甲酯", reaction_type: "硝化反应" },
+      { step_number: 4, reactant: "对硝基苯甲酸甲酯", reagent: "Fe, HCl, 60°C", product: "对氨基苯甲酸甲酯", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "对氨基苯甲酸甲酯", reagent: "NaNO₂, HCl, 0-5°C", product: "对重氮苯甲酸甲酯", reaction_type: "重氮化反应" },
+      { step_number: 6, reactant: "对重氮苯甲酸甲酯", reagent: "CuCN, KCN, 70°C", product: "对氰基苯甲酸甲酯", reaction_type: "取代反应" },
+      { step_number: 7, reactant: "对氰基苯甲酸甲酯", reagent: "NaOH, H₂O, 回流, 然后H⁺", product: "对苯二甲酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 125,
+    title: "苯乙酮合成苯基乙二酸路线",
+    desc: "苯乙酮 → 苯基乙二酸（7步），卤代→氰化→水解→酯化→还原→氧化→水解，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "苯乙酮", reagent: "Br₂, AlCl₃, 0°C", product: "α-溴代苯乙酮", reaction_type: "卤代反应" },
+      { step_number: 2, reactant: "α-溴代苯乙酮", reagent: "NaCN, H₂O, 乙醇, 25°C", product: "α-氰基苯乙酮", reaction_type: "亲核取代" },
+      { step_number: 3, reactant: "α-氰基苯乙酮", reagent: "浓HCl, H₂O, 回流, 110°C", product: "苯甲酰乙酸", reaction_type: "水解反应" },
+      { step_number: 4, reactant: "苯甲酰乙酸", reagent: "CH₃OH, 浓H₂SO₄, 回流, 65°C", product: "苯甲酰乙酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 5, reactant: "苯甲酰乙酸甲酯", reagent: "NaBH₄, CH₃OH, 0-5°C", product: "苯甲酰羟基乙酸甲酯", reaction_type: "还原反应" },
+      { step_number: 6, reactant: "苯甲酰羟基乙酸甲酯", reagent: "KMnO₄, Na₂CO₃, H₂O, 25°C", product: "苯甲酰草酸甲酯", reaction_type: "氧化反应" },
+      { step_number: 7, reactant: "苯甲酰草酸甲酯", reagent: "NaOH, H₂O, 回流, 100°C, 然后 H⁺", product: "苯基乙二酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 126,
+    title: "乙酰乙酸乙酯合成己二酸路线",
+    desc: "乙酰乙酸乙酯 → 己二酸（7步），烷基化→酯水解→脱羧→溴化→氰化→水解→还原，合成纤维原料",
+    steps: [
+      { step_number: 1, reactant: "乙酰乙酸乙酯", reagent: "NaOEt, 乙醇, 25°C; 然后 BrCH₂COOEt", product: "乙基-2-乙酰基戊二酸二乙酯", reaction_type: "烷基化反应" },
+      { step_number: 2, reactant: "乙基-2-乙酰基戊二酸二乙酯", reagent: "NaOH, H₂O, 回流, 90°C, 然后 H⁺", product: "2-乙酰基戊二酸", reaction_type: "酯水解" },
+      { step_number: 3, reactant: "2-乙酰基戊二酸", reagent: "浓HCl, 回流, 110°C", product: "戊二酸", reaction_type: "脱羧反应" },
+      { step_number: 4, reactant: "戊二酸", reagent: "Br₂, PBr₃, 80°C", product: "2-溴戊二酸", reaction_type: "卤代反应" },
+      { step_number: 5, reactant: "2-溴戊二酸", reagent: "NaCN, H₂O, 乙醇, 60°C", product: "2-氰基戊二酸", reaction_type: "亲核取代" },
+      { step_number: 6, reactant: "2-氰基戊二酸", reagent: "NaOH, H₂O, 回流, 100°C, 然后 H⁺", product: "己二酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "己二酸", reagent: "LiAlH₄, 乙醚, 0-25°C, 然后 H⁺", product: "1,6-己二醇", reaction_type: "还原反应" }
+    ]
+  },
+  {
+    id: 127,
+    title: "萘合成邻苯二甲酸酐路线",
+    desc: "萘 → 邻苯二甲酸酐（7步），氧化→硝化→还原→重氮化→氰化→水解→脱水，增塑剂原料",
+    steps: [
+      { step_number: 1, reactant: "萘", reagent: "V₂O₅, O₂, 400°C", product: "邻苯二甲酸酐", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "邻苯二甲酸酐", reagent: "浓HNO₃, 浓H₂SO₄, 0-5°C", product: "3-硝基邻苯二甲酸酐", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "3-硝基邻苯二甲酸酐", reagent: "Fe, HCl, 60°C", product: "3-氨基邻苯二甲酸酐", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "3-氨基邻苯二甲酸酐", reagent: "NaNO₂, HCl, 0-5°C", product: "3-重氮邻苯二甲酸酐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "3-重氮邻苯二甲酸酐", reagent: "CuCN, KCN, H₂O, 60°C", product: "3-氰基邻苯二甲酸酐", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "3-氰基邻苯二甲酸酐", reagent: "NaOH, H₂O, 回流, 100°C, 然后 H⁺", product: "3-羧基邻苯二甲酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "3-羧基邻苯二甲酸", reagent: "P₂O₅, 加热, 200°C", product: "偏苯三酸酐", reaction_type: "脱水反应" }
+    ]
+  },
+  {
+    id: 128,
+    title: "噻吩-2-羧酸合成路线",
+    desc: "噻吩 → 噻吩-2-羧酸（7步），磺化→硝化→还原→重氮化→氰基化→水解→酯化→水解，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "噻吩", reagent: "浓H₂SO₄, 0°C", product: "噻吩-2-磺酸", reaction_type: "磺化反应" },
+      { step_number: 2, reactant: "噻吩-2-磺酸", reagent: "浓HNO₃, 浓H₂SO₄, 50°C", product: "5-硝基噻吩-2-磺酸", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "5-硝基噻吩-2-磺酸", reagent: "Fe, 稀HCl, △", product: "5-氨基噻吩-2-磺酸", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "5-氨基噻吩-2-磺酸", reagent: "NaNO₂, HCl, 0-5°C", product: "5-重氮噻吩-2-磺酸盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "5-重氮噻吩-2-磺酸盐", reagent: "CuCN, 60°C", product: "5-氰基噻吩-2-磺酸", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "5-氰基噻吩-2-磺酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "5-氰基噻吩-2-磺酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 7, reactant: "5-氰基噻吩-2-磺酸乙酯", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "噻吩-2-羧酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 129,
+    title: "萘-2-羧酸合成路线",
+    desc: "萘 → 萘-2-羧酸（7步），氧化→硝化→还原→重氮化→氰基化→水解→酯化→水解，染料及药物中间体",
+    steps: [
+      { step_number: 1, reactant: "萘", reagent: "KMnO₄, H₂O, △", product: "邻苯二甲酸酐", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "邻苯二甲酸酐", reagent: "浓HNO₃, 浓H₂SO₄, 100°C", product: "3-硝基邻苯二甲酸酐", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "3-硝基邻苯二甲酸酐", reagent: "Fe, HCl, △", product: "3-氨基邻苯二甲酸酐", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "3-氨基邻苯二甲酸酐", reagent: "NaNO₂, HCl, 0-5°C", product: "3-重氮邻苯二甲酸盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "3-重氮邻苯二甲酸盐", reagent: "CuCN, 80°C", product: "3-氰基邻苯二甲酸酐", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "3-氰基邻苯二甲酸酐", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "3-氰基邻苯二甲酸二乙酯", reaction_type: "酯化反应" },
+      { step_number: 7, reactant: "3-氰基邻苯二甲酸二乙酯", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "萘-2-羧酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 130,
+    title: "丙烯酸甲酯合成路线",
+    desc: "丙烯酸甲酯 → 反式-2-丁烯酸甲酯（7步），加成→消除→加成→氧化→还原→脱水→氢化，聚合物单体",
+    steps: [
+      { step_number: 1, reactant: "丙烯酸甲酯", reagent: "Br₂, CCl₄, 25°C", product: "2,3-二溴丙酸甲酯", reaction_type: "加成反应" },
+      { step_number: 2, reactant: "2,3-二溴丙酸甲酯", reagent: "KOH, 乙醇, △", product: "丙炔酸甲酯", reaction_type: "消除反应" },
+      { step_number: 3, reactant: "丙炔酸甲酯", reagent: "HBr, 过氧化物, 0°C", product: "3-溴丙烯酸甲酯", reaction_type: "加成反应" },
+      { step_number: 4, reactant: "3-溴丙烯酸甲酯", reagent: "KMnO₄, NaOH, 25°C", product: "3-溴-2,3-二羟基丙酸甲酯", reaction_type: "氧化反应" },
+      { step_number: 5, reactant: "3-溴-2,3-二羟基丙酸甲酯", reagent: "Zn, 稀H₂SO₄", product: "2-丁烯酸甲酯", reaction_type: "还原反应" },
+      { step_number: 6, reactant: "2-丁烯酸甲酯", reagent: "P₂O₅, 加热", product: "2-丁炔酸甲酯", reaction_type: "脱水反应" },
+      { step_number: 7, reactant: "2-丁炔酸甲酯", reagent: "H₂, Pd/C, 25°C", product: "反式-2-丁烯酸甲酯", reaction_type: "氢化反应" }
+    ]
+  },
+  {
+    id: 131,
+    title: "苯甲酸甲酯合成路线",
+    desc: "硝基苯 → 苯甲酸甲酯（7步），还原→重氮化→氰基化→水解→酯化→还原→氧化，香料",
+    steps: [
+      { step_number: 1, reactant: "硝基苯", reagent: "Fe, HCl, 60°C", product: "苯胺", reaction_type: "还原反应" },
+      { step_number: 2, reactant: "苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "重氮苯盐酸盐", reaction_type: "重氮化反应" },
+      { step_number: 3, reactant: "重氮苯盐酸盐", reagent: "CuCN, 80°C", product: "苯甲腈", reaction_type: "取代反应" },
+      { step_number: 4, reactant: "苯甲腈", reagent: "NaOH, H₂O, 回流, 然后 H⁺", product: "苯甲酸", reaction_type: "水解反应" },
+      { step_number: 5, reactant: "苯甲酸", reagent: "CH₃OH, 浓H₂SO₄, 回流", product: "苯甲酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 6, reactant: "苯甲酸甲酯", reagent: "LiAlH₄, 无水乙醚, 0°C", product: "苯甲醇", reaction_type: "还原反应" },
+      { step_number: 7, reactant: "苯甲醇", reagent: "KMnO₄, H₂O, 100°C", product: "苯甲酸甲酯", reaction_type: "氧化反应" }
+    ]
+  },
+  {
+    id: 132,
+    title: "邻氨基苯酚合成路线",
+    desc: "丙烯酸甲酯 → 邻氨基苯酚（7步），加成→氧化→硝化→还原→重氮化→水解→还原，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "丙烯酸甲酯", reagent: "HBr, 过氧化物, 25°C", product: "3-溴丙酸甲酯", reaction_type: "自由基加成反应" },
+      { step_number: 2, reactant: "3-溴丙酸甲酯", reagent: "KOH, 乙醇, 回流", product: "丙烯酸甲酯", reaction_type: "消除反应" },
+      { step_number: 3, reactant: "丙烯酸甲酯", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "2-硝基丙烯酸甲酯", reaction_type: "硝化反应" },
+      { step_number: 4, reactant: "2-硝基丙烯酸甲酯", reagent: "H₂, Pd/C, 1 atm, 25°C", product: "2-氨基丙烯酸甲酯", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "2-氨基丙烯酸甲酯", reagent: "NaNO₂, HCl, 0-5°C", product: "2-重氮丙烯酸甲酯", reaction_type: "重氮化反应" },
+      { step_number: 6, reactant: "2-重氮丙烯酸甲酯", reagent: "H₂O, 50°C", product: "2-羟基丙烯酸甲酯", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "2-羟基丙烯酸甲酯", reagent: "NaOH, H₂O, 回流, 然后 H⁺", product: "邻氨基苯酚", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 133,
+    title: "苯乙酮合成路线",
+    desc: "苯乙酮 → 2-苯基丙二酸二乙酯（7步），溴化→取代→水解→脱羧→酯化→还原→氧化，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "苯乙酮", reagent: "Br₂, FeBr₃, 0°C", product: "2-溴苯乙酮", reaction_type: "卤代反应" },
+      { step_number: 2, reactant: "2-溴苯乙酮", reagent: "丙二酸二乙酯, NaOEt, EtOH, 40°C", product: "2-(2-氧代-2-苯基乙基)丙二酸二乙酯", reaction_type: "亲核取代反应" },
+      { step_number: 3, reactant: "2-(2-氧代-2-苯基乙基)丙二酸二乙酯", reagent: "NaOH, H₂O, 25°C", product: "2-(2-氧代-2-苯基乙基)丙二酸", reaction_type: "水解反应" },
+      { step_number: 4, reactant: "2-(2-氧代-2-苯基乙基)丙二酸", reagent: "△, 150°C", product: "3-苯基-4-氧代丁酸", reaction_type: "脱羧反应" },
+      { step_number: 5, reactant: "3-苯基-4-氧代丁酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "3-苯基-4-氧代丁酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 6, reactant: "3-苯基-4-氧代丁酸乙酯", reagent: "NaBH₄, CH₃OH, 0°C", product: "3-苯基-4-羟基丁酸乙酯", reaction_type: "还原反应" },
+      { step_number: 7, reactant: "3-苯基-4-羟基丁酸乙酯", reagent: "K₂Cr₂O₇, H₂SO₄, 50°C", product: "3-苯基-4-氧代丁酸乙酯", reaction_type: "氧化反应" }
+    ]
+  },
+  {
+    id: 134,
+    title: "苯胺合成路线",
+    desc: "苯胺 → 对氨基苯甲酸（7步），乙酰化→硝化→水解→重氮化→氰基化→水解→还原，染料中间体",
+    steps: [
+      { step_number: 1, reactant: "苯胺", reagent: "乙酸酐, 吡啶, 25°C", product: "乙酰苯胺", reaction_type: "酰化反应" },
+      { step_number: 2, reactant: "乙酰苯胺", reagent: "浓HNO₃, 浓H₂SO₄, 5°C", product: "对硝基乙酰苯胺", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "对硝基乙酰苯胺", reagent: "NaOH, H₂O, 50°C", product: "对硝基苯胺", reaction_type: "水解反应" },
+      { step_number: 4, reactant: "对硝基苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "对硝基苯重氮盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "对硝基苯重氮盐", reagent: "CuCN, KCN, 60°C", product: "对硝基苯甲腈", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "对硝基苯甲腈", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "对硝基苯甲酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 7, reactant: "对硝基苯甲酸乙酯", reagent: "Fe, HCl, 30°C", product: "对氨基苯甲酸乙酯", reaction_type: "还原反应" }
+    ]
+  },
+  {
+    id: 135,
+    title: "硝基苯合成路线",
+    desc: "硝基苯 → 间溴苯乙酸（7步），还原→重氮化→溴化→氰基化→水解→酯化→还原，药物合成",
+    steps: [
+      { step_number: 1, reactant: "硝基苯", reagent: "Fe, HCl, 40°C", product: "苯胺", reaction_type: "还原反应" },
+      { step_number: 2, reactant: "苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "苯重氮盐", reaction_type: "重氮化反应" },
+      { step_number: 3, reactant: "苯重氮盐", reagent: "CuBr, HBr, 10°C", product: "溴苯", reaction_type: "取代反应" },
+      { step_number: 4, reactant: "溴苯", reagent: "Mg, 无水乙醚, 25°C", product: "溴苯基氯化镁", reaction_type: "格氏反应" },
+      { step_number: 5, reactant: "溴苯基氯化镁", reagent: "CO₂, -20°C, 然后H₃O⁺", product: "苯甲酸", reaction_type: "羧化反应" },
+      { step_number: 6, reactant: "苯甲酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "苯甲酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 7, reactant: "苯甲酸甲酯", reagent: "Br₂, FeBr₃, 0°C", product: "间溴苯甲酸甲酯", reaction_type: "溴代反应" }
+    ]
+  },
+  {
+    id: 136,
+    title: "吡啶-3-羧酸合成路线",
+    desc: "吡啶 → 烟酸（7步），氧化→硝化→还原→重氮化→氰基化→水解→酯化，维生素B3中间体",
+    steps: [
+      { step_number: 1, reactant: "吡啶", reagent: "KMnO₄, H₂O, △", product: "吡啶-2-羧酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "吡啶-2-羧酸", reagent: "浓HNO₃, 浓H₂SO₄, △", product: "3-硝基吡啶-2-羧酸", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "3-硝基吡啶-2-羧酸", reagent: "Fe, HCl, △", product: "3-氨基吡啶-2-羧酸", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "3-氨基吡啶-2-羧酸", reagent: "NaNO₂, HCl, 0-5°C", product: "3-重氮吡啶-2-羧酸盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "3-重氮吡啶-2-羧酸盐", reagent: "CuCN, △", product: "3-氰基吡啶-2-羧酸", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "3-氰基吡啶-2-羧酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "3-氰基吡啶-2-羧酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 7, reactant: "3-氰基吡啶-2-羧酸乙酯", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "吡啶-2,3-二羧酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 137,
+    title: "氯苯合成苯胺路线",
+    desc: "氯苯 → 苯胺（7步），硝化→还原→重氮化→取代→还原→酰化→水解，染料中间体",
+    steps: [
+      { step_number: 1, reactant: "氯苯", reagent: "浓HNO₃, 浓H₂SO₄, 50°C", product: "对硝基氯苯", reaction_type: "硝化反应" },
+      { step_number: 2, reactant: "对硝基氯苯", reagent: "Fe, HCl, △", product: "对氯苯胺", reaction_type: "还原反应" },
+      { step_number: 3, reactant: "对氯苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "对氯重氮苯盐", reaction_type: "重氮化反应" },
+      { step_number: 4, reactant: "对氯重氮苯盐", reagent: "H₃PO₂, H₂O, 25°C", product: "氯苯", reaction_type: "取代反应" },
+      { step_number: 5, reactant: "氯苯", reagent: "NH₃, Cu₂O, 200°C, 加压", product: "苯胺", reaction_type: "氨解反应" },
+      { step_number: 6, reactant: "苯胺", reagent: "CH₃COCl, 吡啶, 0°C", product: "乙酰苯胺", reaction_type: "酰化反应" },
+      { step_number: 7, reactant: "乙酰苯胺", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "苯胺", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 138,
+    title: "水杨酸合成阿司匹林路线",
+    desc: "水杨酸 → 阿司匹林（7步），乙酰化→硝化→还原→重氮化→氰基化→水解→酯化，药物合成",
+    steps: [
+      { step_number: 1, reactant: "水杨酸", reagent: "乙酸酐, 浓H₂SO₄, 80°C", product: "乙酰水杨酸", reaction_type: "酯化反应" },
+      { step_number: 2, reactant: "乙酰水杨酸", reagent: "浓HNO₃, 浓H₂SO₄, 0-5°C", product: "5-硝基乙酰水杨酸", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "5-硝基乙酰水杨酸", reagent: "Fe, HCl, 60°C", product: "5-氨基乙酰水杨酸", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "5-氨基乙酰水杨酸", reagent: "NaNO₂, HCl, 0-5°C", product: "5-重氮乙酰水杨酸", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "5-重氮乙酰水杨酸", reagent: "CuCN, 80°C", product: "5-氰基乙酰水杨酸", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "5-氰基乙酰水杨酸", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "5-羧基乙酰水杨酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "5-羧基乙酰水杨酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "5-甲氧羰基乙酰水杨酸", reaction_type: "酯化反应" }
+    ]
+  },
+  {
+    id: 139,
+    title: "苯乙酮合成苯乙酸路线",
+    desc: "苯乙酮 → 苯乙酸（7步），氧化→硝化→还原→重氮化→氰基化→水解→脱羧，香料中间体",
+    steps: [
+      { step_number: 1, reactant: "苯乙酮", reagent: "KMnO₄, NaOH, H₂O, 100°C", product: "苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "苯甲酸", reagent: "浓HNO₃, 浓H₂SO₄, 50°C", product: "间硝基苯甲酸", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "间硝基苯甲酸", reagent: "Zn, NaOH, 80°C", product: "间氨基苯甲酸", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "间氨基苯甲酸", reagent: "NaNO₂, H₂SO₄, 0-5°C", product: "间重氮苯甲酸", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "间重氮苯甲酸", reagent: "CuCN, 70°C", product: "间氰基苯甲酸", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "间氰基苯甲酸", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "间羧基苯甲酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "间羧基苯甲酸", reagent: "CaO, △", product: "苯乙酸", reaction_type: "脱羧反应" }
+    ]
+  },
+  {
+    id: 140,
+    title: "邻羟基苯甲酸合成路线",
+    desc: "氯苯 → 邻羟基苯甲酸（7步），氧化→硝化→还原→重氮化→水解→羧化→酸化，防腐剂",
+    steps: [
+      { step_number: 1, reactant: "氯苯", reagent: "KMnO₄, H₂O, △", product: "氯苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "氯苯甲酸", reagent: "浓HNO₃, 浓H₂SO₄, 50°C", product: "邻硝基氯苯甲酸", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "邻硝基氯苯甲酸", reagent: "Fe, 稀HCl, △", product: "邻氨基氯苯甲酸", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "邻氨基氯苯甲酸", reagent: "NaNO₂, HCl, 0-5°C", product: "邻重氮氯苯甲酸盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "邻重氮氯苯甲酸盐", reagent: "H₃PO₂, H₂O, 40°C", product: "邻氯苯甲酸", reaction_type: "去重氮反应" },
+      { step_number: 6, reactant: "邻氯苯甲酸", reagent: "NaOH, Cu, △, 高温高压", product: "邻羟基苯甲酸钠", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "邻羟基苯甲酸钠", reagent: "稀H₂SO₄", product: "邻羟基苯甲酸", reaction_type: "酸化反应" }
+    ]
+  },
+  {
+    id: 141,
+    title: "呋喃-2,5-二羧酸合成路线",
+    desc: "呋喃 → 呋喃-2,5-二羧酸（7步），溴代→硝化→还原→重氮化→氰基化→水解→氧化，用于MOF材料",
+    steps: [
+      { step_number: 1, reactant: "呋喃", reagent: "Br₂, FeBr₃, 0°C", product: "2-溴呋喃", reaction_type: "溴代反应" },
+      { step_number: 2, reactant: "2-溴呋喃", reagent: "浓HNO₃, 浓H₂SO₄, 0-5°C", product: "2-溴-5-硝基呋喃", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "2-溴-5-硝基呋喃", reagent: "Fe, HCl, △", product: "2-溴-5-氨基呋喃", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "2-溴-5-氨基呋喃", reagent: "NaNO₂, HCl, 0-5°C, 然后CuCN, △", product: "2-溴-5-氰基呋喃", reaction_type: "重氮化-取代反应" },
+      { step_number: 5, reactant: "2-溴-5-氰基呋喃", reagent: "NaOH, H₂O, △", product: "2-溴呋喃-5-羧酸", reaction_type: "水解反应" },
+      { step_number: 6, reactant: "2-溴呋喃-5-羧酸", reagent: "n-BuLi, -78°C, 然后CO₂", product: "呋喃-2,5-二羧酸单锂盐", reaction_type: "锂化-羧化反应" },
+      { step_number: 7, reactant: "呋喃-2,5-二羧酸单锂盐", reagent: "H₃O⁺, △", product: "呋喃-2,5-二羧酸", reaction_type: "酸化反应" }
+    ]
+  },
+  {
+    id: 142,
+    title: "对硝基苯乙酸合成路线",
+    desc: "对硝基甲苯 → 对硝基苯乙酸（7步），硝化→还原→重氮化→氰基化→水解→苄位溴代→氰基取代→水解",
+    steps: [
+      { step_number: 1, reactant: "对硝基甲苯", reagent: "KMnO₄, H₂O, △, pH=7", product: "对硝基苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "对硝基苯甲酸", reagent: "SOCl₂, △", product: "对硝基苯甲酰氯", reaction_type: "酰氯化反应" },
+      { step_number: 3, reactant: "对硝基苯甲酰氯", reagent: "LiAlH₄, 无水乙醚, 0°C", product: "对硝基苄醇", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "对硝基苄醇", reagent: "PBr₃, 乙醚, 0°C", product: "对硝基苄溴", reaction_type: "溴代反应" },
+      { step_number: 5, reactant: "对硝基苄溴", reagent: "NaCN, DMSO, 50°C", product: "对硝基苯乙腈", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "对硝基苯乙腈", reagent: "H₂O, 浓HCl, △", product: "对硝基苯乙酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "对硝基苯乙酸", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "对硝基苯乙酸（重结晶提纯）", reaction_type: "纯化（非反应）" }
+    ]
+  },
+  {
+    id: 143,
+    title: "呋喃-2-甲酸合成路线",
+    desc: "呋喃 → 呋喃-2-甲酸（7步），甲酰化→氧化→硝化→还原→重氮化→氰基化→水解",
+    steps: [
+      { step_number: 1, reactant: "呋喃", reagent: "POCl₃, DMF, 0-5°C", product: "呋喃-2-甲醛", reaction_type: "Vilsmeier甲酰化" },
+      { step_number: 2, reactant: "呋喃-2-甲醛", reagent: "KMnO₄, H₂O, △", product: "呋喃-2-甲酸", reaction_type: "氧化反应" },
+      { step_number: 3, reactant: "呋喃-2-甲酸", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "5-硝基呋喃-2-甲酸", reaction_type: "硝化反应" },
+      { step_number: 4, reactant: "5-硝基呋喃-2-甲酸", reagent: "Fe粉, HCl, 60°C", product: "5-氨基呋喃-2-甲酸", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "5-氨基呋喃-2-甲酸", reagent: "NaNO₂, HCl, 0-5°C", product: "5-重氮呋喃-2-甲酸盐酸盐", reaction_type: "重氮化反应" },
+      { step_number: 6, reactant: "5-重氮呋喃-2-甲酸盐酸盐", reagent: "CuCN, KCN, 50°C", product: "5-氰基呋喃-2-甲酸", reaction_type: "Sandmeyer取代" },
+      { step_number: 7, reactant: "5-氰基呋喃-2-甲酸", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "呋喃-2,5-二甲酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 144,
+    title: "苯胺合成邻苯二酚路线",
+    desc: "苯胺 → 邻苯二酚（7步），乙酰化→硝化→水解→重氮化→水解→还原→重氮化→水解",
+    steps: [
+      { step_number: 1, reactant: "苯胺", reagent: "乙酸酐, 吡啶, 25°C", product: "乙酰苯胺", reaction_type: "酰化反应" },
+      { step_number: 2, reactant: "乙酰苯胺", reagent: "浓HNO₃, 浓H₂SO₄, 5°C", product: "对硝基乙酰苯胺", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "对硝基乙酰苯胺", reagent: "NaOH, H₂O, △", product: "对硝基苯胺", reaction_type: "水解反应" },
+      { step_number: 4, reactant: "对硝基苯胺", reagent: "NaNO₂, HCl, 0-5°C", product: "对硝基重氮苯盐酸盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "对硝基重氮苯盐酸盐", reagent: "H₂SO₄, H₂O, 100°C", product: "对硝基苯酚", reaction_type: "水解反应" },
+      { step_number: 6, reactant: "对硝基苯酚", reagent: "Fe, HCl, 60°C", product: "对氨基苯酚", reaction_type: "还原反应" },
+      { step_number: 7, reactant: "对氨基苯酚", reagent: "NaNO₂, HCl, 0-5°C 然后 H₂O, △", product: "邻苯二酚", reaction_type: "重氮化水解" }
+    ]
+  },
+  {
+    id: 145,
+    title: "对硝基苯甲酸合成路线",
+    desc: "对硝基甲苯 → 对硝基苯甲酸（7步），氧化→硝化→还原→重氮化→氰基化→水解→酯化→水解，染料中间体",
+    steps: [
+      { step_number: 1, reactant: "对硝基甲苯", reagent: "KMnO₄, H⁺, △", product: "对硝基苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "对硝基苯甲酸", reagent: "浓HNO₃, 浓H₂SO₄, △", product: "3,5-二硝基苯甲酸", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "3,5-二硝基苯甲酸", reagent: "Fe, HCl, △", product: "3,5-二氨基苯甲酸", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "3,5-二氨基苯甲酸", reagent: "NaNO₂, HCl, 0-5°C", product: "3,5-双重氮苯甲酸", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "3,5-双重氮苯甲酸", reagent: "CuCN, △", product: "3,5-二氰基苯甲酸", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "3,5-二氰基苯甲酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "3,5-二氰基苯甲酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 7, reactant: "3,5-二氰基苯甲酸乙酯", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "3,5-二羧基苯甲酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 146,
+    title: "氯苯合成路线",
+    desc: "氯苯 → 对氯苯酚（7步），硝化→还原→重氮化→水解→氧化→酯化→还原，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "氯苯", reagent: "浓HNO₃, 浓H₂SO₄, 50-60°C", product: "对硝基氯苯", reaction_type: "硝化反应" },
+      { step_number: 2, reactant: "对硝基氯苯", reagent: "Fe, HCl, △", product: "对氨基氯苯", reaction_type: "还原反应" },
+      { step_number: 3, reactant: "对氨基氯苯", reagent: "NaNO₂, HCl, 0-5°C", product: "对氯重氮苯", reaction_type: "重氮化反应" },
+      { step_number: 4, reactant: "对氯重氮苯", reagent: "H₂O, H₂SO₄, 10-20°C", product: "对氯苯酚", reaction_type: "水解反应" },
+      { step_number: 5, reactant: "对氯苯酚", reagent: "KMnO₄, H⁺, △", product: "对氯苯酚-2-羧酸", reaction_type: "氧化反应" },
+      { step_number: 6, reactant: "对氯苯酚-2-羧酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "对氯苯酚-2-甲酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 7, reactant: "对氯苯酚-2-甲酸甲酯", reagent: "LiAlH₄, 干醚, 0°C", product: "对氯苯酚-2-甲醇", reaction_type: "还原反应" }
+    ]
+  },
+  {
+    id: 147,
+    title: "苯乙烯合成路线",
+    desc: "苯乙烯 → 苯乙酸（7步），氧化→加成→取代→水解→氧化→酯化→还原，香料中间体",
+    steps: [
+      { step_number: 1, reactant: "苯乙烯", reagent: "KMnO₄, H⁺, △", product: "苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "苯甲酸", reagent: "Cl₂, FeCl₃, △", product: "间氯苯甲酸", reaction_type: "取代反应" },
+      { step_number: 3, reactant: "间氯苯甲酸", reagent: "NaOH, H₂O, 200°C, 高压", product: "间羟基苯甲酸", reaction_type: "水解反应" },
+      { step_number: 4, reactant: "间羟基苯甲酸", reagent: "CH₃I, K₂CO₃, 丙酮, △", product: "间甲氧基苯甲酸", reaction_type: "取代反应" },
+      { step_number: 5, reactant: "间甲氧基苯甲酸", reagent: "KMnO₄, H⁺, △", product: "间甲氧基苯甲酸-5-羧酸", reaction_type: "氧化反应" },
+      { step_number: 6, reactant: "间甲氧基苯甲酸-5-羧酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "间甲氧基苯甲酸-5-羧酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 7, reactant: "间甲氧基苯甲酸-5-羧酸乙酯", reagent: "LiAlH₄, 干醚, 0°C", product: "间甲氧基苯甲醇-5-甲醇", reaction_type: "还原反应" }
+    ]
+  },
+  {
+    id: 148,
+    title: "丙二酸二乙酯合成环丙烷羧酸路线",
+    desc: "丙二酸二乙酯 → 环丙烷羧酸（7步），烷基化→水解→脱羧→卤代→成环→腈化→水解，农药和医药中间体",
+    steps: [
+      { step_number: 1, reactant: "丙二酸二乙酯", reagent: "C₂H₅ONa, BrCH₂CH₂Br, 60°C", product: "1,1-环丙烷二甲酸二乙酯", reaction_type: "双烷基化" },
+      { step_number: 2, reactant: "1,1-环丙烷二甲酸二乙酯", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "1,1-环丙烷二甲酸", reaction_type: "水解反应" },
+      { step_number: 3, reactant: "1,1-环丙烷二甲酸", reagent: "Ca(OH)₂, △（220°C）", product: "环丙烷甲酸", reaction_type: "脱羧反应" },
+      { step_number: 4, reactant: "环丙烷甲酸", reagent: "Br₂, PCl₃, 80°C", product: "环丙烷甲酰溴", reaction_type: "酰溴化" },
+      { step_number: 5, reactant: "环丙烷甲酰溴", reagent: "NH₃, 乙醇, -10°C", product: "环丙烷甲酰胺", reaction_type: "酰胺化" },
+      { step_number: 6, reactant: "环丙烷甲酰胺", reagent: "P₂O₅, △", product: "环丙烷甲腈", reaction_type: "脱水反应" },
+      { step_number: 7, reactant: "环丙烷甲腈", reagent: "稀H₂SO₄, H₂O, △", product: "环丙烷羧酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 149,
+    title: "呋喃合成丁二酸酐路线",
+    desc: "呋喃 → 丁二酸酐（7步），加氢→氧化→开环→酯化→还原→卤代→氰化→水解，用于树脂和涂料",
+    steps: [
+      { step_number: 1, reactant: "呋喃", reagent: "H₂, Ni, 100°C, 5atm", product: "四氢呋喃", reaction_type: "加氢还原" },
+      { step_number: 2, reactant: "四氢呋喃", reagent: "KMnO₄, H₂O, 0°C, 中性", product: "丁二醛", reaction_type: "氧化开环" },
+      { step_number: 3, reactant: "丁二醛", reagent: "O₂, 催化剂(Co-OAc), 60°C", product: "丁二酸", reaction_type: "氧化反应" },
+      { step_number: 4, reactant: "丁二酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "丁二酸二甲酯", reaction_type: "酯化反应" },
+      { step_number: 5, reactant: "丁二酸二甲酯", reagent: "LiAlH₄, 无水乙醚, 0°C", product: "1,4-丁二醇", reaction_type: "还原反应" },
+      { step_number: 6, reactant: "1,4-丁二醇", reagent: "HBr, 浓H₂SO₄, △", product: "1,4-二溴丁烷", reaction_type: "卤代反应" },
+      { step_number: 7, reactant: "1,4-二溴丁烷", reagent: "KCN, 乙醇-H₂O, 80°C，然后H⁺水解", product: "丁二腈", reaction_type: "氰化反应" }
+    ]
+  },
+  {
+    id: 150,
+    title: "吡啶-3-甲酸合成路线",
+    desc: "吡啶 → 烟酸（7步），氧化→硝化→还原→重氮化→氰基化→水解→脱羧，维生素B3前体",
+    steps: [
+      { step_number: 1, reactant: "吡啶", reagent: "KMnO₄, H₂O, 100°C", product: "吡啶-N-氧化物", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "吡啶-N-氧化物", reagent: "浓HNO₃, 浓H₂SO₄, 130°C", product: "3-硝基吡啶-N-氧化物", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "3-硝基吡啶-N-氧化物", reagent: "Fe, CH₃COOH, 60°C", product: "3-氨基吡啶", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "3-氨基吡啶", reagent: "NaNO₂, HCl, 0-5°C", product: "3-重氮吡啶盐酸盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "3-重氮吡啶盐酸盐", reagent: "CuCN, KCN, 50°C", product: "3-氰基吡啶", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "3-氰基吡啶", reagent: "NaOH, H₂O, 回流水解", product: "烟酰胺", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "烟酰胺", reagent: "稀H₂SO₄, △", product: "烟酸(吡啶-3-甲酸)", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 151,
+    title: "苯氧乙酸合成路线",
+    desc: "苯酚 → 苯氧乙酸（7步），成盐→醚化→硝化→还原→重氮化→氰基化→水解，除草剂中间体",
+    steps: [
+      { step_number: 1, reactant: "苯酚", reagent: "NaOH, 25°C", product: "苯酚钠", reaction_type: "成盐反应" },
+      { step_number: 2, reactant: "苯酚钠", reagent: "ClCH₂COONa, 60°C", product: "苯氧乙酸钠", reaction_type: "醚化反应" },
+      { step_number: 3, reactant: "苯氧乙酸钠", reagent: "浓HNO₃, 浓H₂SO₄, 0-5°C", product: "对硝基苯氧乙酸", reaction_type: "硝化反应" },
+      { step_number: 4, reactant: "对硝基苯氧乙酸", reagent: "Fe, HCl, 40°C", product: "对氨基苯氧乙酸", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "对氨基苯氧乙酸", reagent: "NaNO₂, HCl, 0-5°C", product: "对重氮苯氧乙酸盐酸盐", reaction_type: "重氮化反应" },
+      { step_number: 6, reactant: "对重氮苯氧乙酸盐酸盐", reagent: "CuCN, KCN, 50°C", product: "对氰基苯氧乙酸", reaction_type: "取代反应" },
+      { step_number: 7, reactant: "对氰基苯氧乙酸", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "对羧基苯氧乙酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 152,
+    title: "呋喃丙烯酸合成路线",
+    desc: "呋喃 → 呋喃丙烯酸（7步），溴代→水解→氧化→还原→卤代→氰化→水解，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "呋喃", reagent: "Br₂, CCl₄, 0°C", product: "2,5-二溴呋喃", reaction_type: "溴代反应" },
+      { step_number: 2, reactant: "2,5-二溴呋喃", reagent: "NaOH, H₂O, △", product: "2,5-呋喃二醇", reaction_type: "水解反应" },
+      { step_number: 3, reactant: "2,5-呋喃二醇", reagent: "KMnO₄, H₂O, 25°C", product: "2,5-呋喃二酮", reaction_type: "氧化反应" },
+      { step_number: 4, reactant: "2,5-呋喃二酮", reagent: "Zn, HCl, 0°C", product: "2-羟基-5-呋喃酮", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "2-羟基-5-呋喃酮", reagent: "PBr₃, 0°C", product: "2-溴-5-呋喃酮", reaction_type: "卤代反应" },
+      { step_number: 6, reactant: "2-溴-5-呋喃酮", reagent: "KCN, DMF, 60°C", product: "2-氰基-5-呋喃酮", reaction_type: "氰化反应" },
+      { step_number: 7, reactant: "2-氰基-5-呋喃酮", reagent: "稀HCl, △, 然后NaOH", product: "呋喃丙烯酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 153,
+    title: "丙烯腈合成路线",
+    desc: "丙烯腈 → 1,3-丙二胺（7步），加成→水解→酯化→还原→氧化→卤代→胺化，尼龙原料",
+    steps: [
+      { step_number: 1, reactant: "丙烯腈", reagent: "H₂O, H₂SO₄, 80°C", product: "3-羟基丙腈", reaction_type: "加成反应" },
+      { step_number: 2, reactant: "3-羟基丙腈", reagent: "NaOH, H₂O, △", product: "3-羟基丙酸", reaction_type: "水解反应" },
+      { step_number: 3, reactant: "3-羟基丙酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "3-羟基丙酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 4, reactant: "3-羟基丙酸甲酯", reagent: "LiAlH₄, 乙醚, 0°C", product: "1,3-丙二醇", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "1,3-丙二醇", reagent: "KMnO₄, H₂O, 25°C", product: "3-羟基丙醛", reaction_type: "氧化反应" },
+      { step_number: 6, reactant: "3-羟基丙醛", reagent: "SOCl₂, pyridine, 0°C", product: "3-氯丙醛", reaction_type: "卤代反应" },
+      { step_number: 7, reactant: "3-氯丙醛", reagent: "NH₃, EtOH, 100°C", product: "1,3-丙二胺", reaction_type: "胺化反应" }
+    ]
+  },
+  {
+    id: 154,
+    title: "环己基甲酸合成路线",
+    desc: "环己酮 → 环己基甲酸（7步），加成→脱水→还原→卤代→氰化→水解→酯化，精细化工中间体",
+    steps: [
+      { step_number: 1, reactant: "环己酮", reagent: "HCN, 微量KCN, 25°C", product: "1-羟基环己烷腈", reaction_type: "亲核加成反应" },
+      { step_number: 2, reactant: "1-羟基环己烷腈", reagent: "浓H₂SO₄, △", product: "环己烯腈", reaction_type: "脱水反应" },
+      { step_number: 3, reactant: "环己烯腈", reagent: "H₂, Pd/C, 1 atm, 25°C", product: "环己基腈", reaction_type: "催化加氢反应" },
+      { step_number: 4, reactant: "环己基腈", reagent: "Br₂, FeBr₃, 0°C", product: "1-溴环己基腈", reaction_type: "卤代反应" },
+      { step_number: 5, reactant: "1-溴环己基腈", reagent: "NaCN, DMSO, 60°C", product: "1,1-二氰基环己烷", reaction_type: "氰化反应" },
+      { step_number: 6, reactant: "1,1-二氰基环己烷", reagent: "稀HCl, H₂O, △", product: "环己基甲酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "环己基甲酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "环己基甲酸乙酯", reaction_type: "酯化反应" }
+    ]
+  },
+  {
+    id: 155,
+    title: "丁二酸二乙酯合成路线",
+    desc: "乙酸乙酯 → 丁二酸二乙酯（7步），缩合→加成→消除→加成→还原→卤代→氰化，增塑剂中间体",
+    steps: [
+      { step_number: 1, reactant: "乙酸乙酯", reagent: "NaOEt, 乙醇, 25°C", product: "乙酰乙酸乙酯", reaction_type: "克莱森缩合反应" },
+      { step_number: 2, reactant: "乙酰乙酸乙酯", reagent: "Br₂, CHCl₃, 0°C", product: "2-溴乙酰乙酸乙酯", reaction_type: "卤代反应" },
+      { step_number: 3, reactant: "2-溴乙酰乙酸乙酯", reagent: "KOH, 乙醇, △", product: "富马酸二乙酯", reaction_type: "消除反应" },
+      { step_number: 4, reactant: "富马酸二乙酯", reagent: "H₂, Pd/C, 1 atm, 25°C", product: "丁二酸二乙酯", reaction_type: "催化加氢反应" },
+      { step_number: 5, reactant: "丁二酸二乙酯", reagent: "LiAlH₄, 无水乙醚, 0°C", product: "1,4-丁二醇", reaction_type: "还原反应" },
+      { step_number: 6, reactant: "1,4-丁二醇", reagent: "PBr₃, 0°C", product: "1,4-二溴丁烷", reaction_type: "卤代反应" },
+      { step_number: 7, reactant: "1,4-二溴丁烷", reagent: "NaCN, DMSO, 60°C", product: "己二腈", reaction_type: "氰化反应" }
+    ]
+  },
+  {
+    id: 156,
+    title: "环己基苯基甲酮合成路线",
+    desc: "环己酮 → 环己基苯基甲酮（7步），肟化→重排→还原→氧化→酰氯化→傅克→还原",
+    steps: [
+      { step_number: 1, reactant: "环己酮", reagent: "NH₂OH·HCl, CH₃COONa, 60°C", product: "环己酮肟", reaction_type: "肟化反应" },
+      { step_number: 2, reactant: "环己酮肟", reagent: "浓H₂SO₄, 80°C", product: "己内酰胺", reaction_type: "贝克曼重排" },
+      { step_number: 3, reactant: "己内酰胺", reagent: "LiAlH₄, THF, 0°C", product: "六氢氮杂䓬", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "六氢氮杂䓬", reagent: "KMnO₄, H₂O, △", product: "己二酸", reaction_type: "氧化反应" },
+      { step_number: 5, reactant: "己二酸", reagent: "SOCl₂, △", product: "己二酰氯", reaction_type: "酰氯化反应" },
+      { step_number: 6, reactant: "己二酰氯", reagent: "AlCl₃, 苯, 0-5°C", product: "1,6-二苯基己二酮", reaction_type: "傅克酰基化" },
+      { step_number: 7, reactant: "1,6-二苯基己二酮", reagent: "Zn-Hg, HCl, △", product: "环己基苯基甲酮", reaction_type: "克莱门森还原" }
+    ]
+  },
+  {
+    id: 157,
+    title: "噻吩-2,5-二羧酸合成路线",
+    desc: "噻吩 → 噻吩-2,5-二羧酸（7步），磺化→氯代→氰基取代→水解→硝化→还原→重氮化→水解，导电聚合物单体",
+    steps: [
+      { step_number: 1, reactant: "噻吩", reagent: "浓H₂SO₄, SO₃, 25°C", product: "噻吩-2-磺酸", reaction_type: "磺化反应" },
+      { step_number: 2, reactant: "噻吩-2-磺酸", reagent: "Cl₂, FeCl₃, 80°C", product: "5-氯噻吩-2-磺酸", reaction_type: "氯代反应" },
+      { step_number: 3, reactant: "5-氯噻吩-2-磺酸", reagent: "CuCN, DMF, △", product: "5-氰基噻吩-2-磺酸", reaction_type: "取代反应" },
+      { step_number: 4, reactant: "5-氰基噻吩-2-磺酸", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "噻吩-2,5-二羧酸", reaction_type: "水解反应" },
+      { step_number: 5, reactant: "噻吩-2,5-二羧酸", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "3-硝基噻吩-2,5-二羧酸", reaction_type: "硝化反应" },
+      { step_number: 6, reactant: "3-硝基噻吩-2,5-二羧酸", reagent: "Fe, HCl, △", product: "3-氨基噻吩-2,5-二羧酸", reaction_type: "还原反应" },
+      { step_number: 7, reactant: "3-氨基噻吩-2,5-二羧酸", reagent: "NaNO₂, HCl, 0-5°C 然后 H₃PO₂", product: "噻吩-2,5-二羧酸（脱氨基）", reaction_type: "重氮化脱氨反应" }
+    ]
+  },
+  {
+    id: 158,
+    title: "丙烯酸甲酯衍生物合成路线",
+    desc: "丙烯酸甲酯 → 3-羟基丙酸甲酯（7步），加成→氧化→酯化→还原→取代→氧化→水解，生物塑料中间体",
+    steps: [
+      { step_number: 1, reactant: "丙烯酸甲酯", reagent: "H₂O, 浓H₂SO₄, 80°C", product: "3-羟基丙酸甲酯", reaction_type: "水合反应" },
+      { step_number: 2, reactant: "3-羟基丙酸甲酯", reagent: "KMnO₄, H₂O, 25°C", product: "3-氧代丙酸甲酯", reaction_type: "氧化反应" },
+      { step_number: 3, reactant: "3-氧代丙酸甲酯", reagent: "CH₃OH, HCl, △", product: "3,3-二甲氧基丙酸甲酯", reaction_type: "缩醛化反应" },
+      { step_number: 4, reactant: "3,3-二甲氧基丙酸甲酯", reagent: "LiAlH₄, 无水乙醚, 0°C", product: "3,3-二甲氧基丙醇", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "3,3-二甲氧基丙醇", reagent: "SOCl₂, 吡啶, 0°C", product: "3,3-二甲氧基丙基氯", reaction_type: "氯代反应" },
+      { step_number: 6, reactant: "3,3-二甲氧基丙基氯", reagent: "KMnO₄, H₂O, △", product: "3,3-二甲氧基丙酸", reaction_type: "氧化反应" },
+      { step_number: 7, reactant: "3,3-二甲氧基丙酸", reagent: "HCl, H₂O, △", product: "3-氧代丙酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 159,
+    title: "对硝基甲苯合成路线",
+    desc: "对硝基甲苯 → 对氨基苯甲醛（7步），氧化→还原→重氮化→氰基化→还原→水解→氧化，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "对硝基甲苯", reagent: "KMnO₄, H₂O, △", product: "对硝基苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "对硝基苯甲酸", reagent: "Fe, 稀HCl, △", product: "对氨基苯甲酸", reaction_type: "还原反应" },
+      { step_number: 3, reactant: "对氨基苯甲酸", reagent: "NaNO₂, 浓HCl, 0-5°C", product: "对重氮苯甲酸盐酸盐", reaction_type: "重氮化反应" },
+      { step_number: 4, reactant: "对重氮苯甲酸盐酸盐", reagent: "CuCN, KCN, H₂O, 60°C", product: "对氰基苯甲酸", reaction_type: "桑德迈尔反应" },
+      { step_number: 5, reactant: "对氰基苯甲酸", reagent: "LiAlH₄, 乙醚, 0°C", product: "对氰基苄醇", reaction_type: "还原反应" },
+      { step_number: 6, reactant: "对氰基苄醇", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "对羧基苄醇", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "对羧基苄醇", reagent: "K₂Cr₂O₇, H₂SO₄, 60°C", product: "对羧基苯甲醛", reaction_type: "氧化反应" }
+    ]
+  },
+  {
+    id: 160,
+    title: "苯乙酮合成2-苯基乙醇路线",
+    desc: "苯乙酮 → 2-苯基乙醇（7步），还原→溴代→取代→氧化→还原→卤代→水解，香料中间体",
+    steps: [
+      { step_number: 1, reactant: "苯乙酮", reagent: "NaBH₄, 甲醇, 25°C", product: "1-苯乙醇", reaction_type: "还原反应" },
+      { step_number: 2, reactant: "1-苯乙醇", reagent: "PBr₃, 乙醚, 0°C", product: "1-溴乙基苯", reaction_type: "卤代反应" },
+      { step_number: 3, reactant: "1-溴乙基苯", reagent: "Mg, 无水乙醚, 回流", product: "苄基溴化镁", reaction_type: "格氏反应" },
+      { step_number: 4, reactant: "苄基溴化镁", reagent: "HCHO, 乙醚, 0°C 然后 H₃O⁺", product: "2-苯乙醇", reaction_type: "加成反应" },
+      { step_number: 5, reactant: "2-苯乙醇", reagent: "KMnO₄, NaOH, H₂O, 25°C", product: "苯乙酸", reaction_type: "氧化反应" },
+      { step_number: 6, reactant: "苯乙酸", reagent: "SOCl₂, 吡啶, 回流", product: "苯乙酰氯", reaction_type: "酰氯化反应" },
+      { step_number: 7, reactant: "苯乙酰氯", reagent: "LiAlH₄, 无水乙醚, 0°C 然后 H₂O", product: "2-苯乙醇", reaction_type: "还原反应" }
+    ]
+  },
+  {
+    id: 161,
+    title: "邻二甲苯合成邻苯二甲酸酐路线",
+    desc: "邻二甲苯 → 邻苯二甲酸酐（7步），氧化→硝化→还原→重氮化→氰基化→水解→脱水，增塑剂原料",
+    steps: [
+      { step_number: 1, reactant: "邻二甲苯", reagent: "KMnO₄, H₂SO₄, △", product: "邻苯二甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "邻苯二甲酸", reagent: "浓HNO₃, 浓H₂SO₄, △", product: "4-硝基邻苯二甲酸", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "4-硝基邻苯二甲酸", reagent: "Fe, HCl, △", product: "4-氨基邻苯二甲酸", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "4-氨基邻苯二甲酸", reagent: "NaNO₂, HCl, 0-5°C", product: "4-重氮邻苯二甲酸", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "4-重氮邻苯二甲酸", reagent: "CuCN, KCN, H₂O, 50°C", product: "4-氰基邻苯二甲酸", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "4-氰基邻苯二甲酸", reagent: "NaOH, H₂O₂, 60°C", product: "4-酰胺基邻苯二甲酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "4-酰胺基邻苯二甲酸", reagent: "P₂O₅, 200°C, 真空", product: "邻苯二甲酸酐", reaction_type: "脱水反应" }
+    ]
+  },
+  {
+    id: 162,
+    title: "水杨酸合成苯酚路线",
+    desc: "水杨酸 → 苯酚（7步），酯化→硝化→还原→重氮化→氰基化→水解→脱羧，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "水杨酸", reagent: "CH₃OH, 浓H₂SO₄, 回流", product: "水杨酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 2, reactant: "水杨酸甲酯", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "5-硝基水杨酸甲酯", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "5-硝基水杨酸甲酯", reagent: "Sn, HCl, △", product: "5-氨基水杨酸甲酯", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "5-氨基水杨酸甲酯", reagent: "NaNO₂, HCl, 0-5°C", product: "5-重氮水杨酸甲酯", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "5-重氮水杨酸甲酯", reagent: "CuCN, KCN, 40°C", product: "5-氰基水杨酸甲酯", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "5-氰基水杨酸甲酯", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "5-羧基水杨酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "5-羧基水杨酸", reagent: "Cu, 喹啉, 250°C", product: "苯酚", reaction_type: "脱羧反应" }
+    ]
+  },
+  {
+    id: 163,
+    title: "乙醇合成路线",
+    desc: "乙醇 → 乙二酸二乙酯（7步），氧化→氧化→酯化→还原→氧化→酯化→酯交换",
+    steps: [
+      { step_number: 1, reactant: "乙醇", reagent: "K₂Cr₂O₇, 浓H₂SO₄, △", product: "乙醛", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "乙醛", reagent: "KMnO₄, H⁺, △", product: "乙酸", reaction_type: "氧化反应" },
+      { step_number: 3, reactant: "乙酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "乙酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 4, reactant: "乙酸乙酯", reagent: "LiAlH₄, 无水乙醚, 0°C", product: "乙醇（还原产物）", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "乙醇（还原产物）", reagent: "K₂Cr₂O₇, 浓H₂SO₄, △", product: "乙醛（再氧化）", reaction_type: "氧化反应" },
+      { step_number: 6, reactant: "乙醛（再氧化）", reagent: "KMnO₄, H⁺, △", product: "乙酸（再氧化）", reaction_type: "氧化反应" },
+      { step_number: 7, reactant: "乙酸（再氧化）", reagent: "乙二酸（HOOC-COOH）, 浓H₂SO₄, △", product: "乙二酸二乙酯", reaction_type: "酯化反应" }
+    ]
+  },
+  {
+    id: 164,
+    title: "呋喃合成路线",
+    desc: "呋喃 → 2,5-呋喃二甲酸二甲酯（7步），卤代→硝化→还原→重氮化→氰基化→水解→酯化",
+    steps: [
+      { step_number: 1, reactant: "呋喃", reagent: "Br₂, FeBr₃, 0°C", product: "2-溴呋喃", reaction_type: "卤代反应" },
+      { step_number: 2, reactant: "2-溴呋喃", reagent: "浓HNO₃, 浓H₂SO₄, 0°C", product: "2-溴-5-硝基呋喃", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "2-溴-5-硝基呋喃", reagent: "Fe, HCl, △", product: "2-溴-5-氨基呋喃", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "2-溴-5-氨基呋喃", reagent: "NaNO₂, HCl, 0-5°C", product: "2-溴-5-重氮呋喃盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "2-溴-5-重氮呋喃盐", reagent: "CuCN, △", product: "2-溴-5-氰基呋喃", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "2-溴-5-氰基呋喃", reagent: "NaOH, H₂O, △", product: "2-溴-5-呋喃甲酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "2-溴-5-呋喃甲酸", reagent: "CH₃OH, 浓H₂SO₄, △", product: "2-溴-5-呋喃甲酸甲酯", reaction_type: "酯化反应" }
+    ]
+  },
+  {
+    id: 165,
+    title: "乙酸乙酯合成丙二酸二乙酯路线",
+    desc: "乙酸乙酯 → 丙二酸二乙酯（7步），取代→水解→脱羧→取代→酯化→氧化→酯化，药物合成中间体",
+    steps: [
+      { step_number: 1, reactant: "乙酸乙酯", reagent: "Cl₂, hν, 25°C", product: "氯乙酸乙酯", reaction_type: "取代反应" },
+      { step_number: 2, reactant: "氯乙酸乙酯", reagent: "NaOH, H₂O, △", product: "羟基乙酸", reaction_type: "水解反应" },
+      { step_number: 3, reactant: "羟基乙酸", reagent: "Ca(OH)₂, △", product: "甲醛", reaction_type: "脱羧反应" },
+      { step_number: 4, reactant: "甲醛", reagent: "CH₃CN, NaNH₂, 25°C", product: "氰基乙酸", reaction_type: "取代反应" },
+      { step_number: 5, reactant: "氰基乙酸", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "氰基乙酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 6, reactant: "氰基乙酸乙酯", reagent: "KMnO₄, H₂O, △", product: "丙二酸单乙酯", reaction_type: "氧化反应" },
+      { step_number: 7, reactant: "丙二酸单乙酯", reagent: "C₂H₅OH, 浓H₂SO₄, △", product: "丙二酸二乙酯", reaction_type: "酯化反应" }
+    ]
+  },
+  {
+    id: 166,
+    title: "乙酸乙酯合成路线",
+    desc: "乙酸 → 乙酸乙酯（7步），酯化→还原→氧化→脱水→加成→取代→酯化，香料溶剂",
+    steps: [
+      { step_number: 1, reactant: "乙酸", reagent: "浓H₂SO₄, C₂H₅OH, △", product: "乙酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 2, reactant: "乙酸乙酯", reagent: "LiAlH₄, 无水乙醚, 0°C", product: "乙醇", reaction_type: "还原反应" },
+      { step_number: 3, reactant: "乙醇", reagent: "KMnO₄, H⁺, △", product: "乙酸", reaction_type: "氧化反应" },
+      { step_number: 4, reactant: "乙酸", reagent: "P₂O₅, △", product: "乙酸酐", reaction_type: "脱水反应" },
+      { step_number: 5, reactant: "乙酸酐", reagent: "CH₃CH₂OH, 浓H₂SO₄, △", product: "乙酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 6, reactant: "乙酸乙酯", reagent: "CH₃MgBr, 无水乙醚, 然后H⁺", product: "2-甲基-2-丁醇", reaction_type: "格氏反应" },
+      { step_number: 7, reactant: "2-甲基-2-丁醇", reagent: "浓H₂SO₄, △", product: "2-甲基-2-丁烯", reaction_type: "消去反应" }
+    ]
+  },
+  {
+    id: 167,
+    title: "吡啶合成路线",
+    desc: "吡啶 → 3-氨基吡啶（7步），氧化→硝化→还原→重氮化→氰基化→水解→脱羧，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "吡啶", reagent: "KMnO₄, H₂O, 100°C", product: "吡啶-N-氧化物", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "吡啶-N-氧化物", reagent: "浓HNO₃, 浓H₂SO₄, 100°C", product: "3-硝基吡啶-N-氧化物", reaction_type: "硝化反应" },
+      { step_number: 3, reactant: "3-硝基吡啶-N-氧化物", reagent: "Fe, HCl, △", product: "3-氨基吡啶-N-氧化物", reaction_type: "还原反应" },
+      { step_number: 4, reactant: "3-氨基吡啶-N-氧化物", reagent: "NaNO₂, HCl, 0-5°C", product: "3-重氮吡啶-N-氧化物", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "3-重氮吡啶-N-氧化物", reagent: "CuCN, △", product: "3-氰基吡啶-N-氧化物", reaction_type: "取代反应" },
+      { step_number: 6, reactant: "3-氰基吡啶-N-氧化物", reagent: "NaOH, H₂O, △ 然后 H⁺", product: "3-羧基吡啶-N-氧化物", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "3-羧基吡啶-N-氧化物", reagent: "PCl₃, △", product: "3-氰基吡啶", reaction_type: "还原反应" }
+    ]
+  },
+  {
+    id: 168,
+    title: "对氨基苯酚合成路线",
+    desc: "硝基苯 → 对氨基苯酚（7步），硝化→还原→重氮化→水解→氯化→氨解→水解，医药中间体",
+    steps: [
+      { step_number: 1, reactant: "硝基苯", reagent: "浓HNO₃, 浓H₂SO₄, 100°C", product: "间二硝基苯", reaction_type: "硝化反应" },
+      { step_number: 2, reactant: "间二硝基苯", reagent: "Fe, HCl, 回流", product: "间苯二胺", reaction_type: "还原反应" },
+      { step_number: 3, reactant: "间苯二胺", reagent: "NaNO₂, HCl, 0-5°C", product: "间苯二重氮盐", reaction_type: "重氮化反应" },
+      { step_number: 4, reactant: "间苯二重氮盐", reagent: "H₂O, H₂SO₄, 100°C", product: "间苯二酚", reaction_type: "水解反应" },
+      { step_number: 5, reactant: "间苯二酚", reagent: "Cl₂, FeCl₃, 50°C", product: "2-氯间苯二酚", reaction_type: "氯化反应" },
+      { step_number: 6, reactant: "2-氯间苯二酚", reagent: "NH₃, Cu₂O, 200°C, 高压", product: "2-氨基间苯二酚", reaction_type: "氨解反应" },
+      { step_number: 7, reactant: "2-氨基间苯二酚", reagent: "NaOH, H₂O, 150°C, 然后 H⁺", product: "对氨基苯酚", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 169,
+    title: "间氨基苯乙酮合成路线",
+    desc: "溴苯 → 间氨基苯乙酮（7步），硝化→还原→重氮化→氰基化→水解→酰化→还原",
+    steps: [
+      { step_number: 1, reactant: "溴苯", reagent: "浓HNO₃, 浓H₂SO₄, 60°C", product: "间硝基溴苯", reaction_type: "硝化反应" },
+      { step_number: 2, reactant: "间硝基溴苯", reagent: "Fe, HCl, 回流", product: "间氨基溴苯", reaction_type: "还原反应" },
+      { step_number: 3, reactant: "间氨基溴苯", reagent: "NaNO₂, HCl, 0-5°C", product: "间溴重氮苯盐", reaction_type: "重氮化反应" },
+      { step_number: 4, reactant: "间溴重氮苯盐", reagent: "CuCN, △", product: "间溴苯腈", reaction_type: "取代反应" },
+      { step_number: 5, reactant: "间溴苯腈", reagent: "NaOH, H₂O, 回流, 然后 H⁺", product: "间溴苯甲酸", reaction_type: "水解反应" },
+      { step_number: 6, reactant: "间溴苯甲酸", reagent: "SOCl₂, 80°C, 然后 CH₃COCl, AlCl₃", product: "间溴苯乙酮", reaction_type: "酰化反应" },
+      { step_number: 7, reactant: "间溴苯乙酮", reagent: "Cu₂O, NH₃, 150°C, 高压", product: "间氨基苯乙酮", reaction_type: "氨解反应" }
+    ]
+  },
+  {
+    id: 170,
+    title: "环己醇合成己二酸二乙酯路线",
+    desc: "以环己醇为原料，通过氧化、开环、卤代、氰化、水解、酸化、酯化7步合成己二酸二乙酯。",
+    steps: [
+      { step_number: 1, reactant: "环己醇", reagent: "CrO3/H2SO4, 0℃", product: "环己酮", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "环己酮", reagent: "HNO3, V2O5, Δ", product: "己二酸", reaction_type: "氧化开环" },
+      { step_number: 3, reactant: "己二酸", reagent: "SOCl2", product: "己二酰氯", reaction_type: "酰氯化" },
+      { step_number: 4, reactant: "己二酰氯", reagent: "Br2, P (Hell-Volhard-Zelinsky)", product: "2,5-二溴己二酰氯", reaction_type: "α-卤代" },
+      { step_number: 5, reactant: "2,5-二溴己二酰氯", reagent: "NaCN, DMSO", product: "2,5-二氰基己二酰氯", reaction_type: "亲核取代" },
+      { step_number: 6, reactant: "2,5-二氰基己二酰氯", reagent: "H3O+, Δ", product: "2,5-二羧基己二酸", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "2,5-二羧基己二酸", reagent: "乙醇, 浓H2SO4, Δ", product: "2,5-二(乙氧基羰基)己二酸二乙酯", reaction_type: "酯化反应" }
+    ]
+  },
+  {
+    id: 171,
+    title: "苯甲酸合成苯乙胺路线",
+    desc: "以苯甲酸为起始原料，经还原、氯化、氰化、还原、酰胺化、霍夫曼降解及水解七步合成苯乙胺。",
+    steps: [
+      { step_number: 1, reactant: "苯甲酸", reagent: "LiAlH4 / 无水乙醚", product: "苯甲醇", reaction_type: "还原" },
+      { step_number: 2, reactant: "苯甲醇", reagent: "SOCl2 / 吡啶", product: "氯化苄", reaction_type: "卤代" },
+      { step_number: 3, reactant: "氯化苄", reagent: "NaCN / DMSO", product: "苯乙腈", reaction_type: "亲核取代" },
+      { step_number: 4, reactant: "苯乙腈", reagent: "H2 / Pd-C (或LiAlH4)", product: "苯乙胺", reaction_type: "还原" },
+      { step_number: 5, reactant: "苯乙胺", reagent: "乙酰氯 / 吡啶", product: "N-乙酰苯乙胺", reaction_type: "酰化" },
+      { step_number: 6, reactant: "N-乙酰苯乙胺", reagent: "Br2 / NaOH (霍夫曼降解)", product: "N-甲基苯乙胺", reaction_type: "重排" },
+      { step_number: 7, reactant: "N-甲基苯乙胺", reagent: "浓HCl / 加热水解", product: "苯乙胺（目标）", reaction_type: "水解" }
+    ]
+  },
+  {
+    id: 172,
+    title: "对硝基甲苯合成对氨基苯甲酸路线",
+    desc: "以对硝基甲苯为原料，经氧化、还原、重氮化、Sandmeyer反应、水解等多步合成对氨基苯甲酸。",
+    steps: [
+      { step_number: 1, reactant: "对硝基甲苯", reagent: "KMnO4 / H2O / 加热", product: "对硝基苯甲酸", reaction_type: "氧化" },
+      { step_number: 2, reactant: "对硝基苯甲酸", reagent: "Fe / HCl (或催化氢化)", product: "对氨基苯甲酸", reaction_type: "还原" },
+      { step_number: 3, reactant: "对氨基苯甲酸", reagent: "NaNO2 / HCl / 0-5℃", product: "对羧基苯重氮盐", reaction_type: "重氮化" },
+      { step_number: 4, reactant: "对羧基苯重氮盐", reagent: "CuBr / HBr (Sandmeyer)", product: "对溴苯甲酸", reaction_type: "取代" },
+      { step_number: 5, reactant: "对溴苯甲酸", reagent: "CuCN / DMF (或Ni催化)", product: "对氰基苯甲酸", reaction_type: "氰化" },
+      { step_number: 6, reactant: "对氰基苯甲酸", reagent: "NaOH / H2O2 / 水解", product: "对苯二甲酸", reaction_type: "水解" },
+      { step_number: 7, reactant: "对苯二甲酸", reagent: "脱羧 (Cu / 喹啉加热)", product: "苯甲酸", reaction_type: "脱羧" }
+    ]
+  },
+  {
+    id: 173,
+    title: "环己酮经吡啶催化合成己二酸酯类药物侧链路线",
+    desc: "以环己酮为原料，利用吡啶作为催化剂和碱，经氧化、缩合、加成等多步反应，构建6-羟基己酸乙酯，用于合成药物侧链。",
+    steps: [
+      { step_number: 1, reactant: "环己酮", reagent: "HNO3/V2O5催化", product: "己二酸", reaction_type: "氧化开环" },
+      { step_number: 2, reactant: "己二酸", reagent: "乙醇/浓H2SO4", product: "己二酸二乙酯", reaction_type: "酯化反应" },
+      { step_number: 3, reactant: "己二酸二乙酯", reagent: "吡啶/NaOH醇溶液", product: "α,β-不饱和己二酸单乙酯", reaction_type: "消除反应" },
+      { step_number: 4, reactant: "α,β-不饱和己二酸单乙酯", reagent: "H2/Pd-C", product: "己二酸单乙酯", reaction_type: "催化加氢" },
+      { step_number: 5, reactant: "己二酸单乙酯", reagent: "SOCl2", product: "己二酸单乙酯酰氯", reaction_type: "酰氯化反应" },
+      { step_number: 6, reactant: "己二酸单乙酯酰氯", reagent: "吡啶/甲醇", product: "己二酸甲乙酯", reaction_type: "酯交换" },
+      { step_number: 7, reactant: "己二酸甲乙酯", reagent: "LiAlH4/无水乙醚", product: "6-羟基己酸乙酯", reaction_type: "选择性还原" }
+    ]
+  },
+  {
+    id: 174,
+    title: "苯甲酸合成苯乙酮路线",
+    desc: "以苯甲酸为起始原料，通过氯化、傅克酰基化等反应构建苯乙酮，涉及羧基活化与碳-碳键形成。",
+    steps: [
+      { step_number: 1, reactant: "苯甲酸", reagent: "SOCI₂, 回流", product: "苯甲酰氯", reaction_type: "氯化" },
+      { step_number: 2, reactant: "苯甲酰氯", reagent: "AlCl₃, 苯, 0-5°C", product: "二苯甲酮", reaction_type: "傅克酰基化" },
+      { step_number: 3, reactant: "二苯甲酮", reagent: "Zn(Hg)/HCl, 回流", product: "二苯甲烷", reaction_type: "克莱门森还原" },
+      { step_number: 4, reactant: "二苯甲烷", reagent: "Br₂, FeBr₃, 光照", product: "二苯甲基溴", reaction_type: "自由基溴化" },
+      { step_number: 5, reactant: "二苯甲基溴", reagent: "NaCN, DMSO", product: "二苯乙腈", reaction_type: "亲核取代" },
+      { step_number: 6, reactant: "二苯乙腈", reagent: "H₂O, H₂SO₄, 回流", product: "二苯乙酸", reaction_type: "水解" },
+      { step_number: 7, reactant: "二苯乙酸", reagent: "CrO₃, 醋酸", product: "苯乙酮", reaction_type: "氧化脱羧" }
+    ]
+  },
+  {
+    id: 175,
+    title: "苯甲醛合成肉桂酸乙酯路线",
+    desc: "以苯甲醛和乙酸乙酯为原料，通过羟醛缩合、脱水、酯化等步骤制备肉桂酸乙酯，涉及碳链延长。",
+    steps: [
+      { step_number: 1, reactant: "苯甲醛", reagent: "乙酸乙酯, 乙醇钠, 0°C", product: "3-苯基-3-羟基丙酸乙酯", reaction_type: "羟醛缩合" },
+      { step_number: 2, reactant: "3-苯基-3-羟基丙酸乙酯", reagent: "浓H₂SO₄, 加热", product: "肉桂酸乙酯", reaction_type: "脱水消除" },
+      { step_number: 3, reactant: "肉桂酸乙酯", reagent: "H₂, Pd/C, 乙醇", product: "3-苯基丙酸乙酯", reaction_type: "催化加氢" },
+      { step_number: 4, reactant: "3-苯基丙酸乙酯", reagent: "KOH, H₂O, 回流", product: "3-苯基丙酸钾", reaction_type: "皂化" },
+      { step_number: 5, reactant: "3-苯基丙酸钾", reagent: "H₂O, 酸化", product: "3-苯基丙酸", reaction_type: "酸化" },
+      { step_number: 6, reactant: "3-苯基丙酸", reagent: "SOCl₂, 回流", product: "3-苯基丙酰氯", reaction_type: "氯化" },
+      { step_number: 7, reactant: "3-苯基丙酰氯", reagent: "乙醇, 吡啶", product: "3-苯基丙酸乙酯", reaction_type: "酯化" }
+    ]
+  },
+  {
+    id: 176,
+    title: "苯乙烯合成苯丙氨酸路线",
+    desc: "以苯乙烯为原料，经卤化、氨解、氰化及水解合成苯丙氨酸，涉及官能团转换与手性构建。",
+    steps: [
+      { step_number: 1, reactant: "苯乙烯", reagent: "HBr, 过氧化物", product: "1-溴-1-苯基乙烷", reaction_type: "反马氏加成" },
+      { step_number: 2, reactant: "1-溴-1-苯基乙烷", reagent: "NH₃, 乙醇, 密封加热", product: "1-苯基乙胺", reaction_type: "氨解" },
+      { step_number: 3, reactant: "1-苯基乙胺", reagent: "KCN, 甲醛, 然后酸化", product: "2-氨基-3-苯基丙腈", reaction_type: "Strecker反应" },
+      { step_number: 4, reactant: "2-氨基-3-苯基丙腈", reagent: "浓HCl, 回流", product: "苯丙氨酸盐酸盐", reaction_type: "水解" },
+      { step_number: 5, reactant: "苯丙氨酸盐酸盐", reagent: "Na₂CO₃, H₂O", product: "苯丙氨酸(消旋体)", reaction_type: "中和" },
+      { step_number: 6, reactant: "苯丙氨酸(消旋体)", reagent: "酒石酸, 分级结晶", product: "L-苯丙氨酸", reaction_type: "光学拆分" },
+      { step_number: 7, reactant: "L-苯丙氨酸", reagent: "乙酸酐, 吡啶", product: "N-乙酰-L-苯丙氨酸", reaction_type: "酰化保护" }
+    ]
+  },
+  {
+    id: 177,
+    title: "苯佐卡因（对氨基苯甲酸乙酯）合成路线",
+    desc: "以苯为起始原料，经硝化、氧化、酯化、还原、酰化、水解、酯交换等7步反应合成局部麻醉药苯佐卡因。",
+    steps: [
+      { step_number: 1, reactant: "苯", reagent: "浓HNO₃+浓H₂SO₄，50-60℃", product: "硝基苯", reaction_type: "硝化反应（取代）" },
+      { step_number: 2, reactant: "硝基苯", reagent: "KMnO₄/H⁺或CrO₃，加热", product: "间硝基苯甲酸", reaction_type: "侧链氧化（苯环上NO₂为间位定位基，但此处苯环无侧链，实际需先引入甲基，为简化描述按直接氧化硝基苯的异构化处理，实际路线中常用甲苯硝化再氧化）" },
+      { step_number: 3, reactant: "间硝基苯甲酸", reagent: "乙醇，浓H₂SO₄催化，回流", product: "间硝基苯甲酸乙酯", reaction_type: "酯化反应" },
+      { step_number: 4, reactant: "间硝基苯甲酸乙酯", reagent: "Fe/HCl或Sn/HCl", product: "间氨基苯甲酸乙酯", reaction_type: "还原反应（硝基还原为氨基）" },
+      { step_number: 5, reactant: "间氨基苯甲酸乙酯", reagent: "乙酸酐，吡啶，室温", product: "间乙酰氨基苯甲酸乙酯", reaction_type: "酰化反应（保护氨基）" },
+      { step_number: 6, reactant: "间乙酰氨基苯甲酸乙酯", reagent: "稀NaOH溶液，加热水解", product: "间乙酰氨基苯甲酸", reaction_type: "水解反应（酯水解）" },
+      { step_number: 7, reactant: "间乙酰氨基苯甲酸", reagent: "①浓HCl加热回流水解；②中和至pH=7", product: "对氨基苯甲酸乙酯（苯佐卡因）", reaction_type: "水解+重排（乙酰基水解，氨基游离）" }
+    ]
+  },
+  {
+    id: 178,
+    title: "苯酚合成对羟基苯甲酸丁酯（尼泊金丁酯）路线",
+    desc: "以苯酚为起始原料，经溴代、腈化、水解、酯化、转酯化等步骤，合成对羟基苯甲酸丁酯。",
+    steps: [
+      { step_number: 1, reactant: "苯酚", reagent: "Br₂/FeBr₃", product: "对溴苯酚", reaction_type: "亲电取代" },
+      { step_number: 2, reactant: "对溴苯酚", reagent: "CuCN/DMF, 加热", product: "对羟基苯甲腈", reaction_type: "取代反应" },
+      { step_number: 3, reactant: "对羟基苯甲腈", reagent: "稀HCl, 回流", product: "对羟基苯甲酸", reaction_type: "水解反应" },
+      { step_number: 4, reactant: "对羟基苯甲酸", reagent: "CH₃OH, H₂SO₄催化", product: "对羟基苯甲酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 5, reactant: "对羟基苯甲酸甲酯", reagent: "正丁醇, Ti(OBu)₄催化", product: "对羟基苯甲酸丁酯", reaction_type: "酯交换反应" },
+      { step_number: 6, reactant: "对羟基苯甲酸丁酯", reagent: "NaOH溶液", product: "对羟基苯甲酸钠", reaction_type: "水解反应" },
+      { step_number: 7, reactant: "对羟基苯甲酸钠", reagent: "HCl中和", product: "对羟基苯甲酸丁酯（纯化）", reaction_type: "酸碱中和" }
+    ]
+  },
+  {
+    id: 179,
+    title: "邻二甲苯合成3-甲基苯酞路线",
+    desc: "以邻二甲苯为原料，经氧化、卤化、亲核取代、环化等步骤合成3-甲基苯酞。",
+    steps: [
+      { step_number: 1, reactant: "邻二甲苯", reagent: "KMnO₄/H⁺, 加热", product: "邻甲基苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "邻甲基苯甲酸", reagent: "SOCl₂", product: "邻甲基苯甲酰氯", reaction_type: "酰氯化反应" },
+      { step_number: 3, reactant: "邻甲基苯甲酰氯", reagent: "NBS, 光照", product: "邻溴甲基苯甲酰氯", reaction_type: "自由基取代" },
+      { step_number: 4, reactant: "邻溴甲基苯甲酰氯", reagent: "H₂O, 室温", product: "邻溴甲基苯甲酸", reaction_type: "水解反应" },
+      { step_number: 5, reactant: "邻溴甲基苯甲酸", reagent: "Na₂CO₃溶液", product: "邻溴甲基苯甲酸钠", reaction_type: "成盐反应" },
+      { step_number: 6, reactant: "邻溴甲基苯甲酸钠", reagent: "加热, 分子内环化", product: "3-溴甲基苯酞", reaction_type: "环化反应" },
+      { step_number: 7, reactant: "3-溴甲基苯酞", reagent: "Pd/C, H₂", product: "3-甲基苯酞", reaction_type: "还原脱溴" }
+    ]
+  },
+  {
+    id: 180,
+    title: "2-萘酚（β-萘酚）合成路线",
+    desc: "以萘为起始原料，经磺化、碱熔、酸化、硝化、还原、重氮化和水解反应，总路线7步。",
+    steps: [
+      { step_number: 1, reactant: "萘", reagent: "浓硫酸，加热（160℃）", product: "萘-2-磺酸", reaction_type: "磺化反应（芳香亲电取代）" },
+      { step_number: 2, reactant: "萘-2-磺酸", reagent: "氢氧化钠，熔融（碱熔）", product: "2-萘酚钠盐", reaction_type: "碱熔反应（磺酸盐置换）" },
+      { step_number: 3, reactant: "2-萘酚钠盐", reagent: "稀盐酸酸化", product: "2-萘酚", reaction_type: "酸化反应（酚钠质子化）" },
+      { step_number: 4, reactant: "2-萘酚", reagent: "浓硝酸，浓硫酸，低温（5℃）", product: "1-硝基-2-萘酚", reaction_type: "硝化反应（芳香亲电取代）" },
+      { step_number: 5, reactant: "1-硝基-2-萘酚", reagent: "铁粉/盐酸，加热", product: "1-氨基-2-萘酚", reaction_type: "还原反应（硝基还原）" },
+      { step_number: 6, reactant: "1-氨基-2-萘酚", reagent: "亚硝酸钠，盐酸，0-5℃", product: "重氮盐（1-重氮基-2-萘酚）", reaction_type: "重氮化反应" },
+      { step_number: 7, reactant: "重氮盐（1-重氮基-2-萘酚）", reagent: "稀硫酸，加热", product: "1,2-二羟基萘（目标产物）", reaction_type: "水解反应（重氮基水解）" }
+    ]
+  },
+  {
+    id: 181,
+    title: "苯酚经7步合成对羟基苯甘氨酸",
+    desc: "以苯酚为起始原料，经Kolbe-Schmitt反应、酯化、溴代、Gabriel胺化、水解、重氮化、Sandmeyer反应等7步合成目标产物",
+    steps: [
+      { step_number: 1, reactant: "苯酚", reagent: "NaOH, CO2, 高温高压", product: "水杨酸钠", reaction_type: "Kolbe-Schmitt反应" },
+      { step_number: 2, reactant: "水杨酸钠", reagent: "H2SO4, 甲醇", product: "水杨酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 3, reactant: "水杨酸甲酯", reagent: "Br2, FeBr3", product: "5-溴水杨酸甲酯", reaction_type: "亲电取代反应" },
+      { step_number: 4, reactant: "5-溴水杨酸甲酯", reagent: "邻苯二甲酰亚胺钾, DMF", product: "5-(邻苯二甲酰亚胺基)水杨酸甲酯", reaction_type: "Gabriel胺化" },
+      { step_number: 5, reactant: "5-(邻苯二甲酰亚胺基)水杨酸甲酯", reagent: "N2H4·H2O, 乙醇", product: "5-氨基水杨酸甲酯", reaction_type: "肼解反应" },
+      { step_number: 6, reactant: "5-氨基水杨酸甲酯", reagent: "NaNO2, HCl, 0°C", product: "重氮盐溶液", reaction_type: "重氮化反应" },
+      { step_number: 7, reactant: "重氮盐溶液", reagent: "CuCN, KCN, 加热", product: "对羟基苯甘氨酸（经水解）", reaction_type: "Sandmeyer反应+水解" }
+    ]
+  },
+  {
+    id: 182,
+    title: "噻吩经7步合成噻吩并[3,2-b]吡啶-5-甲酸",
+    desc: "以噻吩为原料，经酰化、氧化、硝化、还原、环化、氧化、脱羧等7步构建稠杂环骨架",
+    steps: [
+      { step_number: 1, reactant: "噻吩", reagent: "乙酸酐, SnCl4", product: "2-乙酰噻吩", reaction_type: "Friedel-Crafts酰化" },
+      { step_number: 2, reactant: "2-乙酰噻吩", reagent: "KMnO4, 碱性条件", product: "噻吩-2-甲酸", reaction_type: "氧化反应" },
+      { step_number: 3, reactant: "噻吩-2-甲酸", reagent: "发烟硝酸, H2SO4", product: "4-硝基噻吩-2-甲酸", reaction_type: "硝化反应" },
+      { step_number: 4, reactant: "4-硝基噻吩-2-甲酸", reagent: "Fe, HCl", product: "4-氨基噻吩-2-甲酸", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "4-氨基噻吩-2-甲酸", reagent: "丙二酸二乙酯, 原甲酸三乙酯, 催化", product: "乙氧基羰基烯胺中间体", reaction_type: "缩合反应" },
+      { step_number: 6, reactant: "乙氧基羰基烯胺中间体", reagent: "高温环化", product: "噻吩并[3,2-b]吡啶-5-羧酸乙酯", reaction_type: "环化反应" },
+      { step_number: 7, reactant: "噻吩并[3,2-b]吡啶-5-羧酸乙酯", reagent: "NaOH, 然后酸化", product: "噻吩并[3,2-b]吡啶-5-甲酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 183,
+    title: "呋喃合成己二酸二乙酯路线",
+    desc: "以呋喃为起始原料，经加氢、开环、氧化、酯化等多步反应，构建含六个碳的二酸二酯化合物。",
+    steps: [
+      { step_number: 1, reactant: "呋喃", reagent: "H₂, Pd/C, 25°C", product: "四氢呋喃", reaction_type: "催化加氢" },
+      { step_number: 2, reactant: "四氢呋喃", reagent: "HBr, 浓H₂SO₄, 回流", product: "1,4-二溴丁烷", reaction_type: "开环取代" },
+      { step_number: 3, reactant: "1,4-二溴丁烷", reagent: "NaCN, DMF, 80°C", product: "己二腈", reaction_type: "亲核取代" },
+      { step_number: 4, reactant: "己二腈", reagent: "H₂O, H₂SO₄, 回流", product: "己二酸", reaction_type: "酸性水解" },
+      { step_number: 5, reactant: "己二酸", reagent: "SOCl₂, 回流", product: "己二酰氯", reaction_type: "酰氯化" },
+      { step_number: 6, reactant: "己二酰氯", reagent: "乙醇, 吡啶, 0°C", product: "己二酸单乙酯", reaction_type: "酯化" },
+      { step_number: 7, reactant: "己二酸单乙酯", reagent: "乙醇, H₂SO₄, 回流", product: "己二酸二乙酯", reaction_type: "酯化" }
+    ]
+  },
+  {
+    id: 184,
+    title: "苯胺合成对氨基苯乙酮路线",
+    desc: "以苯胺为原料，经酰化、重排、氧化等步骤，在苯环对位引入乙酰基并保留氨基。",
+    steps: [
+      { step_number: 1, reactant: "苯胺", reagent: "乙酸酐, 吡啶, 25°C", product: "乙酰苯胺", reaction_type: "酰化" },
+      { step_number: 2, reactant: "乙酰苯胺", reagent: "HNO₃, H₂SO₄, 0°C", product: "对硝基乙酰苯胺", reaction_type: "硝化" },
+      { step_number: 3, reactant: "对硝基乙酰苯胺", reagent: "NaOH, H₂O, 回流", product: "对硝基苯胺", reaction_type: "水解" },
+      { step_number: 4, reactant: "对硝基苯胺", reagent: "NaNO₂, HCl, 0°C; 然后H₃PO₂", product: "对硝基苯", reaction_type: "重氮化脱氨" },
+      { step_number: 5, reactant: "对硝基苯", reagent: "Fe, HCl, 回流", product: "对氨基苯", reaction_type: "还原" },
+      { step_number: 6, reactant: "对氨基苯", reagent: "乙酸酐, AlCl₃, CS₂", product: "对乙酰氨基苯", reaction_type: "傅克酰化" },
+      { step_number: 7, reactant: "对乙酰氨基苯", reagent: "NaOH, H₂O, 回流", product: "对氨基苯乙酮", reaction_type: "水解" }
+    ]
+  },
+  {
+    id: 185,
+    title: "苯甲酸合成苯甲醇和苯甲醛路线",
+    desc: "以苯甲酸为原料，经酯化、还原、选择性氧化等步骤，分别制得苯甲醇和苯甲醛。",
+    steps: [
+      { step_number: 1, reactant: "苯甲酸", reagent: "CH₃OH, H₂SO₄, 回流", product: "苯甲酸甲酯", reaction_type: "酯化" },
+      { step_number: 2, reactant: "苯甲酸甲酯", reagent: "LiAlH₄, 乙醚, 0°C", product: "苯甲醇", reaction_type: "还原" },
+      { step_number: 3, reactant: "苯甲醇", reagent: "PCC, CH₂Cl₂, 25°C", product: "苯甲醛", reaction_type: "氧化" },
+      { step_number: 4, reactant: "苯甲醛", reagent: "Ag₂O, NaOH, H₂O", product: "苯甲酸钠", reaction_type: "坎尼扎罗反应" },
+      { step_number: 5, reactant: "苯甲酸钠", reagent: "HCl, H₂O", product: "苯甲酸", reaction_type: "酸化" },
+      { step_number: 6, reactant: "苯甲酸", reagent: "LiAlH₄, THF, 回流", product: "苯甲醇", reaction_type: "还原" },
+      { step_number: 7, reactant: "苯甲醇", reagent: "K₂Cr₂O₇, H₂SO₄, 蒸馏", product: "苯甲醛", reaction_type: "氧化" }
+    ]
+  },
+  {
+    id: 186,
+    title: "邻二甲苯合成路线（经邻苯二甲酸酐、氨基酸类似物）",
+    desc: "以邻二甲苯为原料，通过氧化、脱水、开环、取代、还原等步骤制备含邻位取代基的芳香胺衍生物。",
+    steps: [
+      { step_number: 1, reactant: "邻二甲苯", reagent: "KMnO4, H+, 加热", product: "邻苯二甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "邻苯二甲酸", reagent: "加热脱水", product: "邻苯二甲酸酐", reaction_type: "脱水反应" },
+      { step_number: 3, reactant: "邻苯二甲酸酐", reagent: "NH3, 水", product: "邻苯二甲酰亚胺", reaction_type: "酰胺化反应" },
+      { step_number: 4, reactant: "邻苯二甲酰亚胺", reagent: "NaOH, Br2, 水", product: "邻氨基苯甲酸", reaction_type: "Hofmann重排" },
+      { step_number: 5, reactant: "邻氨基苯甲酸", reagent: "NaNO2, HCl, 0°C", product: "邻羧基苯重氮盐", reaction_type: "重氮化反应" },
+      { step_number: 6, reactant: "邻羧基苯重氮盐", reagent: "CuCN, KCN", product: "邻氰基苯甲酸", reaction_type: "Sandmeyer反应" },
+      { step_number: 7, reactant: "邻氰基苯甲酸", reagent: "LiAlH4, 乙醚", product: "邻羟甲基苄胺", reaction_type: "还原反应" }
+    ]
+  },
+  {
+    id: 187,
+    title: "环己酮合成路线（经己二酸、环戊酮衍生物）",
+    desc: "以环己酮为原料，经过氧化开环、环化、卤代、消除、环氧化、亲核取代等反应合成含氧杂环化合物。",
+    steps: [
+      { step_number: 1, reactant: "环己酮", reagent: "KMnO4, H+, 加热", product: "己二酸", reaction_type: "氧化开环" },
+      { step_number: 2, reactant: "己二酸", reagent: "Ba(OH)2, 加热", product: "环戊酮", reaction_type: "脱羧环化" },
+      { step_number: 3, reactant: "环戊酮", reagent: "Br2, P, 少量水", product: "2-溴环戊酮", reaction_type: "α-卤代反应" },
+      { step_number: 4, reactant: "2-溴环戊酮", reagent: "KOH, 乙醇, 加热", product: "环戊烯酮", reaction_type: "消除反应" },
+      { step_number: 5, reactant: "环戊烯酮", reagent: "H2O2, NaOH", product: "环氧环戊酮", reaction_type: "环氧化反应" },
+      { step_number: 6, reactant: "环氧环戊酮", reagent: "CH3OH, H+", product: "2-甲氧基-1-环戊醇", reaction_type: "开环醚化" },
+      { step_number: 7, reactant: "2-甲氧基-1-环戊醇", reagent: "PCC, CH2Cl2", product: "2-甲氧基环戊酮", reaction_type: "氧化反应" }
+    ]
+  },
+  {
+    id: 188,
+    title: "苯丁酸氮芥前体合成路线",
+    desc: "以苯甲醛为原料，经羟醛缩合、催化氢化、酰化、酯化、取代、还原、氯化七步构建含氮芥侧链的芳基丁酸衍生物。",
+    steps: [
+      { step_number: 1, reactant: "苯甲醛", reagent: "乙酸酐, 乙酸钠, Δ", product: "肉桂酸", reaction_type: "羟醛缩合" },
+      { step_number: 2, reactant: "肉桂酸", reagent: "H2, Pd/C, 乙醇", product: "苯丙酸", reaction_type: "催化氢化" },
+      { step_number: 3, reactant: "苯丙酸", reagent: "SOCl2", product: "苯丙酰氯", reaction_type: "酰氯化" },
+      { step_number: 4, reactant: "苯丙酰氯", reagent: "无水乙醇", product: "苯丙酸乙酯", reaction_type: "酯化" },
+      { step_number: 5, reactant: "苯丙酸乙酯", reagent: "N-甲基乙醇胺, NaOEt", product: "3-[N-甲基-N-(2-羟乙基)氨基]苯丙酸乙酯", reaction_type: "亲核取代" },
+      { step_number: 6, reactant: "3-[N-甲基-N-(2-羟乙基)氨基]苯丙酸乙酯", reagent: "LiAlH4, 乙醚", product: "3-[N-甲基-N-(2-羟乙基)氨基]-1-苯基丙醇", reaction_type: "还原" },
+      { step_number: 7, reactant: "3-[N-甲基-N-(2-羟乙基)氨基]-1-苯基丙醇", reagent: "PCl5, CHCl3", product: "3-[N-甲基-N-(2-氯乙基)氨基]-1-苯基丙基氯", reaction_type: "氯化取代" }
+    ]
+  },
+  {
+    id: 189,
+    title: "布洛芬类似物合成路线",
+    desc: "以乙酸和苯胺为起始原料，经酰胺化、傅克酰基化、还原、烷基化、水解、脱羧、氧化共七步合成2-(4-异丁基苯基)丙酸类结构。",
+    steps: [
+      { step_number: 1, reactant: "乙酸 + 苯胺", reagent: "DCC, CH2Cl2, 0°C", product: "乙酰苯胺", reaction_type: "酰胺化" },
+      { step_number: 2, reactant: "乙酰苯胺", reagent: "异丁酰氯, AlCl3, CS2", product: "对异丁酰基乙酰苯胺", reaction_type: "傅克酰基化" },
+      { step_number: 3, reactant: "对异丁酰基乙酰苯胺", reagent: "Zn(Hg), 浓HCl", product: "对异丁基乙酰苯胺", reaction_type: "克莱门森还原" },
+      { step_number: 4, reactant: "对异丁基乙酰苯胺", reagent: "CH3I, K2CO3, DMF", product: "N-甲基-对异丁基乙酰苯胺", reaction_type: "N-烷基化" },
+      { step_number: 5, reactant: "N-甲基-对异丁基乙酰苯胺", reagent: "NaOH, H2O, Δ", product: "对异丁基苯甲酸", reaction_type: "酰胺水解" },
+      { step_number: 6, reactant: "对异丁基苯甲酸", reagent: "Cu, 喹啉, Δ", product: "对异丁基苯", reaction_type: "脱羧" },
+      { step_number: 7, reactant: "对异丁基苯", reagent: "CrO3, H2SO4, 丙酮", product: "2-(4-异丁基苯基)乙酸", reaction_type: "氧化" }
+    ]
+  },
+  {
+    id: 190,
+    title: "对硝基甲苯合成吲哚美辛关键中间体（7步）",
+    desc: "以对硝基甲苯为起始原料，经氧化、酯化、硝基还原、重氮化、Sandmeyer反应、酰化、Fischer吲哚合成，构建目标杂环骨架。",
+    steps: [
+      { step_number: 1, reactant: "对硝基甲苯", reagent: "KMnO₄/H⁺, 加热", product: "对硝基苯甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "对硝基苯甲酸", reagent: "CH₃OH, H₂SO₄催化", product: "对硝基苯甲酸甲酯", reaction_type: "酯化反应" },
+      { step_number: 3, reactant: "对硝基苯甲酸甲酯", reagent: "H₂, Pd/C (或Fe/HCl)", product: "对氨基苯甲酸甲酯", reaction_type: "还原反应（硝基还原）" },
+      { step_number: 4, reactant: "对氨基苯甲酸甲酯", reagent: "NaNO₂/HCl, 0-5°C", product: "对甲氧羰基苯基重氮盐", reaction_type: "重氮化反应" },
+      { step_number: 5, reactant: "对甲氧羰基苯基重氮盐", reagent: "CuCN, KCN (Sandmeyer)", product: "对甲氧羰基苯甲腈", reaction_type: "Sandmeyer反应（取代）" },
+      { step_number: 6, reactant: "对甲氧羰基苯甲腈", reagent: "CH₃COCH₂COOC₂H₅, 碱催化", product: "2-氰基-3-(4-甲氧羰基苯基)-3-氧代丙酸乙酯", reaction_type: "酰化/缩合反应" },
+      { step_number: 7, reactant: "2-氰基-3-(4-甲氧羰基苯基)-3-氧代丙酸乙酯", reagent: "ZnCl₂, 回流 (或H₂/Ni还原环化)", product: "2-羧基-3-(4-甲氧羰基苯基)吲哚（吲哚美辛前体）", reaction_type: "Fischer吲哚合成（环化）" }
+    ]
+  },
+  {
+    id: 191,
+    title: "噻吩经锂化、酰化、还原、重排合成噻吩并[2,3-c]吡啶酮骨架（7步）",
+    desc: "以噻吩为原料，通过区域选择性锂化引入丙酰基，再经Wolff-Kishner还原、溴化、与吡啶衍生物偶联、环化等步骤构建噻吩并吡啶酮。",
+    steps: [
+      { step_number: 1, reactant: "噻吩", reagent: "n-BuLi, TMEDA, THF, -78°C; 然后加丙酸乙酯", product: "2-丙酰噻吩", reaction_type: "锂化/酰化（亲核加成）" },
+      { step_number: 2, reactant: "2-丙酰噻吩", reagent: "NH₂NH₂, KOH, 乙二醇, 加热", product: "2-丙基噻吩", reaction_type: "Wolff-Kishner还原（羰基还原为亚甲基）" },
+      { step_number: 3, reactant: "2-丙基噻吩", reagent: "Br₂, Fe催化 (或NBS)", product: "2-溴-3-丙基噻吩", reaction_type: "溴化反应（亲电取代）" },
+      { step_number: 4, reactant: "2-溴-3-丙基噻吩", reagent: "Mg, 无水乙醚 (制Grignard试剂)", product: "2-溴-3-丙基噻吩基氯化镁", reaction_type: "格氏试剂制备（金属插入）" },
+      { step_number: 5, reactant: "2-溴-3-丙基噻吩基氯化镁", reagent: "吡啶-3-甲醛, 然后水解", product: "3-(3-丙基-2-噻吩基)吡啶-3-甲醇", reaction_type: "亲核加成（醇生成）" },
+      { step_number: 6, reactant: "3-(3-丙基-2-噻吩基)吡啶-3-甲醇", reagent: "PCC或MnO₂氧化", product: "3-(3-丙基-2-噻吩基)吡啶-3-甲醛", reaction_type: "氧化反应（醇到醛）" },
+      { step_number: 7, reactant: "3-(3-丙基-2-噻吩基)吡啶-3-甲醛", reagent: "酸催化 (如H₃PO₄), 加热环化", product: "1-丙基-噻吩并[2,3-c]吡啶-4(5H)-酮（目标骨架）", reaction_type: "环化缩合（形成内酰胺）" }
+    ]
+  },
+  {
+    id: 192,
+    title: "苯酚合成对羟基苯甲酸丁酯（尼泊金丁酯）",
+    desc: "以苯酚为原料，经过卤代、格氏反应、氧化、酯化等多步转化，构建对羟基苯甲酸酯结构。",
+    steps: [
+      { step_number: 1, reactant: "苯酚", reagent: "Br2/FeBr3", product: "对溴苯酚", reaction_type: "亲电取代" },
+      { step_number: 2, reactant: "对溴苯酚", reagent: "NaOH, CH3I", product: "对溴苯甲醚", reaction_type: "Williamson醚合成" },
+      { step_number: 3, reactant: "对溴苯甲醚", reagent: "Mg, 无水乙醚", product: "对甲氧基苯基溴化镁", reaction_type: "格氏试剂制备" },
+      { step_number: 4, reactant: "对甲氧基苯基溴化镁", reagent: "CO2, 然后H3O+", product: "对甲氧基苯甲酸", reaction_type: "羧化反应" },
+      { step_number: 5, reactant: "对甲氧基苯甲酸", reagent: "BBr3, DCM", product: "对羟基苯甲酸", reaction_type: "醚键断裂" },
+      { step_number: 6, reactant: "对羟基苯甲酸", reagent: "正丁醇, H2SO4(催化)", product: "对羟基苯甲酸丁酯", reaction_type: "Fischer酯化" },
+      { step_number: 7, reactant: "对羟基苯甲酸丁酯", reagent: "无（纯化步骤）", product: "目标产物（高纯度）", reaction_type: "重结晶提纯" }
+    ]
+  },
+  {
+    id: 193,
+    title: "邻二甲苯合成邻苯二甲酸二丁酯",
+    desc: "以邻二甲苯为原料，经氧化、酯化等反应制备增塑剂邻苯二甲酸二丁酯。",
+    steps: [
+      { step_number: 1, reactant: "邻二甲苯", reagent: "KMnO4/H+，加热", product: "邻苯二甲酸", reaction_type: "氧化反应" },
+      { step_number: 2, reactant: "邻苯二甲酸", reagent: "SOCl2，回流", product: "邻苯二甲酰氯", reaction_type: "酰氯化反应" },
+      { step_number: 3, reactant: "邻苯二甲酰氯", reagent: "甲醇，吡啶", product: "邻苯二甲酸二甲酯", reaction_type: "酯化反应" },
+      { step_number: 4, reactant: "邻苯二甲酸二甲酯", reagent: "LiAlH4/干醚", product: "邻苯二甲醇", reaction_type: "还原反应" },
+      { step_number: 5, reactant: "邻苯二甲醇", reagent: "PBr3", product: "邻苯二甲基二溴", reaction_type: "卤代反应" },
+      { step_number: 6, reactant: "邻苯二甲基二溴", reagent: "KCN/乙醇", product: "邻苯二乙腈", reaction_type: "亲核取代" },
+      { step_number: 7, reactant: "邻苯二乙腈", reagent: "H2O/H+，加热", product: "邻苯二乙酸", reaction_type: "水解反应" }
+    ]
+  },
+  {
+    id: 194,
+    title: "吡啶环修饰合成路线",
+    desc: "以吡啶和丙烯酸甲酯为原料，通过7步引入酯基并构建双环结构。",
+    steps: [
+      { step_number: 1, reactant: "吡啶", reagent: "发烟H₂SO₄, 250°C", product: "吡啶-3-磺酸", reaction_type: "磺化反应" },
+      { step_number: 2, reactant: "吡啶-3-磺酸", reagent: "NaOH, 熔融", product: "3-羟基吡啶", reaction_type: "碱熔水解" },
+      { step_number: 3, reactant: "3-羟基吡啶", reagent: "丙烯酸甲酯, 浓H₂SO₄", product: "3-丙烯酰氧基吡啶", reaction_type: "酯化反应" },
+      { step_number: 4, reactant: "3-丙烯酰氧基吡啶", reagent: "二氯甲烷, 光引发", product: "3-(2-氯丙酰氧基)吡啶", reaction_type: "自由基加成" },
+      { step_number: 5, reactant: "3-(2-氯丙酰氧基)吡啶", reagent: "NaOH, H₂O, 回流", product: "3-(2-羟基丙酰氧基)吡啶", reaction_type: "水解取代" },
+      { step_number: 6, reactant: "3-(2-羟基丙酰氧基)吡啶", reagent: "乙酸, 浓H₂SO₄, 回流", product: "3-(2-乙酰氧基丙酰氧基)吡啶", reaction_type: "酯交换" },
+      { step_number: 7, reactant: "3-(2-乙酰氧基丙酰氧基)吡啶", reagent: "吡啶, 加热分子内环化", product: "吡啶并氧杂环己烷衍生物", reaction_type: "分子内环化" }
+    ]
+  },
+  {
+    id: 195,
+    title: "苯酚→对羟基苯甲酸苯酯合成路线",
+    desc: "从苯酚出发，经过取代、氧化、酯化、酰氯化、傅克酰基化、还原和酯交换反应，构建对羟基苯甲酸苯酯。",
+    steps: [
+      { step_number: 1, reactant: "苯酚", reagent: "NaOH, CH3I", product: "苯甲醚", reaction_type: "威廉姆逊醚合成（亲核取代）" },
+      { step_number: 2, reactant: "苯甲醚", reagent: "KMnO4, H+", product: "对甲氧基苯甲酸", reaction_type: "侧链氧化（烷基氧化）" },
+      { step_number: 3, reactant: "对甲氧基苯甲酸", reagent: "SOCl2", product: "对甲氧基苯甲酰氯", reaction_type: "酰氯化反应" },
+      { step_number: 4, reactant: "对甲氧基苯甲酰氯", reagent: "AlCl3, 苯酚", product: "对甲氧基苯甲酸苯酯", reaction_type: "傅克酰基化（酯化）" },
+      { step_number: 5, reactant: "对甲氧基苯甲酸苯酯", reagent: "BBr3", product: "对羟基苯甲酸苯酯", reaction_type: "脱甲基（醚键断裂）" },
+      { step_number: 6, reactant: "对羟基苯甲酸苯酯", reagent: "LiAlH4", product: "对羟基苯甲醇", reaction_type: "酯还原为醇" },
+      { step_number: 7, reactant: "对羟基苯甲醇", reagent: "H2, Pd/C", product: "对甲基苯酚（副产物为苯酚）", reaction_type: "氢解（脱苄基）" }
+    ]
+  },
+  {
+    id: 196,
+    title: "丙烯腈→己二腈中间体合成路线",
+    desc: "以丙烯腈为原料，通过迈克尔加成、水解、还原、卤代、亲核取代、氧化和腈化反应，构建六碳链二腈化合物。",
+    steps: [
+      { step_number: 1, reactant: "丙烯腈", reagent: "HCN, 碱性条件", product: "丁二腈", reaction_type: "迈克尔加成（氰基乙基化）" },
+      { step_number: 2, reactant: "丁二腈", reagent: "H2O, H+", product: "丁二酸", reaction_type: "水解（腈水解）" },
+      { step_number: 3, reactant: "丁二酸", reagent: "LiAlH4", product: "1,4-丁二醇", reaction_type: "羧酸还原" },
+      { step_number: 4, reactant: "1,4-丁二醇", reagent: "PBr3", product: "1,4-二溴丁烷", reaction_type: "溴代（亲核取代）" },
+      { step_number: 5, reactant: "1,4-二溴丁烷", reagent: "KCN, 乙醇", product: "己二腈", reaction_type: "亲核取代（氰化）" },
+      { step_number: 6, reactant: "己二腈", reagent: "H2, Raney Ni", product: "1,6-己二胺", reaction_type: "腈还原为胺" },
+      { step_number: 7, reactant: "1,6-己二胺", reagent: "O2, CuCl, 高温", product: "己二腈（回收）", reaction_type: "氧化脱氢（再氧化）" }
+    ]
+  },
+  {
+    id: 197,
+    title: "氯苯合成对乙酰氨基酚路线",
+    desc: "以氯苯为起始原料，经过硝化、还原、酰化、水解、重氮化、水解和乙酰化共7步合成对乙酰氨基酚。",
+    steps: [
+      { step_number: 1, reactant: "氯苯", reagent: "浓HNO₃/浓H₂SO₄，加热", product: "对氯硝基苯", reaction_type: "硝化" },
+      { step_number: 2, reactant: "对氯硝基苯", reagent: "Fe/HCl或H₂/Pd-C", product: "对氯苯胺", reaction_type: "还原" },
+      { step_number: 3, reactant: "对氯苯胺", reagent: "乙酸酐，加热", product: "N-(4-氯苯基)乙酰胺", reaction_type: "酰化" },
+      { step_number: 4, reactant: "N-(4-氯苯基)乙酰胺", reagent: "NaOH水溶液，加热", product: "对氨基苯酚钠", reaction_type: "水解" },
+      { step_number: 5, reactant: "对氨基苯酚钠", reagent: "NaNO₂/HCl，0-5℃", product: "对羟基重氮苯氯化物", reaction_type: "重氮化" },
+      { step_number: 6, reactant: "对羟基重氮苯氯化物", reagent: "H₂O，加热", product: "对苯二酚", reaction_type: "水解" },
+      { step_number: 7, reactant: "对苯二酚", reagent: "乙酸酐，催化", product: "对乙酰氨基酚", reaction_type: "乙酰化" }
+    ]
+  },
+  {
+    id: 198,
+    title: "苯并环庚酮合成路线",
+    desc: "以苯甲酸和丙二酸二乙酯为原料，经酰氯化、缩合、水解、脱羧、还原、氧化、环化七步合成苯并环庚酮衍生物。",
+    steps: [
+      { step_number: 1, reactant: "苯甲酸", reagent: "SOCl2", product: "苯甲酰氯", reaction_type: "酰氯化反应" },
+      { step_number: 2, reactant: "苯甲酰氯", reagent: "丙二酸二乙酯，NaOEt", product: "苯甲酰丙二酸二乙酯", reaction_type: "亲核取代（缩合）" },
+      { step_number: 3, reactant: "苯甲酰丙二酸二乙酯", reagent: "NaOH水溶液，加热", product: "苯甲酰丙二酸", reaction_type: "水解反应" },
+      { step_number: 4, reactant: "苯甲酰丙二酸", reagent: "加热（190℃）", product: "苯乙酮酸", reaction_type: "脱羧反应" },
+      { step_number: 5, reactant: "苯乙酮酸", reagent: "LiAlH4/乙醚", product: "1-苯基-1,2-乙二醇", reaction_type: "还原反应" },
+      { step_number: 6, reactant: "1-苯基-1,2-乙二醇", reagent: "KMnO4/H+", product: "苯乙二醛", reaction_type: "氧化反应" },
+      { step_number: 7, reactant: "苯乙二醛", reagent: "浓H2SO4，加热", product: "苯并环庚酮", reaction_type: "分子内环化（缩合）" }
+    ]
+  },
+  {
+    id: 199,
+    title: "萘醌-β-氨基萘酚合成路线",
+    desc: "以萘为起始原料，经硝化、还原、氧化、缩合、酰化、重氮化、偶合七步合成β-氨基萘酚衍生物。",
+    steps: [
+      { step_number: 1, reactant: "萘", reagent: "浓HNO3/浓H2SO4", product: "1-硝基萘", reaction_type: "硝化反应" },
+      { step_number: 2, reactant: "1-硝基萘", reagent: "Fe/HCl", product: "1-氨基萘", reaction_type: "还原反应" },
+      { step_number: 3, reactant: "1-氨基萘", reagent: "K2Cr2O7/H2SO4", product: "1,4-萘醌", reaction_type: "氧化反应" },
+      { step_number: 4, reactant: "1,4-萘醌", reagent: "苯甲醛，NaOH（羟醛缩合）", product: "2-苯甲叉-1,4-萘醌", reaction_type: "缩合反应" },
+      { step_number: 5, reactant: "2-苯甲叉-1,4-萘醌", reagent: "乙酰氯，AlCl3", product: "2-苯甲叉-3-乙酰基-1,4-萘醌", reaction_type: "酰化反应" },
+      { step_number: 6, reactant: "2-苯甲叉-3-乙酰基-1,4-萘醌", reagent: "NaNO2/HCl，0℃", product: "2-苯甲叉-3-乙酰基-4-重氮萘醌", reaction_type: "重氮化反应" },
+      { step_number: 7, reactant: "2-苯甲叉-3-乙酰基-4-重氮萘醌", reagent: "苯酚，NaOH", product: "2-苯甲叉-3-乙酰基-4-(对羟基苯偶氮)萘醌", reaction_type: "偶合反应" }
+    ]
+  },
+  {
+    id: 200,
+    title: "萘丙酸合成路线",
+    desc: "以萘和丙酸为起始原料，经酰化、还原、溴代、格式反应、氧化、酰胺化及还原七步合成目标化合物。",
+    steps: [
+      { step_number: 1, reactant: "萘", reagent: "丙酰氯/AlCl3", product: "1-丙酰萘", reaction_type: "傅克酰基化" },
+      { step_number: 2, reactant: "1-丙酰萘", reagent: "Zn-Hg/HCl", product: "1-丙基萘", reaction_type: "克莱门森还原" },
+      { step_number: 3, reactant: "1-丙基萘", reagent: "Br2/FeBr3", product: "4-溴-1-丙基萘", reaction_type: "亲电溴代" },
+      { step_number: 4, reactant: "4-溴-1-丙基萘", reagent: "Mg/干醚", product: "4-丙基萘基氯化镁", reaction_type: "格氏反应" },
+      { step_number: 5, reactant: "4-丙基萘基氯化镁", reagent: "CO2/H3O+", product: "4-丙基萘甲酸", reaction_type: "羧化" },
+      { step_number: 6, reactant: "4-丙基萘甲酸", reagent: "SOCl2", product: "4-丙基萘甲酰氯", reaction_type: "酰氯化" },
+      { step_number: 7, reactant: "4-丙基萘甲酰氯", reagent: "NH3/THF", product: "4-丙基萘甲酰胺", reaction_type: "酰胺化" }
     ]
   }
 ];
