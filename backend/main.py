@@ -157,8 +157,14 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             "form-action 'self'"
         )
         # 移除可能泄露服务器信息的头
-        response.headers.pop("Server", None)
-        response.headers.pop("X-Powered-By", None)
+        try:
+            del response.headers["Server"]
+        except (KeyError, TypeError):
+            pass
+        try:
+            del response.headers["X-Powered-By"]
+        except (KeyError, TypeError):
+            pass
         return response
 
 
