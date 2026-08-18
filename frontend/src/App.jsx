@@ -3,11 +3,13 @@ import RouteInput from './components/RouteInput.jsx'
 import QuestionPreview from './components/QuestionPreview.jsx'
 import RouteLibraryPage from './components/RouteLibraryPage.jsx'
 import StructureViewer from './components/StructureViewer.jsx'
+import QuestionBankPage from './components/QuestionBankPage.jsx'
 
 const NAV_ITEMS = [
   { id: 'library', icon: '📚', label: '路线库', section: '开始' },
   { id: 'input', icon: '📝', label: '合成路线输入', section: '工作区' },
   { id: 'preview', icon: '📋', label: '命题预览', section: '工作区', badge: true },
+  { id: 'bank', icon: '🗂️', label: '题库', section: '题库' },
   { id: 'viewer', icon: '🔬', label: '结构式查看器', section: '工具' },
   { id: 'about', icon: 'ℹ️', label: '关于本站', section: '其他' },
 ]
@@ -16,6 +18,7 @@ const BREADCRUMB_MAP = {
   library: '路线库',
   input: '合成路线输入',
   preview: '命题预览',
+  bank: '题库',
   viewer: '结构式查看器',
   about: '关于本站',
 }
@@ -339,6 +342,18 @@ export default function App() {
                 onExport={handleExport}
                 loading={loading}
                 error={error}
+              />
+            </div>
+          )}
+
+          {/* 题库 */}
+          {activeTab === 'bank' && (
+            <div className="animate-fade-up">
+              <QuestionBankPage
+                onSelectQuestion={(q) => {
+                  setQuestionData(q)
+                  setActiveTab('preview')
+                }}
               />
             </div>
           )}

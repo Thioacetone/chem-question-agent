@@ -489,6 +489,52 @@ def get_reaction_types():
     return REACTION_TYPES
 
 
+# ==================== 题库 API ====================
+
+@app.get("/api/questions/structure-inference")
+def get_structure_inference_questions(
+    page: int = Query(1, ge=1, description="页码"),
+    page_size: int = Query(10, ge=1, le=50, description="每页数量"),
+):
+    """
+    获取结构简式推断题题库
+    """
+    import json as _json
+    import os as _os
+    q_path = _os.path.join(_os.path.dirname(__file__), "structure_inference_questions.json")
+    if not _os.path.exists(q_path):
+        return {"questions": [], "total": 0, "page": page, "page_size": page_size}
+    with open(q_path, "r", encoding="utf-8") as f:
+        all_questions = _json.load(f)
+    total = len(all_questions)
+    start = (page - 1) * page_size
+    end = start + page_size
+    return {
+        "questions": all_questions[start:end],
+        "total": total,
+        "page": page,
+        "page_size": page_size,
+        "total_pages": (total + page_size - 1) // page_size,
+    }
+
+
+@app.get("/api/questions/structure-inference/{index}")
+def get_structure_inference_question(index: int):
+    """
+    获取单道结构简式推断题
+    """
+    import json as _json
+    import os as _os
+    q_path = _os.path.join(_os.path.dirname(__file__), "structure_inference_questions.json")
+    if not _os.path.exists(q_path):
+        raise HTTPException(status_code=404, detail="题库文件不存在")
+    with open(q_path, "r", encoding="utf-8") as f:
+        all_questions = _json.load(f)
+    if index < 0 or index >= len(all_questions):
+        raise HTTPException(status_code=404, detail="题目序号超出范围")
+    return all_questions[index]
+
+
 # ==================== 结构式渲染 API ====================
 
 class RenderRequest(BaseModel):
