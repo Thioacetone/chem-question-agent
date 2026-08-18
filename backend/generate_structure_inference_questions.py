@@ -63,7 +63,7 @@ selected_routes = []
 for r in routes:
     steps = r.get("steps", [])
     n = len(steps)
-    if 7 <= n <= 10:
+    if 7 <= n <= 8:
         if n - 2 >= 3:
             selected_routes.append(r)
 
