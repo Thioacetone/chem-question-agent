@@ -179,6 +179,7 @@ for i, route in enumerate(selected_routes[:MAX_QUESTIONS]):
 - 🔴 每道题都必须有答案，不能遗漏任何一道
 - 方程式使用→[条件]格式，条件写在箭头上方方括号内
 - 化学结构式用{{{{结构式:SMILES}}}}占位符
+- 🔴 第(5)题答案合成路线中每个化合物都必须用{{{{结构式:SMILES}}}}占位符，格式：第1步：{{{{结构式:SMILES}}}}（化合物名）→[条件] {{{{结构式:SMILES}}}}（化合物名）；第2步：{{{{结构式:SMILES}}}}（中间体）→[条件] {{{{结构式:SMILES}}}}（中间体）；... 共5-7步
 
 【解析 analysis】
 - 🔴 解析中绝对不能出现"已知"二字！禁止写"利用已知信息""运用已知的XX反应""已知的XX"等任何含"已知"的表述
@@ -201,7 +202,7 @@ for i, route in enumerate(selected_routes[:MAX_QUESTIONS]):
     {{"number": 2, "content": "第(2)题答案（{hidden_structure}的结构简式）"}},
     {{"number": 3, "content": "第(3)题完整答案"}},
     {{"number": 4, "content": "第(4)题完整答案"}},
-    {{"number": 5, "content": "第(5)题答案（5-7步合成路线，→[条件]格式，绝对不能出现'已知'二字）"}}
+    {{"number": 5, "content": "第(5)题答案（5-7步合成路线，→[条件]格式，每个化合物用{{{{结构式:SMILES}}}}占位符，绝对不能出现'已知'二字）"}}
   ],
   "new_info": "第(5)题已知信息（含具体反应方程式）",
   "analysis": "试题解析（绝对不能出现'已知'二字，只分析考查知识点和解题思路）"
@@ -237,6 +238,12 @@ for i, route in enumerate(selected_routes[:MAX_QUESTIONS]):
         question_data["route_id"] = route["id"]
         question_data["route_title"] = route["title"]
         question_data["route_steps"] = n
+        # 🔴 存储 raw_route 数据，供前端路线图渲染（QuestionPreview 依赖此字段）
+        question_data["raw_route"] = {
+            "title": route["title"],
+            "steps": route["steps"],
+            "hidden_structure": hidden_structure
+        }
 
         # ===== 验证 =====
         issues = []
