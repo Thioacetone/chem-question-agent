@@ -42,6 +42,7 @@ export default function RouteDiagram({ routeData, title = '' }) {
               .replace(/<svg\s+width="[^"]*"\s+height="[^"]*"/, '<svg width="100%" height="auto"')
               .replace(/<svg\s+height="[^"]*"\s+width="[^"]*"/, '<svg width="100%" height="auto"')
             setSvg(responsive)
+            setLoading(false)
             lastErr = null
           }
           return

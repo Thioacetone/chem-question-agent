@@ -86,6 +86,7 @@ export default function InlineStructure({ name, size = 'small', showLabel = true
             cache[cacheKey] = svgText   // 只缓存成功结果
             setSvg(svgText)
             setError(false)
+            setLoading(false)
           }
           lastErr = null
           return
