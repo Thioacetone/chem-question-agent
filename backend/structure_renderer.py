@@ -967,6 +967,15 @@ class StructureRenderer:
                 row_positions[ri] = [p + offset for p in row_positions[ri]]
             max_x += offset
 
+        # 竖直箭头（行间连接）的条件文字位于最右侧且向右延伸，
+        # 未计入画布宽度会被右侧裁剪遮住，这里补足其宽度
+        if len(rows) > 1:
+            v_top_x = row_positions[0][-1] + struct_w / 2
+            v_reagent = StructureRenderer._format_reagent(steps[rows[1][0]].get("reagent", ""))
+            if v_reagent:
+                v_w = _estimate_text_width(v_reagent) + 24
+                max_x = max(max_x, v_top_x + 18 + v_w)
+
         total_w = max_x + side_margin
         num_rows = len(rows)
         total_h = side_margin * 2 + row_total_h * num_rows + row_gap * (num_rows - 1)
