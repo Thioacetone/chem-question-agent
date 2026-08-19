@@ -26,9 +26,18 @@ jobs:
 
       - name: Install Railway CLI
         run: |
-          set -e
-          npm i -g @railway/cli
-          railway version
+          set +e
+          for i in 1 2 3; do
+            npm i -g @railway/cli@latest
+            if command -v railway >/dev/null 2>&1; then
+              railway version
+              exit 0
+            fi
+            echo "retry $i after 5s..."
+            sleep 5
+          done
+          echo "::error::Failed to install Railway CLI after 3 retries"
+          exit 1
 
       - name: Check RAILWAY_TOKEN secret
         id: check_token
@@ -47,7 +56,6 @@ jobs:
         id: deploy
         run: |
           set -e
-          # 显式指定 service + 关闭交互 + 详细日志，便于 CI 中稳定执行与失败诊断
           railway up \
             --service "${RAILWAY_SERVICE_ID}" \
             --verbose \
