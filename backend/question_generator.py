@@ -229,7 +229,54 @@ class QuestionGenerator:
 
             return question_data
         except Exception as e:
-            return {"error": f"命题生成失败: {str(e)}", "raw_response": getattr(self, '_last_raw', '')}
+            import traceback
+            tb = traceback.format_exc()
+            print("=== generate_from_route EXCEPTION TRACEBACK ===\n" + tb, flush=True)
+            return {"error": f"命题生成失败: {str(e)}", "raw_response": getattr(self, '_last_raw', ''), "_traceback": tb}
+
+    @staticmethod
+    def _coerce_dict_list(value):
+        """将 answers/questions 规范化为 list[dict]。
+
+        LLM 在重试时偶发把 answers 返回成 list[str]（如 ["答案1","答案2"]），
+        导致下游 a.get("content") / q.get("type") 抛 'str' object has no attribute 'get'。
+        这里把字符串元素包装为 {"content": str}，其余非 dict 元素丢弃，保证不再崩溃。
+        """
+        if not isinstance(value, list):
+            return []
+        result = []
+        for item in value:
+            if isinstance(item, dict):
+                result.append(item)
+            elif isinstance(item, str):
+                result.append({"content": item})
+        return result
+
+    @classmethod
+    def _normalize_question_data(cls, question_data):
+        """把 question_data 中 answers/questions 规范化，兜住 LLM 偶发的各种异常形态。
+
+        LLM 在重试时可能把 answers/questions 返回成：
+        - list[str]（如 ["答案1","答案2"]）
+        - str（纯文本描述）
+        - dict（单个对象而非列表）
+        这些都会导致下游 a.get("content") / q.get("type") 抛 'str' object has no attribute 'get'。
+        这里统一归约为 list[dict]，无法解析的形态置空以触发验证重试，而非直接崩溃。
+        """
+        if not isinstance(question_data, dict):
+            return question_data
+        for key in ("answers", "questions"):
+            val = question_data.get(key)
+            if isinstance(val, list):
+                question_data[key] = cls._coerce_dict_list(val)
+            elif isinstance(val, str):
+                # 纯字符串无法可靠拆分为结构化条目，置空交给验证重试兜底
+                question_data[key] = []
+            elif isinstance(val, dict):
+                question_data[key] = [val]
+            elif val is None:
+                question_data[key] = []
+        return question_data
 
     def _check_structure_placeholders(self, answers: list) -> list:
         """检查哪些答案缺少 {结构式:...} 或 {{结构式:...}} 占位符"""
@@ -493,45 +540,55 @@ class QuestionGenerator:
         )
 
     def _parse_json_response(self, response: str) -> dict:
-        """解析LLM返回的JSON（增强版：处理markdown代码块）"""
+        """解析LLM返回的JSON（增强版：处理markdown代码块 + 数据规范化）"""
         cleaned = response.strip()
+        result = None
 
         # 策略1：直接解析
         try:
-            return json.loads(cleaned)
+            result = json.loads(cleaned)
         except json.JSONDecodeError:
             pass
 
         # 策略2：去除markdown代码块标记 ```json ... ``` 或 ``` ... ```
-        code_block = re.search(r'```(?:json)?\s*\n?([\s\S]*?)\n?```', cleaned)
-        if code_block:
-            try:
-                return json.loads(code_block.group(1).strip())
-            except json.JSONDecodeError:
-                pass
+        if result is None:
+            code_block = re.search(r'```(?:json)?\s*\n?([\s\S]*?)\n?```', cleaned)
+            if code_block:
+                try:
+                    result = json.loads(code_block.group(1).strip())
+                except json.JSONDecodeError:
+                    pass
 
         # 策略3：栈匹配
-        start = cleaned.find('{')
-        if start >= 0:
-            depth = 0
-            for i in range(start, len(cleaned)):
-                if cleaned[i] == '{':
-                    depth += 1
-                elif cleaned[i] == '}':
-                    depth -= 1
-                    if depth == 0:
-                        try:
-                            return json.loads(cleaned[start:i + 1])
-                        except json.JSONDecodeError:
-                            break
+        if result is None:
+            start = cleaned.find('{')
+            if start >= 0:
+                depth = 0
+                for i in range(start, len(cleaned)):
+                    if cleaned[i] == '{':
+                        depth += 1
+                    elif cleaned[i] == '}':
+                        depth -= 1
+                        if depth == 0:
+                            try:
+                                result = json.loads(cleaned[start:i + 1])
+                                break
+                            except json.JSONDecodeError:
+                                break
 
         # 策略4：正则回退
-        json_match = re.search(r'\{[\s\S]*\}', cleaned)
-        if json_match:
-            try:
-                return json.loads(json_match.group())
-            except json.JSONDecodeError:
-                pass
+        if result is None:
+            json_match = re.search(r'\{[\s\S]*\}', cleaned)
+            if json_match:
+                try:
+                    result = json.loads(json_match.group())
+                except json.JSONDecodeError:
+                    pass
+
+        # 🔴 数据规范化：确保answers/questions总是list[dict]，防止LLM返回list[str]导致下游a.get()崩溃
+        if isinstance(result, dict):
+            result = QuestionGenerator._normalize_question_data(result)
+            return result
 
         return {"raw_output": response, "parse_error": True}
 
@@ -628,7 +685,12 @@ class QuestionGenerator:
         if "answers" not in question_data:
             return question_data
 
+        # 防御性：确保answers是 list[dict]
+        question_data = QuestionGenerator._normalize_question_data(question_data)
+
         for a in question_data["answers"]:
+            if not isinstance(a, dict):
+                continue
             content = a.get("content", "")
             if not isinstance(content, str):
                 continue
