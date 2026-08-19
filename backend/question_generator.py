@@ -281,36 +281,73 @@ class QuestionGenerator:
 
     @classmethod
     def _normalize_question_data(cls, question_data):
-        """把 question_data 中 answers/questions 规范化，兜住 LLM 偶发的各种异常形态。
+        """把 question_data 里 questions/answers 规范化，兜住 LLM 偶发的各种结构漂移。
 
-        LLM 在重试时可能把 answers/questions 返回成：
+        LLM 可能返回：
         - list[str]（如 ["答案1","答案2"]）
-        - str（纯文本描述）
-        - dict（单个对象而非列表）
-        这些都会导致下游 a.get("content") / q.get("type") 抛 'str' object has no attribute 'get'。
-        这里统一归约为 list[dict]，无法解析的形态置空以触发验证重试，而非直接崩溃。
+        - str / dict（非列表形态）
+        - 合并结构：questions 元素用 {id, type, question, answer, score}，答案内嵌在 question.answer 中，
+          且顶层没有独立 answers——这会导致前端 q.content 为 None 而"只见答案不见题目"。
+        这里统一：
+        1) 字段映射 id/index→number、question/stem/text/题干/题目→content、answer→content；
+        2) 从 questions 内嵌 answer 抽取独立 answers；
+        3) 按位置补全 number。
         """
         if not isinstance(question_data, dict):
             return question_data
-        for key in ("answers", "questions"):
-            val = question_data.get(key)
-            if isinstance(val, list):
-                question_data[key] = cls._coerce_dict_list(val)
-            elif isinstance(val, str):
-                # 纯字符串无法可靠拆分为结构化条目，置空交给验证重试兜底
-                question_data[key] = []
-            elif isinstance(val, dict):
-                question_data[key] = [val]
-            elif val is None:
-                question_data[key] = []
 
-        # 兜底：answers 元素即便丢失 number（LLM 返回 list[str] 时），也按位置补全，
-        # 否则前端无法识别第5题路线答案，导致答案不显示。
-        answers = question_data.get("answers")
-        if isinstance(answers, list):
-            for idx, a in enumerate(answers):
-                if isinstance(a, dict) and a.get("number") is None:
-                    a["number"] = idx + 1
+        # ---------- 1. questions 归一 + 字段映射 ----------
+        q_raw = question_data.get("questions")
+        if isinstance(q_raw, list):
+            q_list = cls._coerce_dict_list(q_raw)
+        elif isinstance(q_raw, dict):
+            q_list = [q_raw]
+        else:
+            q_list = []
+
+        extracted_answers = []
+        normalized_questions = []
+        for idx, q in enumerate(q_list):
+            if not isinstance(q, dict):
+                q = {"content": q}
+            # number：兼容 id / index
+            if q.get("number") is None:
+                q["number"] = q.get("id", q.get("index", idx + 1))
+            # content：兼容 question / stem / text / 题干 / 题目
+            if not q.get("content"):
+                for alias in ("question", "stem", "text", "题干", "题目"):
+                    if q.get(alias):
+                        q["content"] = q[alias]
+                        break
+            normalized_questions.append(q)
+            # 内嵌答案抽取
+            ans = q.get("answer")
+            if ans is not None:
+                extracted_answers.append({"number": q.get("number", idx + 1), "content": ans})
+        question_data["questions"] = normalized_questions
+
+        # ---------- 2. answers 归一 + 字段映射 ----------
+        a_raw = question_data.get("answers")
+        if isinstance(a_raw, list):
+            a_list = cls._coerce_dict_list(a_raw)
+        elif isinstance(a_raw, dict):
+            a_list = [a_raw]
+        else:
+            a_list = []
+        if not a_list:
+            a_list = extracted_answers
+
+        normalized_answers = []
+        for idx, a in enumerate(a_list):
+            if not isinstance(a, dict):
+                a = {"content": a}
+            if not a.get("content") and a.get("answer") is not None:
+                a["content"] = a["answer"]
+            if a.get("number") is None:
+                a["number"] = a.get("id", idx + 1)
+            normalized_answers.append(a)
+        question_data["answers"] = normalized_answers
+
         return question_data
 
     def _check_structure_placeholders(self, answers: list) -> list:
