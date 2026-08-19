@@ -55,12 +55,21 @@ jobs:
         if: steps.check_token.outputs.token_exists == 'true'
         id: deploy
         run: |
-          set -e
-          railway up \
-            --service "${RAILWAY_SERVICE_ID}" \
-            --verbose \
-            --yes \
-            --detach
+          set -euxo pipefail
+          railway up --help 2>&1 || true
+          # 两种传参：支持 --service 则显式传；否则只靠 env RAILWAY_SERVICE_ID
+          if railway up --help 2>&1 | grep -qE -- '--service[^a-zA-Z]'; then
+            railway up \
+              --service "${RAILWAY_SERVICE_ID}" \
+              --verbose \
+              --yes \
+              --detach
+          else
+            railway up \
+              --verbose \
+              --yes \
+              --detach
+          fi
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE_ID: ${{ vars.RAILWAY_SERVICE_ID || '91712910-9373-461d-9b83-673f4f0e23e6' }}
