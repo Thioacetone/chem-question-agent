@@ -110,6 +110,13 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         return client.host if client else "unknown"
 
     async def dispatch(self, request: StarletteRequest, call_next):
+        # 结构式渲染/查询接口：纯本地 RDKit 计算，极轻量且是页面正常渲染所必需。
+        # 首页路线库一次性渲染 200 条路线会发起数百个 name-to-smiles / svg 请求，
+        # 若受 IP 限流会在第 36 个请求起全部 429，导致整个页面的结构式空白。
+        # 因此 /api/render 前缀直接放行，不做限流。
+        if request.url.path.startswith("/api/render"):
+            return await call_next(request)
+
         ip = self._get_client_ip(request)
         now = time.time()
         window_start = now - RATE_LIMIT_WINDOW
