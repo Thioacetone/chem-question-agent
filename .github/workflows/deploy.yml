@@ -51,14 +51,51 @@ jobs:
             echo "RAILWAY_TOKEN 已配置（prefix=${token:0:8}..., len=${#token})"
           fi
 
+      - name: Authenticate Railway CLI with token
+        if: steps.check_token.outputs.token_exists == 'true'
+        id: auth
+        run: |
+          set -euxo pipefail
+          # 先打印 login/auth subcmd 的 help，确认新版入参
+          railway login --help 2>&1 || true
+          railway auth --help 2>&1 || true
+          railway auth login --help 2>&1 || true
+          railway --help 2>&1 | head -n 60 || true
+
+          # 多种新版登录方式尝试（从官方文档兼容新旧版 CLI）
+          # 方式 1: 新版 railway auth login --token
+          if railway auth login --help 2>&1 | grep -qiE '(--token[^a-z]|tokens)'; then
+            railway auth login --token "${RAILWAY_TOKEN}"
+          # 方式 2: 老版 railway login --token
+          elif railway login --help 2>&1 | grep -qiE '(--token[^a-z]|tokens)'; then
+            railway login --token "${RAILWAY_TOKEN}"
+          # 方式 3: 通过 $HOME/.railway 写配置（兼容 npm global 包位置，新版默认读 ~/.railway/state.json 或 config.json）
+          else
+            mkdir -p "$HOME/.railway"
+            # 新版 state.json
+            python3 -c "
+import json, os, sys
+token=os.environ['RAILWAY_TOKEN']
+cfg={'token': token, 'projectId': '', 'environmentId': ''}
+with open(os.path.expanduser('~/.railway/state.json'),'w') as f: json.dump(cfg,f)
+with open(os.path.expanduser('~/.railway/config.json'),'w') as f: json.dump(cfg,f)
+print('wrote ~/.railway/state.json & config.json')
+"
+            # 再 whoami 验证
+            railway whoami 2>&1 || true
+          fi
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
       - name: Deploy to Railway
         if: steps.check_token.outputs.token_exists == 'true'
         id: deploy
         run: |
           set -euxo pipefail
-          railway up --help 2>&1 || true
-          # 两种传参：支持 --service 则显式传；否则只靠 env RAILWAY_SERVICE_ID
-          if railway up --help 2>&1 | grep -qE -- '--service[^a-zA-Z]'; then
+          # 鉴权状态验证
+          railway whoami 2>&1 || true
+          # 根据参数支持情况执行 up
+          if railway up --help 2>&1 | grep -qE -- '(--service[^a-zA-Z]|-s,)'; then
             railway up \
               --service "${RAILWAY_SERVICE_ID}" \
               --verbose \
@@ -75,7 +112,7 @@ jobs:
           RAILWAY_SERVICE_ID: ${{ vars.RAILWAY_SERVICE_ID || '91712910-9373-461d-9b83-673f4f0e23e6' }}
 
       - name: Dump deploy status on failure
-        if: failure() && steps.deploy.outcome == 'failure'
+        if: failure()
         run: |
           echo "--- railway whoami ---"
           railway whoami 2>&1 || true
@@ -83,5 +120,7 @@ jobs:
           railway status 2>&1 || true
           echo "--- railway service list ---"
           railway services 2>&1 || true
+          echo "--- ~/.railway directory listing ---"
+          ls -la "$HOME/.railway" || true
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
