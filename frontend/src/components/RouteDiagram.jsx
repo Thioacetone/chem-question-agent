@@ -18,37 +18,46 @@ export default function RouteDiagram({ routeData, title = '' }) {
     const loadDiagram = async () => {
       setLoading(true)
       setError(null)
-      try {
-        const res = await fetch('/api/render/route-diagram', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            steps: routeData.steps,
-            title: title || routeData.title || '',
-            hidden_structure: routeData.hidden_structure || null,
-          }),
-        })
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}))
-          throw new Error(errData.detail || '路线图渲染失败')
-        }
-        const svgText = await res.text()
-        if (mountedRef.current) {
-          // 将固定宽高的 SVG 改为响应式：width="100%" height="auto"，保留 viewBox
-          const responsive = svgText
-            .replace(/<svg\s+width="[^"]*"\s+height="[^"]*"/, '<svg width="100%" height="auto"')
-            .replace(/<svg\s+height="[^"]*"\s+width="[^"]*"/, '<svg width="100%" height="auto"')
-          setSvg(responsive)
-        }
-      } catch (e) {
-        if (mountedRef.current) {
-          setError(e.message)
-        }
-      } finally {
-        if (mountedRef.current) {
-          setLoading(false)
+      // 路线图渲染较重（可能 5-30 秒），最多重试 3 次，避免偶发超时/容器重启导致永久降级为文字版
+      let lastErr = null
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const res = await fetch('/api/render/route-diagram', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache, no-store',
+              'Pragma': 'no-cache',
+            },
+            body: JSON.stringify({
+              steps: routeData.steps,
+              title: title || routeData.title || '',
+              hidden_structure: routeData.hidden_structure || null,
+            }),
+          })
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}))
+            throw new Error(errData.detail || errData.message || ('HTTP ' + res.status))
+          }
+          const svgText = await res.text()
+          if (!svgText || !svgText.includes('<svg')) throw new Error('invalid svg payload')
+          if (mountedRef.current) {
+            const responsive = svgText
+              .replace(/<svg\s+width="[^"]*"\s+height="[^"]*"/, '<svg width="100%" height="auto"')
+              .replace(/<svg\s+height="[^"]*"\s+width="[^"]*"/, '<svg width="100%" height="auto"')
+            setSvg(responsive)
+            lastErr = null
+          }
+          return
+        } catch (e) {
+          lastErr = e
+          if (attempt < 2) await new Promise(r => setTimeout(r, 600 * (attempt + 1)))
         }
       }
+      if (mountedRef.current) {
+        setError(lastErr ? (lastErr.message || '路线图渲染失败') : '路线图渲染失败')
+      }
+      if (mountedRef.current) setLoading(false)
     }
 
     loadDiagram()

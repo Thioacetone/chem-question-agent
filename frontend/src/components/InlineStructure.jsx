@@ -55,35 +55,51 @@ export default function InlineStructure({ name, size = 'small', showLabel = true
 
       setLoading(true)
       setError(false)
-      try {
-        // 1. 名称→SMILES
-        const nameRes = await fetch('/api/render/name-to-smiles', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name }),
-        })
-        if (!nameRes.ok) throw new Error('查询失败')
-        const nameData = await nameRes.json()
-        if (!nameData.smiles) throw new Error('未找到')
 
-        // 2. SMILES→SVG
-        const svgRes = await fetch('/api/render/svg', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ smiles: nameData.smiles, label: '', width: w, height: h }),
-        })
-        if (!svgRes.ok) throw new Error('渲染失败')
-        const svgText = await svgRes.text()
+      // 最多重试 3 次，避免偶发性网络抖动 / 容器重启导致的 5xx 永久显示「错误占位」
+      // 失败不写入全局缓存，以便用户下一次刷新时可以重跑
+      let lastErr = null
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const commonHeaders = {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store',
+            'Pragma': 'no-cache',
+          }
+          // 1. 名称→SMILES（统一走后端 resolve_smiles：内置+离线映射+归一化+回退链）
+          const nameRes = await fetch('/api/render/name-to-smiles', {
+            method: 'POST',
+            headers: commonHeaders,
+            body: JSON.stringify({ name }),
+          })
+          if (!nameRes.ok) throw new Error('name HTTP ' + nameRes.status)
+          const nameData = await nameRes.json()
+          if (!nameData.smiles) throw new Error('no smiles: ' + (nameData.error || 'unknown'))
 
-        if (mountedRef.current) {
-          cache[cacheKey] = svgText
-          setSvg(svgText)
+          // 2. SMILES→SVG
+          const svgRes = await fetch('/api/render/svg', {
+            method: 'POST',
+            headers: commonHeaders,
+            body: JSON.stringify({ smiles: nameData.smiles, label: '', width: w, height: h }),
+          })
+          if (!svgRes.ok) throw new Error('svg HTTP ' + svgRes.status)
+          const svgText = await svgRes.text()
+          if (!svgText || !svgText.includes('<svg')) throw new Error('svg payload invalid')
+
+          if (mountedRef.current) {
+            cache[cacheKey] = svgText   // 只缓存成功结果
+            setSvg(svgText)
+            setError(false)
+          }
+          lastErr = null
+          return
+        } catch (e) {
+          lastErr = e
+          if (attempt < 2) await new Promise(r => setTimeout(r, 400 * (attempt + 1)))
         }
-      } catch {
-        if (mountedRef.current) setError(true)
-      } finally {
-        if (mountedRef.current) setLoading(false)
       }
+      if (lastErr && mountedRef.current) setError(true)
+      if (mountedRef.current) setLoading(false)
     }
 
     load()

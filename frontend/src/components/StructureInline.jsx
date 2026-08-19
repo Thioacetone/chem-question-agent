@@ -42,23 +42,41 @@ export default function StructureInline({ name, routeData, width = 160, height =
 
     const loadSvg = async () => {
       setError(null)
-      try {
-        const res = await fetch('/api/render/inline-svg', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: resolvedName, width, height }),
-        })
-        if (!res.ok) {
-          throw new Error('渲染失败')
+      // 最多重试 3 次，避免偶发网络抖动 / 容器重启时的 5xx 永久显示「错误占位」
+      let lastErr = null
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          const res = await fetch('/api/render/inline-svg', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'no-cache, no-store',
+              'Pragma': 'no-cache',
+            },
+            body: JSON.stringify({ name: resolvedName, width, height }),
+          })
+          if (!res.ok) throw new Error('HTTP ' + res.status)
+          let svgText = await res.text()
+          // inline-svg 可能返回 JSON 包裹（后端新版本）或纯 SVG 字符串
+          if (svgText && svgText.trim().startsWith('{')) {
+            try {
+              const obj = JSON.parse(svgText)
+              if (obj && typeof obj.svg === 'string') svgText = obj.svg
+            } catch (_) { /* keep as-is */ }
+          }
+          if (!svgText || !svgText.includes('<svg')) throw new Error('invalid svg payload')
+          if (mountedRef.current) {
+            setSvg(svgText)
+          }
+          lastErr = null
+          return
+        } catch (e) {
+          lastErr = e
+          if (attempt < 2) await new Promise(r => setTimeout(r, 400 * (attempt + 1)))
         }
-        const svgText = await res.text()
-        if (mountedRef.current) {
-          setSvg(svgText)
-        }
-      } catch (e) {
-        if (mountedRef.current) {
-          setError(e.message)
-        }
+      }
+      if (mountedRef.current) {
+        setError(lastErr ? lastErr.message : '渲染失败')
       }
     }
 
