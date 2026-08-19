@@ -6,7 +6,7 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm ci 2>/dev/null || npm install
-# Force cache bust: 2026-08-18-v7
+# Force cache bust: 2026-08-18-v8
 COPY frontend/ ./
 RUN npm run build
 
@@ -28,7 +28,7 @@ RUN pip install --no-cache-dir rdkit>=2023.9.0 \
     && pip install --no-cache-dir fastapi==0.115.0 uvicorn==0.30.6 gunicorn==23.0.0 \
     pydantic==2.9.2 python-docx==1.1.2 python-multipart==0.0.12 httpx==0.27.2 'openai>=1.50.0'
 
-# 复制后端代码 (cache bust: 2026-08-18-v7)
+# 复制后端代码 (cache bust: 2026-08-18-v8)
 COPY backend/ ./backend/
 COPY runtime.txt ./
 
