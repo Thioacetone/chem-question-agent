@@ -10,117 +10,51 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  notify:
+    # Railway 后台 Source 已经绑定为 GitHub Repo + master，会在每次 push 后自动构建部署。
+    # 本工作流只做两件事：
+    #   1) 打印当前 commit 摘要，用于在 Actions 列表里确认"这次推送已经触发 Railway 侧部署"
+    #   2) 构建结束后用 Railway Public Domain / 自定义域名的 /api/health 做一次健康检查，避免用户误以为没更新
+    name: 触发 Railway 原生部署（GitHub Repo Source）+ 健康检查
     runs-on: ubuntu-latest
-    env:
-      # 项目后端服务 ID（不变），显式指定避免 CLI 上下文中断
-      RAILWAY_SERVICE_ID: "91712910-9373-461d-9b83-673f4f0e23e6"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      - name: 打印部署摘要
+        run: |
+          set -e
+          echo "Branch:   ${GITHUB_REF_NAME}"
+          echo "Commit:   ${GITHUB_SHA}"
+          echo "Message:  $(git log -1 --pretty=%s)"
+          echo "Pusher:   ${GITHUB_ACTOR}"
+          echo "Railway 将自动拉取 master 最新代码并重新构建（Source=GitHub Repo，无需本 Workflow 调 railway up）。"
+          echo "可在 Railway 后台 → 对应项目 → Deployments 标签查看构建进度。"
 
-      - name: Install Railway CLI
+      - name: 等待部署完成后健康检查
+        id: healthcheck
         run: |
           set +e
-          for i in 1 2 3; do
-            npm i -g @railway/cli@latest
-            if command -v railway >/dev/null 2>&1; then
-              railway version
-              exit 0
-            fi
-            echo "retry $i after 5s..."
-            sleep 5
+          URLS=(
+            "https://thioacetone-chemistry.top/api/health"
+            "https://chem-question-agent-production.up.railway.app/api/health"
+          )
+          SLEEP=15
+          TRIES=40   # 15s * 40 ≈ 10min
+          ok=0
+          for ((i=1;i<=TRIES;i++)); do
+            for U in "${URLS[@]}"; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "$U" || echo 000)
+              echo "[$i/$TRIES] $U  HTTP $code"
+              if [ "$code" = "200" ]; then
+                echo "✅ $U 健康检查通过"
+                ok=$((ok+1))
+                break 2
+              fi
+            done
+            sleep $SLEEP
           done
-          echo "::error::Failed to install Railway CLI after 3 retries"
-          exit 1
-
-      - name: Check RAILWAY_TOKEN secret
-        id: check_token
-        run: |
-          token="${{ secrets.RAILWAY_TOKEN }}"
-          if [ -z "${token}" ]; then
-            echo "token_exists=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::RAILWAY_TOKEN secret 未配置。请在 GitHub 仓库 Settings → Secrets and variables → Actions → New repository secret，添加 Name=RAILWAY_TOKEN，Value=你在 Railway 控制台生成的个人 Token（Project Settings → Tokens，或 Account → Tokens）。"
-          else
-            echo "token_exists=true" >> "$GITHUB_OUTPUT"
-            echo "RAILWAY_TOKEN 已配置（prefix=${token:0:8}..., len=${#token})"
+          if [ "$ok" -eq 0 ]; then
+            echo "⚠️  健康检查在 $((TRIES*SLEEP))s 内未返回 200，请到 Railway 后台 Deployments 确认构建状态（或 Build/Start 日志）。"
+            exit 0
           fi
-
-      - name: Authenticate Railway CLI with token
-        if: steps.check_token.outputs.token_exists == 'true'
-        id: auth
-        run: |
-          set -euxo pipefail
-          # 先打印 login/auth subcmd 的 help，确认新版入参
-          railway login --help 2>&1 || true
-          railway auth --help 2>&1 || true
-          railway auth login --help 2>&1 || true
-          railway --help 2>&1 | head -n 60 || true
-
-          # 多种新版登录方式尝试（从官方文档兼容新旧版 CLI）
-          # 方式 1: 新版 railway auth login --token
-          if railway auth login --help 2>&1 | grep -qiE '(--token[^a-z]|tokens)'; then
-            railway auth login --token "${RAILWAY_TOKEN}"
-          # 方式 2: 老版 railway login --token
-          elif railway login --help 2>&1 | grep -qiE '(--token[^a-z]|tokens)'; then
-            railway login --token "${RAILWAY_TOKEN}"
-          # 方式 3: 通过 $HOME/.railway 写配置（兼容 npm global 包位置，新版默认读 ~/.railway/state.json 或 config.json）
-          else
-            mkdir -p "$HOME/.railway"
-            # 新版 state.json
-            python3 -c "
-import json, os, sys
-token=os.environ['RAILWAY_TOKEN']
-cfg={'token': token, 'projectId': '', 'environmentId': ''}
-with open(os.path.expanduser('~/.railway/state.json'),'w') as f: json.dump(cfg,f)
-with open(os.path.expanduser('~/.railway/config.json'),'w') as f: json.dump(cfg,f)
-print('wrote ~/.railway/state.json & config.json')
-"
-            # 再 whoami 验证
-            railway whoami 2>&1 || true
-          fi
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Deploy to Railway
-        if: steps.check_token.outputs.token_exists == 'true'
-        id: deploy
-        run: |
-          set -euxo pipefail
-          # 鉴权状态验证
-          railway whoami 2>&1 || true
-          # 根据参数支持情况执行 up
-          if railway up --help 2>&1 | grep -qE -- '(--service[^a-zA-Z]|-s,)'; then
-            railway up \
-              --service "${RAILWAY_SERVICE_ID}" \
-              --verbose \
-              --yes \
-              --detach
-          else
-            railway up \
-              --verbose \
-              --yes \
-              --detach
-          fi
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_SERVICE_ID: ${{ vars.RAILWAY_SERVICE_ID || '91712910-9373-461d-9b83-673f4f0e23e6' }}
-
-      - name: Dump deploy status on failure
-        if: failure()
-        run: |
-          echo "--- railway whoami ---"
-          railway whoami 2>&1 || true
-          echo "--- railway status ---"
-          railway status 2>&1 || true
-          echo "--- railway service list ---"
-          railway services 2>&1 || true
-          echo "--- ~/.railway directory listing ---"
-          ls -la "$HOME/.railway" || true
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
