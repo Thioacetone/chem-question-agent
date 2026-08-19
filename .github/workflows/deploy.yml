@@ -12,6 +12,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      # 项目后端服务 ID（不变），显式指定避免 CLI 上下文中断
+      RAILWAY_SERVICE_ID: "91712910-9373-461d-9b83-673f4f0e23e6"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,7 +27,41 @@ jobs:
       - name: Install Railway CLI
         run: npm i -g @railway/cli
 
+      - name: Verify Railway CLI & Token
+        run: |
+          set -e
+          railway version
+          if [ -z "${RAILWAY_TOKEN}" ]; then
+            echo "::error::RAILWAY_TOKEN secret is empty, deployment cannot proceed."
+            exit 1
+          fi
+          # 仅展示 token 前缀用于诊断，不泄露完整值
+          echo "RAILWAY_TOKEN set (prefix=${RAILWAY_TOKEN:0:8}..., len=${#RAILWAY_TOKEN})"
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
       - name: Deploy to Railway
-        run: railway up --detach
+        id: deploy
+        run: |
+          set -e
+          # 显式指定 service + 关闭交互式 + 详细日志，便于 CI 中稳定执行与失败诊断
+          railway up \
+            --service "${RAILWAY_SERVICE_ID}" \
+            --verbose \
+            --yes \
+            --detach
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_SERVICE_ID: ${{ vars.RAILWAY_SERVICE_ID || '91712910-9373-461d-9b83-673f4f0e23e6' }}
+
+      - name: Dump deploy status on failure
+        if: failure() && steps.deploy.outcome == 'failure'
+        run: |
+          echo "--- railway status ---"
+          railway status 2>&1 || true
+          echo "--- railway whoami ---"
+          railway whoami 2>&1 || true
+          echo "--- railway service list ---"
+          railway services 2>&1 || true
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
