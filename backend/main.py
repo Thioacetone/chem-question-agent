@@ -602,27 +602,15 @@ def render_multiple_structures(request: RenderMultipleRequest):
 @app.post("/api/render/name-to-smiles")
 def name_to_smiles(request: NameToSmilesRequest):
     """
-    化合物名称 → SMILES（内置词典 → PubChem → LLM 三级回退）
+    化合物名称 → SMILES（统一走 StructureRenderer.resolve_smiles，含归一化+离线映射+回退链）
     """
-    # 先检查内置词典
     name = request.name
-    source = "unknown"
-    if name in renderer.BUILTIN_NAMES:
-        smiles = renderer.BUILTIN_NAMES[name]
-        source = "builtin"
-    elif name in renderer._cache:
-        smiles = renderer._cache[name]
-        source = "cache"
-    else:
-        smiles = renderer.name_to_smiles(name)
-        if smiles:
-            # 判断来源
-            if name in renderer.BUILTIN_NAMES:
-                source = "builtin"
-            else:
-                source = "pubchem"  # 默认，LLM回退也标记为llm
-
+    smiles = renderer.resolve_smiles(name)
     if smiles:
+        # 来源判断：是否在 BUILTIN / 归一化映射命中
+        source = "builtin"
+        if name not in renderer.BUILTIN_NAMES and name not in renderer._cache:
+            source = "pubchem"
         return {"name": name, "smiles": smiles, "source": source}
     return {"name": name, "smiles": None, "error": "未找到该化合物，请尝试使用英文名称或SMILES直接输入"}
 
@@ -630,7 +618,7 @@ def name_to_smiles(request: NameToSmilesRequest):
 @app.post("/api/render/batch-name-to-smiles")
 def batch_name_to_smiles(names: List[str] = Body(..., description="化合物名称列表")):
     """
-    批量解析：多个化合物名称 → SMILES
+    批量解析：多个化合物名称 → SMILES（统一走 resolve_smiles）
     一次请求解析所有化合物名称，避免多次网络调用
     """
     results = {}
@@ -638,16 +626,12 @@ def batch_name_to_smiles(names: List[str] = Body(..., description="化合物名�
         name = name.strip()
         if not name:
             continue
-        if name in renderer.BUILTIN_NAMES:
-            results[name] = {"smiles": renderer.BUILTIN_NAMES[name], "source": "builtin"}
-        elif name in renderer._cache:
-            results[name] = {"smiles": renderer._cache[name], "source": "cache"}
+        smiles = renderer.resolve_smiles(name)
+        if smiles:
+            source = "builtin" if (name in renderer.BUILTIN_NAMES or name in renderer._cache) else "pubchem"
+            results[name] = {"smiles": smiles, "source": source}
         else:
-            smiles = renderer.name_to_smiles(name)
-            if smiles:
-                results[name] = {"smiles": smiles, "source": "pubchem"}
-            else:
-                results[name] = {"smiles": None, "error": "未找到"}
+            results[name] = {"smiles": None, "error": "未找到"}
     return {"results": results}
 
 
@@ -677,7 +661,7 @@ def render_route_diagram(request: RouteDiagramRequest):
         # 第一个化合物只需要reactant
         if i == 0:
             reactant_name = step.get("reactant", "")
-            reactant_smiles = renderer.name_to_smiles(reactant_name)
+            reactant_smiles = renderer.resolve_smiles(reactant_name)
             if not reactant_smiles:
                 raw = step.get("reactant", "")
                 if renderer.smiles_to_mol(raw):
@@ -690,7 +674,7 @@ def render_route_diagram(request: RouteDiagramRequest):
 
         # 产物
         product_name = step.get("product", "")
-        product_smiles = renderer.name_to_smiles(product_name)
+        product_smiles = renderer.resolve_smiles(product_name)
         if not product_smiles:
             raw = step.get("product", "")
             if renderer.smiles_to_mol(raw):
@@ -732,28 +716,16 @@ def enrich_route(request: RouteInput):
 
         # 解析反应物SMILES
         reactant_name = step.reactant
-        reactant_smiles = None
-        if reactant_name in renderer.BUILTIN_NAMES:
-            reactant_smiles = renderer.BUILTIN_NAMES[reactant_name]
-        elif reactant_name in renderer._cache:
-            reactant_smiles = renderer._cache[reactant_name]
-        elif renderer.smiles_to_mol(reactant_name):
+        reactant_smiles = renderer.resolve_smiles(reactant_name)
+        if not reactant_smiles and renderer.smiles_to_mol(reactant_name):
             reactant_smiles = reactant_name
-        else:
-            reactant_smiles = renderer.name_to_smiles(reactant_name)
         enriched["reactant_smiles"] = reactant_smiles or ""
 
         # 解析产物SMILES
         product_name = step.product
-        product_smiles = None
-        if product_name in renderer.BUILTIN_NAMES:
-            product_smiles = renderer.BUILTIN_NAMES[product_name]
-        elif product_name in renderer._cache:
-            product_smiles = renderer._cache[product_name]
-        elif renderer.smiles_to_mol(product_name):
+        product_smiles = renderer.resolve_smiles(product_name)
+        if not product_smiles and renderer.smiles_to_mol(product_name):
             product_smiles = product_name
-        else:
-            product_smiles = renderer.name_to_smiles(product_name)
         enriched["product_smiles"] = product_smiles or ""
 
         enriched_steps.append(enriched)
@@ -772,23 +744,17 @@ def render_inline_svg(request: InlineSvgRequest):
     以及化合物代号（如"化合物A"）——会从内置映射中查找
     """
     name = request.name.strip()
-    smiles = None
 
-    # 处理"化合物X"格式：提取代号
+    # 处理"化合物X"格式：提取代号，先按代号解析，失败再按原名称解析
     compound_match = re.match(r'化合物([A-Z])', name)
+    smiles = None
     if compound_match:
         code = compound_match.group(1)
-        name = code  # 尝试用代号查找
-
-    # 多级查找SMILES
-    if name in renderer.BUILTIN_NAMES:
-        smiles = renderer.BUILTIN_NAMES[name]
-    elif name in renderer._cache:
-        smiles = renderer._cache[name]
-    elif renderer.smiles_to_mol(name):  # 可能是SMILES
+        smiles = renderer.resolve_smiles(code)
+    if not smiles:
+        smiles = renderer.resolve_smiles(name)
+    if not smiles and renderer.smiles_to_mol(name):
         smiles = name
-    else:
-        smiles = renderer.name_to_smiles(name)
 
     if not smiles:
         raise HTTPException(status_code=404, detail=f"无法解析化合物: {name}")

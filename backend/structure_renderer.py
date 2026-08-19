@@ -567,6 +567,49 @@ class StructureRenderer:
         return StructureRenderer.name_to_smiles_pubchem(name)
 
     @staticmethod
+    def resolve_smiles(name: str) -> Optional[str]:
+        """统一的名称→SMILES解析入口：名称归一化 → 内置词典 → 缓存 → SMILES 直写 → PubChem/LLM 回退。
+
+        所有需要把名称解析成 SMILES 的路径都应走这里，避免因名称中带全角括号注解、
+        或直接查 BUILTIN_NAMES（未走离线映射）而解析失败。
+        """
+        if not name:
+            return None
+        raw = name.strip()
+        if not raw:
+            return None
+
+        # 1. 原始名称缓存（命中则最快返回，避免重复归一化 / 回退）
+        if raw in StructureRenderer._cache:
+            return StructureRenderer._cache[raw]
+
+        # 2. 归一化名称
+        norm = StructureRenderer._normalize_name(raw)
+        candidates = [raw] if norm == raw else [norm, raw]
+
+        # 3. 先用内置词典（已包含离线映射 name_smiles_map.json，由模块末尾合并）
+        for cand in candidates:
+            if cand in StructureRenderer.BUILTIN_NAMES:
+                StructureRenderer._cache[raw] = StructureRenderer.BUILTIN_NAMES[cand]
+                return StructureRenderer.BUILTIN_NAMES[cand]
+
+        # 4. 是否本身就是合法 SMILES
+        if StructureRenderer.smiles_to_mol(raw):
+            StructureRenderer._cache[raw] = raw
+            return raw
+
+        # 5. 回退：PubChem API → LLM 推断
+        smiles = StructureRenderer.name_to_smiles_pubchem(raw)
+        if smiles:
+            return smiles
+        # 再对归一化名称试一次（防御性）
+        if norm != raw:
+            smiles2 = StructureRenderer.name_to_smiles_pubchem(norm)
+            if smiles2:
+                return smiles2
+        return None
+
+    @staticmethod
     def smiles_to_mol(smiles: str) -> Optional[Chem.Mol]:
         """SMILES转分子对象"""
         try:
