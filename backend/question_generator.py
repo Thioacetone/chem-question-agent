@@ -17,6 +17,26 @@ from config import (
 )
 
 
+# 已知信息反应类型池（第5题已知信息从以下随机选择，避免 LLM 反复选 Perkin）
+KNOWN_INFO_REACTION_POOL = [
+    "Wittig反应（醛酮→烯烃）：R-CHO→[Ph₃P=CHR', THF] R-CH=CH-R'",
+    "Knoevenagel缩合（醛+活泼亚甲基→α,β-不饱和化合物）：R-CHO→[CH₂(COOEt)₂, 哌啶, △] R-CH=C(COOEt)₂",
+    "羟醛缩合（Aldol）：R-CHO→[NaOH, H₂O, △] R-CH=CH-CHO",
+    "Perkin反应（芳醛+酸酐→肉桂酸类）：Ar-CHO→[(CH₃CO)₂O, CH₃COONa, △] Ar-CH=CH-COOH",
+    "Claisen酯缩合（酯→β-酮酯）：R-COOEt→[NaOEt, EtOH] R-CO-CH₂-COOEt",
+    "Gabriel胺合成（邻苯二甲酰亚胺→伯胺）：R-Br→[邻苯二甲酰亚胺钾, N₂H₄] R-NH₂",
+    "Clemmensen还原（羰基→亚甲基）：R-CO-R'→[Zn(Hg), HCl] R-CH₂-R'",
+    "Wolff-Kishner还原（羰基→亚甲基，碱性）：R-CO-R'→[N₂H₄, KOH, 二甘醇, △] R-CH₂-R'",
+    "Hell-Volhard-Zelinsky反应（羧酸α-卤代）：R-CH₂-COOH→[Br₂, P(红)] R-CHBr-COOH",
+    "Hofmann重排（酰胺→少一个碳的胺）：R-CONH₂→[Br₂, NaOH] R-NH₂",
+    "黄鸣龙改进（羰基→亚甲基）：R-CO-R'→[N₂H₄·H₂O, NaOH, 二甘醇, △] R-CH₂-R'",
+    "格氏试剂与CO₂（制备羧酸）：R-MgBr→[CO₂, H₃O⁺] R-COOH",
+    "格氏试剂与醛酮（制备醇）：R-MgBr→[R'-CHO, H₃O⁺] R-CH(OH)-R'",
+    "苯炔中间体（消除加成）：Ar-X→[NaNH₂, NH₃(l)] Ar-NH₂",
+    "Diels-Alder反应（环加成）：双烯→[亲双烯体, △] 环己烯衍生物",
+]
+
+
 class QuestionGenerator:
     """命题生成引擎 v4.0"""
 
@@ -45,6 +65,9 @@ class QuestionGenerator:
 
         # 随机选择用途身份
         identity = random.choice(TARGET_IDENTITIES)
+
+        # 随机指定已知信息反应类型（避免 LLM 反复选 Perkin）
+        forced_reaction = random.choice(KNOWN_INFO_REACTION_POOL)
 
         # 🔴 提取路线关键信息，帮助LLM精准设问
         steps = route_data.get("steps", [])
@@ -87,6 +110,10 @@ class QuestionGenerator:
 【相关高中反应参考】
 {chr(10).join(relevant_reactions[:8])}
 
+【🔴 强制规定 — 本次已知信息反应类型（必须严格遵守，不得改用其他反应）】
+第(5)题已知信息(new_info)必须使用以下反应类型，不得使用 Perkin 或其他类型替代：
+{forced_reaction}
+
 【命题提示 — 请严格遵循以下指引】
 1. 第(1)题：从上述中间体C/D/E中选择一个，问其官能团名称、分子式、手性碳个数或某步反应类型
    关键：必须指定具体化合物代号，不能泛泛而问
@@ -96,7 +123,7 @@ class QuestionGenerator:
    关键：必须具体到某步（如"B→C所需的试剂和条件为____"）
 4. 第(4)题：从路线中间体中选择一个，设计3个递进条件（①官能团特征反应②核磁氢谱③结构限制）
    关键：条件必须具体且有区分度，能唯一确定结构
-5. 第(5)题：已知信息优先使用路线中的特殊反应（人名反应等），设计不同于题干路线的合成路线
+5. 第(5)题：已知信息必须使用上面【强制规定】指定的反应类型，设计不同于题干路线的合成路线
    关键：目标产物是路线中某化合物的"类似物"（结构相近但不同），答案路线必须与题干路线不同
 6. 第(5)题合成路线答案必须恰好5-7步，不能少于5步，也不能多于7步。这是硬性要求！
 🔴 单步路线（仅1步反应）绝对禁止！必须设计5-7步的完整合成路线。
@@ -276,6 +303,14 @@ class QuestionGenerator:
                 question_data[key] = [val]
             elif val is None:
                 question_data[key] = []
+
+        # 兜底：answers 元素即便丢失 number（LLM 返回 list[str] 时），也按位置补全，
+        # 否则前端无法识别第5题路线答案，导致答案不显示。
+        answers = question_data.get("answers")
+        if isinstance(answers, list):
+            for idx, a in enumerate(answers):
+                if isinstance(a, dict) and a.get("number") is None:
+                    a["number"] = idx + 1
         return question_data
 
     def _check_structure_placeholders(self, answers: list) -> list:

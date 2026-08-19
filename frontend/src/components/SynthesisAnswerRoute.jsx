@@ -47,6 +47,11 @@ function parseArrowFormat(text) {
   const stepParts = text.split(/第\d+步[：:]\s*/).filter(s => s.trim())
   if (stepParts.length === 0) return null
 
+  // 无"第N步"标记（仅整体一段）→ 按连续箭头链解析 A→[条件]B→[条件]C
+  if (stepParts.length === 1) {
+    return parseArrowChain(normalized)
+  }
+
   const steps = []
   let prevProductSmiles = ''
 
@@ -96,6 +101,49 @@ function parseArrowFormat(text) {
     prevProductSmiles = productSmiles
   }
 
+  if (steps.length === 0) return null
+  return { title: '合成路线', steps }
+}
+
+/**
+ * 解析连续箭头链格式（无"第N步"标记）：
+ * {{结构式:A}}→[条件1]{{结构式:B}}→[条件2]{{结构式:C}}
+ * 或单个方程式：{{结构式:A}}→[条件]{{结构式:B}}
+ * 每对 结构式→[条件]结构式 视为一步，条件在箭头上方。
+ */
+function parseArrowChain(normalized) {
+  // 提取所有结构式 SMILES（顺序）
+  const smiles = []
+  const smRe = /\{结构式:([^}]+?)\}/g
+  let m
+  while ((m = smRe.exec(normalized)) !== null) {
+    smiles.push(m[1].trim())
+  }
+  if (smiles.length < 2) return null
+
+  // 提取所有条件 →[条件]
+  const conds = []
+  const condRe = /→\s*\[([^\]]*)\]/g
+  let c
+  while ((c = condRe.exec(normalized)) !== null) {
+    conds.push(c[1].trim())
+  }
+
+  // 步骤数 = 结构式数 - 1，且不超过条件数
+  const n = Math.min(smiles.length - 1, conds.length)
+  if (n <= 0) return null
+
+  const steps = []
+  for (let i = 0; i < n; i++) {
+    steps.push({
+      step_number: i + 1,
+      reactant: smiles[i],
+      reagent: conds[i] || '',
+      product: smiles[i + 1],
+      product_name: `产物${i + 1}`,
+      reactant_name: '',
+    })
+  }
   if (steps.length === 0) return null
   return { title: '合成路线', steps }
 }
