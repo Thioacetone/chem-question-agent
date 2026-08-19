@@ -24,11 +24,7 @@ export default function RouteDiagram({ routeData, title = '' }) {
         try {
           const res = await fetch('/api/render/route-diagram', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Cache-Control': 'no-cache, no-store',
-              'Pragma': 'no-cache',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               steps: routeData.steps,
               title: title || routeData.title || '',

@@ -48,11 +48,7 @@ export default function StructureInline({ name, routeData, width = 160, height =
         try {
           const res = await fetch('/api/render/inline-svg', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Cache-Control': 'no-cache, no-store',
-              'Pragma': 'no-cache',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name: resolvedName, width, height }),
           })
           if (!res.ok) throw new Error('HTTP ' + res.status)

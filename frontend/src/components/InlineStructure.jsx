@@ -61,11 +61,7 @@ export default function InlineStructure({ name, size = 'small', showLabel = true
       let lastErr = null
       for (let attempt = 0; attempt < 3; attempt++) {
         try {
-          const commonHeaders = {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'no-cache, no-store',
-            'Pragma': 'no-cache',
-          }
+          const commonHeaders = { 'Content-Type': 'application/json' }
           // 1. 名称→SMILES（统一走后端 resolve_smiles：内置+离线映射+归一化+回退链）
           const nameRes = await fetch('/api/render/name-to-smiles', {
             method: 'POST',
