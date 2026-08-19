@@ -25,26 +25,29 @@ jobs:
           node-version: 20
 
       - name: Install Railway CLI
-        run: npm i -g @railway/cli
-
-      - name: Verify Railway CLI & Token
         run: |
           set -e
+          npm i -g @railway/cli
           railway version
-          if [ -z "${RAILWAY_TOKEN}" ]; then
-            echo "::error::RAILWAY_TOKEN secret is empty, deployment cannot proceed."
-            exit 1
+
+      - name: Check RAILWAY_TOKEN secret
+        id: check_token
+        run: |
+          token="${{ secrets.RAILWAY_TOKEN }}"
+          if [ -z "${token}" ]; then
+            echo "token_exists=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::RAILWAY_TOKEN secret 未配置。请在 GitHub 仓库 Settings → Secrets and variables → Actions → New repository secret，添加 Name=RAILWAY_TOKEN，Value=你在 Railway 控制台生成的个人 Token（Project Settings → Tokens，或 Account → Tokens）。"
+          else
+            echo "token_exists=true" >> "$GITHUB_OUTPUT"
+            echo "RAILWAY_TOKEN 已配置（prefix=${token:0:8}..., len=${#token})"
           fi
-          # 仅展示 token 前缀用于诊断，不泄露完整值
-          echo "RAILWAY_TOKEN set (prefix=${RAILWAY_TOKEN:0:8}..., len=${#RAILWAY_TOKEN})"
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
       - name: Deploy to Railway
+        if: steps.check_token.outputs.token_exists == 'true'
         id: deploy
         run: |
           set -e
-          # 显式指定 service + 关闭交互式 + 详细日志，便于 CI 中稳定执行与失败诊断
+          # 显式指定 service + 关闭交互 + 详细日志，便于 CI 中稳定执行与失败诊断
           railway up \
             --service "${RAILWAY_SERVICE_ID}" \
             --verbose \
@@ -57,10 +60,10 @@ jobs:
       - name: Dump deploy status on failure
         if: failure() && steps.deploy.outcome == 'failure'
         run: |
-          echo "--- railway status ---"
-          railway status 2>&1 || true
           echo "--- railway whoami ---"
           railway whoami 2>&1 || true
+          echo "--- railway status ---"
+          railway status 2>&1 || true
           echo "--- railway service list ---"
           railway services 2>&1 || true
         env:
