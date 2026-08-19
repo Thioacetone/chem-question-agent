@@ -462,20 +462,35 @@ class StructureRenderer:
         return None
 
     @staticmethod
+    def _normalize_name(name: str) -> str:
+        """去除题干中括号注解（如「对硝基苯乙酸（重结晶提纯）」）及首尾空白。
+
+        只剥离全角括号中的说明性文字，保留 IUPAC 名称中的半角括号取代基（如 2-(4-异丁基苯基)乙酸）。
+        """
+        if not name:
+            return name
+        import re
+        n = name.strip()
+        n = re.sub(r'（[^（）]*）', '', n)
+        return n.strip()
+
+    @staticmethod
     def name_to_smiles_pubchem(name: str) -> Optional[str]:
         """
         通过 PubChem PUG REST API 查询化合物名称→SMILES
         支持中英文名称、IUPAC命名、商品名、俗名等
-        回退链：内置词典 → PubChem API → LLM 智能推断
+        回退链：内置词典(含离线扩展映射) → PubChem API → LLM 智能推断
         """
         # 先检查缓存
         if name in StructureRenderer._cache:
             return StructureRenderer._cache[name]
 
-        # 先检查内置映射
-        if name in StructureRenderer.BUILTIN_NAMES:
-            StructureRenderer._cache[name] = StructureRenderer.BUILTIN_NAMES[name]
-            return StructureRenderer.BUILTIN_NAMES[name]
+        # 归一化（去除括号注解），再检查内置映射
+        norm = StructureRenderer._normalize_name(name)
+        lookup = norm if norm != name else name
+        if lookup in StructureRenderer.BUILTIN_NAMES:
+            StructureRenderer._cache[name] = StructureRenderer.BUILTIN_NAMES[lookup]
+            return StructureRenderer.BUILTIN_NAMES[lookup]
 
         # 尝试 PubChem API
         try:
@@ -1289,3 +1304,20 @@ class StructureRenderer:
 
 # 全局单例
 renderer = StructureRenderer()
+
+
+# 加载离线扩展映射（覆盖合成路线库中的全部化合物名称 → SMILES），
+# 使路线图结构式渲染不依赖运行时网络（PubChem）与 LLM 密钥。
+try:
+    import os as _os
+    _map_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "name_smiles_map.json")
+    if _os.path.exists(_map_path):
+        with open(_map_path, "r", encoding="utf-8") as _f:
+            _extra = json.load(_f)
+        if isinstance(_extra, dict):
+            for _k, _v in _extra.items():
+                if _k and isinstance(_v, str) and _v:
+                    # 用 setdefault 保证内置词典优先，避免离线映射覆盖已有正确值
+                    StructureRenderer.BUILTIN_NAMES.setdefault(_k, _v)
+except Exception:
+    pass

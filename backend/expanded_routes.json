@@ -10884,7 +10884,7 @@
     "steps": [
       {
         "step_number": 1,
-        "reactant": "乙酸 + 苯胺",
+        "reactant": "苯胺",
         "reagent": "DCC, CH2Cl2, 0°C",
         "product": "乙酰苯胺",
         "reaction_type": "酰胺化"
@@ -11095,7 +11095,7 @@
         "step_number": 7,
         "reactant": "对羟基苯甲酸丁酯",
         "reagent": "无（纯化步骤）",
-        "product": "目标产物（高纯度）",
+        "product": "对羟基苯甲酸丁酯（高纯度）",
         "reaction_type": "重结晶提纯"
       }
     ],
